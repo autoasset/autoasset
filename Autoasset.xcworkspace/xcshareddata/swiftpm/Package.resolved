@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Stem",
+        "repositoryURL": "https://github.com/linhay/Stem",
+        "state": {
+          "branch": "develop",
+          "revision": "31e6a1ee142a619dd941b02f1ec69bf034d9f523",
+          "version": null
+        }
+      },
+      {
+        "package": "swift-argument-parser",
+        "repositoryURL": "https://github.com/apple/swift-argument-parser",
+        "state": {
+          "branch": null,
+          "revision": "8d31a0905c346a45c87773ad50862b5b3df8dff6",
+          "version": "0.0.4"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
