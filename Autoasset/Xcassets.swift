@@ -69,9 +69,11 @@ class Asset {
     static let shared = Asset()
 
     var imageCode: [String] = []
-    var gifCode: [String]   = []
-    var dataCode: [String]  = []
+    var gifCode:   [String] = []
+    var dataCode:  [String] = []
     var colorCode: [String] = []
+    var isUseInLibrary: Bool = false
+    var bundleName: String = "Asset"
 
     func addGIFCode(with name: String) -> Warn? {
         if name.first?.isNumber ?? false {
@@ -87,16 +89,33 @@ class Asset {
     func addImageCode(with name: String) -> Warn? {
         if name.first?.isNumber ?? false {
             let caseName = name.camelCased()
-            imageCode.append("    static var _\(caseName): AssetImage { AssetImage(named: \"\(name)\")! }")
+            imageCode.append("    static var _\(caseName): AssetImage { AssetImage(asset: \"\(name)\") }")
             return Warn("首字母不能为数字: \(caseName), 已更替为 _\(caseName)")
         }else {
-            imageCode.append("    static var \(name.camelCased()): AssetImage { AssetImage(named: \"\(name)\")! }")
+            imageCode.append("    static var \(name.camelCased()): AssetImage { AssetImage(asset: \"\(name)\") }")
             return nil
         }
     }
 
     func createTemplate() -> String {
-        
+
+        let frameworkCode = """
+        extension AssetImage {
+            static let bundle = Bundle(path: Bundle(for: AssetBundle.self).resourcePath!.appending("/\(bundleName).bundle"))!
+            convenience init(asset named: String) {
+                self.init(named: named, in: UIImage.bundle, compatibleWith: nil)!
+            }
+        }
+        """
+
+        let staticCode = """
+        extension AssetImage {
+            convenience init(asset named: String) {
+                self.init(named: named)!
+            }
+        }
+        """
+
         return """
         #if os(iOS) || os(tvOS) || os(watchOS)
         import UIKit
@@ -108,11 +127,13 @@ class Asset {
 
         import Foundation
 
+        \(isUseInLibrary ? staticCode : frameworkCode)
+
         public enum Asset {
-            static let image   = AssetImageSource.self
-            static let gifData = AssetGIFDataSource.self
-            static let color   = AssetColorSource.self
-            static let data    = AssetDataSource.self
+            public static let image   = AssetImageSource.self
+            public static let gifData = AssetGIFDataSource.self
+            public static let color   = AssetColorSource.self
+            public static let data    = AssetDataSource.self
         }
 
         public enum AssetImageSource { }

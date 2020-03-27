@@ -14,20 +14,25 @@ var warns = [Warn]()
 struct Count: ParsableCommand {
     static let configuration = CommandConfiguration(abstract: "Word counter.")
 
-    @Option(name: [.short, .customLong("input")], help: "输入: 资源文件夹路径")
+    @Argument(name: [.short, .customLong("input")], help: "输入: 资源文件夹路径")
     var input: String
 
-    @Option(name: [.short, .customLong("xcassets")], help: "输出: xcassets路径")
+    @Argument(name: [.short, .customLong("xcassets")], default: "./image.xcassets", help: "输出: xcassets路径")
     var xcassets: String
 
-    @Option(name: [.short, .customLong("asset")], help: "输出: asset文件路径")
+    @Argument(name: [.short, .customLong("asset")], default: "./asset.swift", help: "输出: asset文件路径")
     var asset: String
 
-    @Option(name: [.short, .customLong("warn")], help: "输出: warn文件路径")
+    @Argument(name: [.customLong("warn")], default: nil, help: "输出: warn文件路径")
     var warn: String?
 
-    func run() throws {
+    @Argument(default: false, help: "是否用于静态库输出")
+    var isUseInLibrary: Bool
 
+    @Argument(default: "Asset", help: "静态库内 bundle 名")
+    var bundleName: String
+
+    func run() throws {
         let inputFilePath  = try FilePath(url: URL(fileURLWithPath: input))
         let tempFilePath   = try FilePath(url: URL(fileURLWithPath: "./tempAutoasset"), type: .folder)
         let outputFilePath = try FilePath(url: URL(fileURLWithPath: xcassets), type: .folder)
@@ -36,6 +41,9 @@ struct Count: ParsableCommand {
         guard inputFilePath.type == .folder else {
             throw RuntimeError("inputFile 不能是文件, 只能是文件夹")
         }
+
+        Asset.shared.bundleName = bundleName
+        Asset.shared.isUseInLibrary = isUseInLibrary
 
         try tempFilePath.delete()
         try inputFilePath.copy(to: tempFilePath)
@@ -46,7 +54,6 @@ struct Count: ParsableCommand {
         try outputFilePath.create()
         try makeImageAsset(imageFilePaths, outputFilePath)
         try makeGIFDataAsset(gifFilePaths, outputFilePath)
-        try tempFilePath.delete()
         try Asset.shared.createTemplate().data(using: .utf8)?.write(to: assetFilePath.url)
         let warnFile = warns.map({ $0.message }).joined(separator: "\n")
         print(warnFile)
@@ -131,9 +138,12 @@ struct RuntimeError: Error, CustomStringConvertible {
     }
 }
 
-Count.main()
-//var count      = Count()
-//count.input    = "./UI/"
-//count.xcassets = "./image.xcassets"
-//count.asset    = "./asset.swift"
-//try! count.run()
+//Count.main()
+var count      = Count()
+count.input    = "./UI/"
+count.xcassets = "./image.xcassets"
+count.asset    = "./asset.swift"
+count.warn     = "./warn.txt"
+count.bundleName = "Asset"
+count.isUseInLibrary = false
+try! count.run()
