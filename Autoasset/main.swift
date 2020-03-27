@@ -9,29 +9,29 @@ import Foundation
 import ArgumentParser
 import Stem
 
+var warns = [Warn]()
+
 struct Count: ParsableCommand {
     static let configuration = CommandConfiguration(abstract: "Word counter.")
 
     @Option(name: [.short, .customLong("input")], help: "输入: 资源文件夹路径")
-    var inputFile: String
+    var input: String
 
-    @Option(name: [.short, .customLong("output")], help: "输出: xcassets路径")
-    var outputFile: String
+    @Option(name: [.short, .customLong("xcassets")], help: "输出: xcassets路径")
+    var xcassets: String
 
-    //    @Flag(name: .shortAndLong, help: "Print status updates while counting.")
-    //    var verbose: Bool
+    @Option(name: [.short, .customLong("asset")], help: "输出: asset文件路径")
+    var asset: String
+
+    @Option(name: [.short, .customLong("warn")], help: "输出: warn文件路径")
+    var warn: String?
 
     func run() throws {
-        //        if verbose {
-        //            print("""
-        //                Counting words in '\(inputFile)' \
-        //                and writing the result into '\(outputFile)'.
-        //                """)
-        //        }
 
-        let inputFilePath  = try FilePath(url: URL(fileURLWithPath: inputFile))
+        let inputFilePath  = try FilePath(url: URL(fileURLWithPath: input))
         let tempFilePath   = try FilePath(url: URL(fileURLWithPath: "./tempAutoasset"), type: .folder)
-        let outputFilePath = try FilePath(url: URL(fileURLWithPath: outputFile), type: .folder)
+        let outputFilePath = try FilePath(url: URL(fileURLWithPath: xcassets), type: .folder)
+        let assetFilePath  = try FilePath(url: URL(fileURLWithPath: asset), type: .file)
 
         guard inputFilePath.type == .folder else {
             throw RuntimeError("inputFile 不能是文件, 只能是文件夹")
@@ -41,9 +41,23 @@ struct Count: ParsableCommand {
         try inputFilePath.copy(to: tempFilePath)
         let filePaths = try tempFilePath.subAllFilePaths().filter({ $0.type == .file })
 
+        let (imageFilePaths, gifFilePaths) = try splitImageFilePaths(filePaths)
+        try outputFilePath.delete()
+        try outputFilePath.create()
+        try makeImageAsset(imageFilePaths, outputFilePath)
+        try makeGIFDataAsset(gifFilePaths, outputFilePath)
+        try tempFilePath.delete()
+        try Asset.shared.createTemplate().data(using: .utf8)?.write(to: assetFilePath.url)
+        let warnFile = warns.map({ $0.message }).joined(separator: "\n")
+        print(warnFile)
+        if let warn = warn {
+            try warnFile.data(using: .utf8)?.write(to: URL(fileURLWithPath: warn))
+        }
+    }
+
+    private func splitImageFilePaths(_ filePaths: [FilePath]) throws -> (imageFilePaths: [String: [FilePath]],  gifFilePaths: [FilePath]) {
         var imageFilePaths = [String: [FilePath]]()
         var gifFilePaths = [FilePath]()
-
         for item in filePaths {
             guard item.fileName.hasPrefix(".") == false else {
                 continue
@@ -52,7 +66,7 @@ struct Count: ParsableCommand {
             case .gif:
                 gifFilePaths.append(item)
             default:
-                guard let name = item.fileName.split(separator: "@").first?.split(separator: ".").first?.description else {
+                guard let name = Xcassets.shared.createSourceNameKey(with: item.fileName) else {
                     continue
                 }
                 if imageFilePaths[name] == nil {
@@ -62,12 +76,31 @@ struct Count: ParsableCommand {
                 }
             }
         }
+        return (imageFilePaths, gifFilePaths)
+    }
 
-        try outputFilePath.delete()
-        try outputFilePath.create()
+    private func makeGIFDataAsset(_ filePaths: [FilePath], _ outputFilePath: FilePath) throws {
+        let keySet = Set(filePaths.compactMap({ Xcassets.shared.createSourceNameKey(with: $0.fileName) }))
+        try keySet.forEach { key in
+            let folderName = key.replacingOccurrences(of: "@2x.", with: ".")
+                                .replacingOccurrences(of: "@3x.", with: ".")
+            let folder = try outputFilePath.create(folder: "\(folderName).dataset")
+            if let filePath = filePaths.first(where: { $0.fileName.hasPrefix("\(key).") || $0.fileName.hasPrefix("\(key)@") }) {
+                try filePath.move(to: folder)
+                if let warn = Asset.shared.addGIFCode(with: folderName) {
+                    warns.append(Warn(warn.message + "\npath: " + filePath.url.path))
+                }
+                try Xcassets.shared.createDataContents(with: [filePath.fileName]).write(to: folder.url.appendingPathComponent("Contents.json"))
+            }
+        }
+    }
 
-        let imageFolders = try imageFilePaths.map { key, value -> FilePath in
+    private func makeImageAsset(_ filePathMap: [String : [FilePath]], _ outputFilePath: FilePath) throws {
+        let imageFolders = try filePathMap.map { key, value -> FilePath in
             let folder = try outputFilePath.create(folder: "\(key).imageset")
+            if let warn = Asset.shared.addImageCode(with: key) {
+                warns.append(Warn(warn.message + "\n" + value.map({ "path: \($0.url.path)" }).joined(separator: "\n")))
+            }
             var flag = false
             value.forEach { item in
                 do {
@@ -76,7 +109,7 @@ struct Count: ParsableCommand {
                     flag = true
                 }
                 if flag {
-                    print("文件重复: \n\(value.map({ $0.url.path }))")
+                    warns.append(Warn("文件重复\n" + value.map({ "path: \($0.url.path)" }).joined(separator: "\n")))
                 }
             }
             return folder
@@ -84,39 +117,11 @@ struct Count: ParsableCommand {
 
         try imageFolders.forEach { folder in
             let fileNames = try folder.subFilePaths().map({ $0.fileName })
-            var contents: [String: Any] = ["info": ["version": 1, "author": "xcode"]]
-            var list = [[String: String]]()
-            do {
-                var dict = ["idiom": "universal", "scale": "3x"]
-                if let name = fileNames.first(where: { $0.contains("@3x.") }) {
-                    dict["filename"] = name
-                }
-                list.append(dict)
-            }
-            do {
-                var dict = ["idiom": "universal", "scale": "2x"]
-                if let name = fileNames.first(where: { $0.contains("@2x.") }) {
-                    dict["filename"] = name
-                }
-                list.append(dict)
-            }
-            do {
-                var dict = ["idiom": "universal", "scale": "1x"]
-                if let name = fileNames.first(where: { $0.contains("@2x.") == false && $0.contains("@3x.") == false }) {
-                    dict["filename"] = name
-                }
-                list.append(dict)
-            }
-            contents["images"] = list
-            let data = try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted])
-            try data.write(to:  folder.url.appendingPathComponent("Contents.json"))
+            try Xcassets.shared.createImageContents(with: fileNames).write(to: folder.url.appendingPathComponent("Contents.json"))
         }
-
-        try tempFilePath.delete()
     }
+
 }
-
-
 
 struct RuntimeError: Error, CustomStringConvertible {
     var description: String
@@ -126,8 +131,9 @@ struct RuntimeError: Error, CustomStringConvertible {
     }
 }
 
-//Count.main()
-var count = Count()
-count.inputFile  = "./UI/"
-count.outputFile = "./image.xcassets"
-try! count.run()
+Count.main()
+//var count      = Count()
+//count.input    = "./UI/"
+//count.xcassets = "./image.xcassets"
+//count.asset    = "./asset.swift"
+//try! count.run()

@@ -12,6 +12,7 @@
 		CD814806242C589B00D2DF0A /* Stem in Frameworks */ = {isa = PBXBuildFile; productRef = CD814805242C589B00D2DF0A /* Stem */; };
 		CD814808242C83B900D2DF0A /* FilePath.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD814807242C83B900D2DF0A /* FilePath.swift */; };
 		CDA9F0AC242C9A8700255373 /* Xcassets.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA9F0AB242C9A8700255373 /* Xcassets.swift */; };
+		CDA9F109242DE44700255373 /* Warn.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA9F108242DE44700255373 /* Warn.swift */; };
 		D6228C53EC98B7A44507F1DD /* Pods_Autoasset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65EFE37CC6610AA0D8AF1FA5 /* Pods_Autoasset.framework */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +36,8 @@
 		CD394C0C242B60CF00277F88 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		CD814807242C83B900D2DF0A /* FilePath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilePath.swift; sourceTree = "<group>"; };
 		CDA9F0AB242C9A8700255373 /* Xcassets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Xcassets.swift; sourceTree = "<group>"; };
+		CDA9F0D9242D950800255373 /* image.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = image.xcassets; sourceTree = "<group>"; };
+		CDA9F108242DE44700255373 /* Warn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Warn.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +95,8 @@
 				CD814807242C83B900D2DF0A /* FilePath.swift */,
 				CDA9F0AB242C9A8700255373 /* Xcassets.swift */,
 				CD394C0C242B60CF00277F88 /* main.swift */,
+				CDA9F108242DE44700255373 /* Warn.swift */,
+				CDA9F0D9242D950800255373 /* image.xcassets */,
 			);
 			path = Autoasset;
 			sourceTree = "<group>";
@@ -189,6 +194,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD814808242C83B900D2DF0A /* FilePath.swift in Sources */,
+				CDA9F109242DE44700255373 /* Warn.swift in Sources */,
 				CD394C0D242B60CF00277F88 /* main.swift in Sources */,
 				CDA9F0AC242C9A8700255373 /* Xcassets.swift in Sources */,
 			);
