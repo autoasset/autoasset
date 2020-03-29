@@ -11,25 +11,33 @@ import Stem
 
 var warns = [Warn]()
 
-struct Count: ParsableCommand {
+struct RuntimeError: Error, CustomStringConvertible {
+    var description: String
+
+    init(_ description: String) {
+        self.description = description
+    }
+}
+
+struct Autoasset: ParsableCommand {
     static let configuration = CommandConfiguration(abstract: "Word counter.")
 
-    @Argument(name: [.short, .customLong("input")], help: "输入: 资源文件夹路径")
+    @Option(name: [.short, .customLong("input")], help: "输入: 资源文件夹路径")
     var input: String
 
-    @Argument(name: [.short, .customLong("xcassets")], default: "./image.xcassets", help: "输出: xcassets路径")
+    @Option(name: [.short, .customLong("xcassets")], default: "./image.xcassets", help: "输出: xcassets路径")
     var xcassets: String
 
-    @Argument(name: [.short, .customLong("asset")], default: "./asset.swift", help: "输出: asset文件路径")
+    @Option(name: [.short, .customLong("asset")], default: "./asset.swift", help: "输出: asset文件路径")
     var asset: String
 
-    @Argument(name: [.customLong("warn")], default: nil, help: "输出: warn文件路径")
+    @Option(name: [.customLong("warn")], default: nil, help: "输出: warn文件路径")
     var warn: String?
 
-    @Argument(default: false, help: "是否用于静态库输出")
+    @Option(name: [.customLong("isUseInLibrary")], default: false, help: "是否用于静态库输出")
     var isUseInLibrary: Bool
 
-    @Argument(default: "Asset", help: "静态库内 bundle 名")
+    @Option(name: [.customLong("bundleName")], default: "Asset", help: "静态库内 bundle 名")
     var bundleName: String
 
     func run() throws {
@@ -60,7 +68,23 @@ struct Count: ParsableCommand {
         if let warn = warn {
             try warnFile.data(using: .utf8)?.write(to: URL(fileURLWithPath: warn))
         }
+
+        if isUseInLibrary {
+            let code = """
+            在podspec中添加以下代码
+            s.resource_bundles = {
+                'Assets' => ['Sources/Assets/*.xcassets']
+            }
+
+            在podfile中移除 use_framework! 字段
+            """
+            print(code)
+        }
     }
+
+}
+
+extension Autoasset {
 
     private func splitImageFilePaths(_ filePaths: [FilePath]) throws -> (imageFilePaths: [String: [FilePath]],  gifFilePaths: [FilePath]) {
         var imageFilePaths = [String: [FilePath]]()
@@ -130,20 +154,13 @@ struct Count: ParsableCommand {
 
 }
 
-struct RuntimeError: Error, CustomStringConvertible {
-    var description: String
 
-    init(_ description: String) {
-        self.description = description
-    }
-}
-
-//Count.main()
-var count      = Count()
-count.input    = "./UI/"
-count.xcassets = "./image.xcassets"
-count.asset    = "./asset.swift"
-count.warn     = "./warn.txt"
-count.bundleName = "Asset"
-count.isUseInLibrary = false
-try! count.run()
+Autoasset.main()
+//var count = Autoasset()
+//count.input    = "./UI/"
+//count.xcassets = "./image.xcassets"
+//count.asset    = "./asset.swift"
+//count.warn     = "./warn.txt"
+//count.bundleName = "Asset"
+//count.isUseInLibrary = false
+//try! count.run()

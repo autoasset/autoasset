@@ -98,17 +98,21 @@ class Asset {
     }
 
     func createTemplate() -> String {
+        let staticCode = """
 
-        let frameworkCode = """
+        fileprivate class AssetBundle { }
+
         extension AssetImage {
+
             static let bundle = Bundle(path: Bundle(for: AssetBundle.self).resourcePath!.appending("/\(bundleName).bundle"))!
+
             convenience init(asset named: String) {
                 self.init(named: named, in: UIImage.bundle, compatibleWith: nil)!
             }
         }
         """
 
-        let staticCode = """
+        let frameworkCode = """
         extension AssetImage {
             convenience init(asset named: String) {
                 self.init(named: named)!
