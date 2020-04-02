@@ -20,65 +20,66 @@ struct RuntimeError: Error, CustomStringConvertible {
 }
 
 struct Autoasset: ParsableCommand {
-    static let configuration = CommandConfiguration(abstract: "Word counter.")
+    static let configuration = CommandConfiguration(version: "1.0.0")
 
-    @Option(name: [.short, .customLong("input")], help: "输入: 资源文件夹路径")
-    var input: String
+    @Option(name: [.short, .customLong("config")], help: "配置")
+    var config: String
 
-    @Option(name: [.short, .customLong("xcassets")], default: "./image.xcassets", help: "输出: xcassets路径")
-    var xcassets: String
-
-    @Option(name: [.short, .customLong("asset")], default: "./asset.swift", help: "输出: asset文件路径")
-    var asset: String
-
-    @Option(name: [.customLong("warn")], default: nil, help: "输出: warn文件路径")
-    var warn: String?
-
-    @Option(name: [.customLong("isUseInLibrary")], default: false, help: "是否用于静态库输出")
-    var isUseInLibrary: Bool
-
-    @Option(name: [.customLong("bundleName")], default: "Asset", help: "静态库内 bundle 名")
-    var bundleName: String
+    func readImageFilePaths(folders: [FilePath]) throws -> [FilePath] {
+        return folders.reduce([FilePath]()) { (result, item) -> [FilePath] in
+            do {
+                return result + (try item.subAllFilePaths()).filter({ $0.type == .file })
+            } catch {
+                return result
+            }
+        }
+    }
 
     func run() throws {
-        let inputFilePath  = try FilePath(url: URL(fileURLWithPath: input))
-        let tempFilePath   = try FilePath(url: URL(fileURLWithPath: "./tempAutoasset"), type: .folder)
-        let outputFilePath = try FilePath(url: URL(fileURLWithPath: xcassets), type: .folder)
-        let assetFilePath  = try FilePath(url: URL(fileURLWithPath: asset), type: .file)
+        let config = try Config(url: URL(fileURLWithPath: self.config))
+        try start(config: config)
 
-        guard inputFilePath.type == .folder else {
-            throw RuntimeError("inputFile 不能是文件, 只能是文件夹")
-        }
+    }
 
-        Asset.shared.bundleName = bundleName
-        Asset.shared.isUseInLibrary = isUseInLibrary
+    func autoassetVersion() throws {
+        print(Bundle.version())
+    }
 
-        try tempFilePath.delete()
-        try inputFilePath.copy(to: tempFilePath)
-        let filePaths = try tempFilePath.subAllFilePaths().filter({ $0.type == .file })
+    func start(config: Config) throws {
 
-        let (imageFilePaths, gifFilePaths) = try splitImageFilePaths(filePaths)
-        try outputFilePath.delete()
-        try outputFilePath.create()
-        try makeImageAsset(imageFilePaths, outputFilePath)
-        try makeGIFDataAsset(gifFilePaths, outputFilePath)
-        try Asset.shared.createTemplate().data(using: .utf8)?.write(to: assetFilePath.url)
-        let warnFile = warns.map({ $0.message }).joined(separator: "\n")
-        print(warnFile)
-        if let warn = warn {
-            try warnFile.data(using: .utf8)?.write(to: URL(fileURLWithPath: warn))
-        }
+        func makeImages() throws {
+            var imageFolderPaths = [FilePath]()
+            if let url = config.xcassets.input.imagesPath {
+                let filePath = try FilePath(url: URL(fileURLWithPath: url.path), type: .folder)
+                imageFolderPaths.append(filePath)
+            }
+            if let url = config.xcassets.input.gifsPath {
+                let filePath = try FilePath(url: URL(fileURLWithPath: url.path), type: .folder)
+                imageFolderPaths.append(filePath)
+            }
+            let filePaths = try readImageFilePaths(folders: imageFolderPaths)
 
-        if isUseInLibrary {
-            let code = """
-            在podspec中添加以下代码
-            s.resource_bundles = {
-                'Assets' => ['Sources/Assets/*.xcassets']
+            let (imageFilePaths, gifFilePaths) = try splitImageFilePaths(filePaths)
+
+            if let url = config.xcassets.output.imagesXcassetsPath {
+                let filePath = try FilePath(url: URL(fileURLWithPath: url.path), type: .folder)
+                try filePath.delete()
+                try filePath.create()
+                try makeImageAsset(imageFilePaths, filePath)
             }
 
-            在podfile中移除 use_framework! 字段
-            """
-            print(code)
+            if let url = config.xcassets.output.gifsXcassetsPath {
+                let filePath = try FilePath(url: URL(fileURLWithPath: url.path), type: .folder)
+                try filePath.delete()
+                try filePath.create()
+                try makeGIFDataAsset(gifFilePaths, filePath)
+            }
+        }
+
+        try makeImages()
+
+        if let url = config.asset.path {
+            try Asset.shared.createTemplate(to: url)
         }
     }
 
@@ -114,7 +115,7 @@ extension Autoasset {
         let keySet = Set(filePaths.compactMap({ Xcassets.shared.createSourceNameKey(with: $0.fileName) }))
         try keySet.forEach { key in
             let folderName = key.replacingOccurrences(of: "@2x.", with: ".")
-                                .replacingOccurrences(of: "@3x.", with: ".")
+                .replacingOccurrences(of: "@3x.", with: ".")
             let folder = try outputFilePath.create(folder: "\(folderName).dataset")
             if let filePath = filePaths.first(where: { $0.fileName.hasPrefix("\(key).") || $0.fileName.hasPrefix("\(key)@") }) {
                 try filePath.move(to: folder)
@@ -140,7 +141,7 @@ extension Autoasset {
                     flag = true
                 }
                 if flag {
-                    warns.append(Warn("文件重复\n" + value.map({ "path: \($0.url.path)" }).joined(separator: "\n")))
+                    warns.append(Warn("文件重复\n" + value.map({ "path: \($0.url)" }).joined(separator: "\n")))
                 }
             }
             return folder
@@ -154,13 +155,10 @@ extension Autoasset {
 
 }
 
-
 Autoasset.main()
-//var count = Autoasset()
-//count.input    = "./UI/"
-//count.xcassets = "./image.xcassets"
-//count.asset    = "./asset.swift"
-//count.warn     = "./warn.txt"
-//count.bundleName = "Asset"
-//count.isUseInLibrary = false
-//try! count.run()
+//let asset = Autoasset()
+//do {
+//    try asset.start(config: Config(url: URL(fileURLWithPath: #"/Users/linhey/Library/Developer/Xcode/DerivedData/Autoasset-cesnvfxrvtssyacujwludbzpqzhs/Build/Products/autoasset.package"#)))
+//} catch {
+//     print(error.localizedDescription)
+//}

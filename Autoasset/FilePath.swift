@@ -128,9 +128,14 @@ extension FilePath {
         }
         var list = [FilePath]()
         for case let path as String in enumerator {
-            guard let fullPath = enumerator.value(forKey: "path") as? String,
-                let item = try? FilePath(url: URL(fileURLWithPath: fullPath + path)) else {
-                    continue
+            guard path.hasPrefix(".") else {
+                continue
+            }
+            guard let fullPath = enumerator.value(forKey: "path") as? String else {
+                continue
+            }
+            guard let item = try? FilePath(url: URL(fileURLWithPath: fullPath + path)) else {
+                continue
             }
             list.append(item)
         }
