@@ -37,6 +37,13 @@ class FilePath: Equatable {
     var fileName: String {
         return url.lastPathComponent
     }
+
+    convenience init(path: String, type: Type? = nil) throws {
+        guard let url = URLComponents(url: URL(fileURLWithPath: path), resolvingAgainstBaseURL: true)?.url else {
+            throw FilePathError(message: "path解析错误: \(path)", code: 0)
+        }
+        try self.init(url: url, type: type)
+    }
     
     init(url: URL, type: Type? = nil) throws {
         guard url.isFileURL else {

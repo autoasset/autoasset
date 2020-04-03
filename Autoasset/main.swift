@@ -20,7 +20,7 @@ struct RuntimeError: Error, CustomStringConvertible {
 }
 
 struct Autoasset: ParsableCommand {
-    static let configuration = CommandConfiguration(version: "1.0.0")
+    static let configuration = CommandConfiguration(version: "1")
 
     @Option(name: [.short, .customLong("config")], help: "配置")
     var config: String
@@ -36,9 +36,8 @@ struct Autoasset: ParsableCommand {
     }
 
     func run() throws {
-        let config = try Config(url: URL(fileURLWithPath: self.config))
+        let config = try Config(url: FilePath(path: self.config, type: .file).url)
         try start(config: config)
-
     }
 
     func autoassetVersion() throws {
@@ -46,40 +45,42 @@ struct Autoasset: ParsableCommand {
     }
 
     func start(config: Config) throws {
+        var asset = Asset(config: config.asset)
 
         func makeImages() throws {
             var imageFolderPaths = [FilePath]()
-            if let url = config.xcassets.input.imagesPath {
-                let filePath = try FilePath(url: URL(fileURLWithPath: url.path), type: .folder)
+            if let path = config.xcassets.input.imagesPath?.path {
+                let filePath = try FilePath(path: path, type: .folder)
                 imageFolderPaths.append(filePath)
             }
-            if let url = config.xcassets.input.gifsPath {
-                let filePath = try FilePath(url: URL(fileURLWithPath: url.path), type: .folder)
+            if let path = config.xcassets.input.gifsPath?.path {
+                let filePath = try FilePath(path: path, type: .folder)
                 imageFolderPaths.append(filePath)
             }
             let filePaths = try readImageFilePaths(folders: imageFolderPaths)
 
             let (imageFilePaths, gifFilePaths) = try splitImageFilePaths(filePaths)
 
-            if let url = config.xcassets.output.imagesXcassetsPath {
-                let filePath = try FilePath(url: URL(fileURLWithPath: url.path), type: .folder)
+            if let path = config.xcassets.output.imagesXcassetsPath?.path {
+                let filePath = try FilePath(path: path, type: .folder)
                 try filePath.delete()
                 try filePath.create()
-                try makeImageAsset(imageFilePaths, filePath)
+                try makeImageAsset(imageFilePaths, filePath, asset: &asset)
             }
 
-            if let url = config.xcassets.output.gifsXcassetsPath {
-                let filePath = try FilePath(url: URL(fileURLWithPath: url.path), type: .folder)
+            if let path = config.xcassets.output.gifsXcassetsPath?.path {
+                let filePath = try FilePath(path: path, type: .folder)
                 try filePath.delete()
                 try filePath.create()
-                try makeGIFDataAsset(gifFilePaths, filePath)
+                try makeGIFDataAsset(gifFilePaths, filePath, asset: &asset)
             }
         }
 
         try makeImages()
+        try asset.output()
 
-        if let url = config.asset.path {
-            try Asset.shared.createTemplate(to: url)
+        if let podspec = config.podspec {
+            try Podspec(config: podspec).output()
         }
     }
 
@@ -87,6 +88,7 @@ struct Autoasset: ParsableCommand {
 
 extension Autoasset {
 
+    /// 分离 image 与 gif 文件
     private func splitImageFilePaths(_ filePaths: [FilePath]) throws -> (imageFilePaths: [String: [FilePath]],  gifFilePaths: [FilePath]) {
         var imageFilePaths = [String: [FilePath]]()
         var gifFilePaths = [FilePath]()
@@ -111,15 +113,15 @@ extension Autoasset {
         return (imageFilePaths, gifFilePaths)
     }
 
-    private func makeGIFDataAsset(_ filePaths: [FilePath], _ outputFilePath: FilePath) throws {
+    private func makeGIFDataAsset(_ filePaths: [FilePath], _ outputFilePath: FilePath, asset: inout Asset) throws {
         let keySet = Set(filePaths.compactMap({ Xcassets.shared.createSourceNameKey(with: $0.fileName) }))
         try keySet.forEach { key in
             let folderName = key.replacingOccurrences(of: "@2x.", with: ".")
                 .replacingOccurrences(of: "@3x.", with: ".")
             let folder = try outputFilePath.create(folder: "\(folderName).dataset")
             if let filePath = filePaths.first(where: { $0.fileName.hasPrefix("\(key).") || $0.fileName.hasPrefix("\(key)@") }) {
-                try filePath.move(to: folder)
-                if let warn = Asset.shared.addGIFCode(with: folderName) {
+                try filePath.copy(to: folder)
+                if let warn = asset.addGIFCode(with: folderName) {
                     warns.append(Warn(warn.message + "\npath: " + filePath.url.path))
                 }
                 try Xcassets.shared.createDataContents(with: [filePath.fileName]).write(to: folder.url.appendingPathComponent("Contents.json"))
@@ -127,16 +129,16 @@ extension Autoasset {
         }
     }
 
-    private func makeImageAsset(_ filePathMap: [String : [FilePath]], _ outputFilePath: FilePath) throws {
+    private func makeImageAsset(_ filePathMap: [String : [FilePath]], _ outputFilePath: FilePath, asset: inout Asset) throws {
         let imageFolders = try filePathMap.map { key, value -> FilePath in
             let folder = try outputFilePath.create(folder: "\(key).imageset")
-            if let warn = Asset.shared.addImageCode(with: key) {
+            if let warn = asset.addImageCode(with: key) {
                 warns.append(Warn(warn.message + "\n" + value.map({ "path: \($0.url.path)" }).joined(separator: "\n")))
             }
             var flag = false
             value.forEach { item in
                 do {
-                    try item.move(to: folder)
+                    try item.copy(to: folder)
                 } catch {
                     flag = true
                 }
@@ -156,9 +158,3 @@ extension Autoasset {
 }
 
 Autoasset.main()
-//let asset = Autoasset()
-//do {
-//    try asset.start(config: Config(url: URL(fileURLWithPath: #"/Users/linhey/Library/Developer/Xcode/DerivedData/Autoasset-cesnvfxrvtssyacujwludbzpqzhs/Build/Products/autoasset.package"#)))
-//} catch {
-//     print(error.localizedDescription)
-//}

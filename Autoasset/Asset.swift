@@ -25,18 +25,56 @@ class AssetComponents {
 }
 
 class Asset {
-    
-    static let shared = Asset()
-    
+
+    let config: Config.Asset
+
+    enum Placeholder {
+        static let images = "[images_code]"
+        static let gifs   = "[gifs_code]"
+        static let datas  = "[datas_code]"
+        static let colors = "[colors_code]"
+        static let fonts  = "[fonts_code]"
+    }
+
     var imageCode: [String] = []
     var gifCode:   [String] = []
     var dataCode:  [String] = []
     var colorCode: [String] = []
     var fontCode:  [String] = []
+
+    init(config: Config.Asset) {
+        self.config = config
+    }
+
+    func output() throws {
+        guard let output = config.outputPath else {
+            throw RunError(message: "Config: asset/output_path 不能为空")
+        }
+
+        var template = ""
+
+        if let path = config.templatePath?.path {
+            template = try String(contentsOfFile: path, encoding: .utf8)
+        } else {
+            template = createTemplate()
+        }
+
+        try template
+            .replacingOccurrences(of: Placeholder.images, with: imageCode.sorted().joined(separator: "\n"))
+            .replacingOccurrences(of: Placeholder.gifs, with: gifCode.sorted().joined(separator: "\n"))
+            .replacingOccurrences(of: Placeholder.datas, with: dataCode.sorted().joined(separator: "\n"))
+            .replacingOccurrences(of: Placeholder.colors, with: colorCode.sorted().joined(separator: "\n"))
+            .replacingOccurrences(of: Placeholder.fonts, with: fontCode.sorted().joined(separator: "\n"))
+            .data(using: .utf8)?.write(to: output)
+    }
     
-    var isUseInLibrary: Bool = false
-    var bundleName: String = "Asset"
+
     
+}
+
+// MARK: - add
+extension Asset {
+
     func addGIFCode(with name: String) -> Warn? {
         if name.first?.isNumber ?? false {
             let caseName = name.camelCased()
@@ -47,7 +85,7 @@ class Asset {
             return nil
         }
     }
-    
+
     func addImageCode(with name: String) -> Warn? {
         if name.first?.isNumber ?? false {
             let caseName = name.camelCased()
@@ -58,22 +96,25 @@ class Asset {
             return nil
         }
     }
-    
-    func createTemplate(to url: URL) throws {
+
+}
+
+private extension Asset {
+
+    func createTemplate() -> String {
         let staticCode = """
-        
         fileprivate class AssetBundle { }
-        
+
         extension AssetImage {
-        
-        static let bundle = Bundle(path: Bundle(for: AssetBundle.self).resourcePath!.appending("/\(bundleName).bundle"))!
-        
+
+        static let bundle = Bundle(path: Bundle(for: AssetBundle.self).resourcePath!.appending("Asset.bundle"))!
+
         convenience init(asset named: String) {
         self.init(named: named, in: UIImage.bundle, compatibleWith: nil)!
         }
         }
         """
-        
+
         let frameworkCode = """
         extension AssetImage {
             convenience init(asset named: String) {
@@ -81,8 +122,8 @@ class Asset {
             }
         }
         """
-        
-        try """
+
+        return """
             #if os(iOS) || os(tvOS) || os(watchOS)
             import UIKit
             public typealias AssetImage = UIImage
@@ -93,7 +134,7 @@ class Asset {
 
             import Foundation
 
-            \(isUseInLibrary ? staticCode : frameworkCode)
+            \(config.isUseInPod ? staticCode : frameworkCode)
 
             public enum Asset {
             public static let image   = AssetImageSource.self
@@ -108,21 +149,21 @@ class Asset {
             public enum AssetDataSource { }
 
             public extension AssetImageSource {
-            \(imageCode.sorted().joined(separator: "\n"))
+            [images_code]
             }
 
             public extension AssetGIFDataSource {
-            \(gifCode.sorted().joined(separator: "\n"))
+            [gifs_code]
             }
 
             public extension AssetColorSource {
-            \(dataCode.sorted().joined(separator: "\n"))
+            [colors_code]
             }
 
             public extension AssetDataSource {
-            \(colorCode.sorted().joined(separator: "\n"))
+            [datas_code]
             }
-            """.data(using: .utf8)?.write(to: url)
+            """
     }
-    
+
 }

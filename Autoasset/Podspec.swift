@@ -12,41 +12,76 @@ import Stem
 
 class Podspec {
 
-    let template: String
+    let config: Config.Podspec
 
-    init(template url: URL) throws {
-        template = try String(contentsOfFile: url.path, encoding: .utf8)
+    enum Placeholder {
+        static let version = "[version]"
+        static let resource_bundles = "[resource_bundles]"
     }
 
-    func output(url: URL) throws {
-        let version = (try versionFromGit() + 1).string
-        let resource_bundles_code = """
-        s.resource_bundles = {
-          'Assets' => ['Sources/Assets/*.xcassets']
-         }
-        """
+    init(config: Config.Podspec) {
+        self.config = config
+    }
 
-        try template.replacingOccurrences(of: "[version]", with: version)
-            .replacingOccurrences(of: "[resource_bundles]", with: resource_bundles_code)
+    func output() throws {
+        guard let output = config.outputPath else {
+            throw RunError(message: "Config: podspec/output_path 不能为空")
+        }
+
+        var template = ""
+        
+        if let path = config.templatePath?.path {
+            template = try String(contentsOfFile: path, encoding: .utf8)
+        } else {
+            template = createTemplate()
+        }
+
+        let version = try Git.lastTagVersion() + 1
+        try template.replacingOccurrences(of: Placeholder.version, with: "\(version)")
+            .replacingOccurrences(of: Placeholder.resource_bundles, with: resourceBundlesCode())
             .data(using: .utf8)?
-            .write(to: url)
+            .write(to: output)
     }
 
-    private func versionFromGit() throws -> Int {
-        let hex = run("git", "rev-list", "--tags", "--max-count=1").stdout
-        if hex.isEmpty {
-            return 0
-        }
-
-        let version = run("git", "describe", "--tags", hex).stdout
-        if let version = Int(argument: version) {
-            return version
-        }
-
-        throw RunError(message: "无法解析版本号, hex: \(hex), version: \(version), 请使用 1/2/3/4/5 数字类型")
-    }
 
 }
 
+private extension Podspec {
 
+    func resourceBundlesCode() -> String {
+        return """
+        s.resource_bundles = {
+                'Assets' => ['Sources/Assets/*.xcassets']
+        }
+        """
+    }
 
+    func createTemplate() -> String {
+        return """
+        Pod::Spec.new do |s|
+        s.name             = 'Resources'
+        s.version          = [version]
+        s.summary          = 'UI资源包'
+
+        s.description      = <<-DESC
+        TODO: Add long description of the pod here.
+        DESC
+
+        s.homepage         = 'https://github.com/linhey/Resources'
+        s.license          = { :type => 'MIT', :file => 'LICENSE' }
+        s.author           = { 'linhey' => 'is.linhey@outlook.com' }
+        s.source           = { :git => 'https://github.com/linhey/Resources.git', :tag => s.version.to_s }
+
+        s.ios.deployment_target = '10.0'
+
+        s.swift_version  = "4.2"
+        s.swift_versions = ['4.0', '4.2', '5.0', '5.1', '5.2']
+        s.requires_arc   = true
+
+        [resource_bundles]
+
+        end
+        """
+    }
+
+}

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD053A402435FA7B008A2E56 /* Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD053A3F2435FA7B008A2E56 /* Git.swift */; };
 		CD394C0D242B60CF00277F88 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD394C0C242B60CF00277F88 /* main.swift */; };
 		CD394C15242B643700277F88 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = CD394C14242B643700277F88 /* ArgumentParser */; };
 		CD814806242C589B00D2DF0A /* Stem in Frameworks */ = {isa = PBXBuildFile; productRef = CD814805242C589B00D2DF0A /* Stem */; };
@@ -34,6 +35,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CD053A3F2435FA7B008A2E56 /* Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Git.swift; sourceTree = "<group>"; };
 		CD394C09242B60CF00277F88 /* Autoasset */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Autoasset; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD394C0C242B60CF00277F88 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		CD814807242C83B900D2DF0A /* FilePath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilePath.swift; sourceTree = "<group>"; };
@@ -89,14 +91,15 @@
 			isa = PBXGroup;
 			children = (
 				CD814807242C83B900D2DF0A /* FilePath.swift */,
+				CDA383622433398D00D3EDD9 /* Podspec.swift */,
 				CDA9F0AB242C9A8700255373 /* Xcassets.swift */,
 				CDA3836D243351EC00D3EDD9 /* Asset.swift */,
 				CD394C0C242B60CF00277F88 /* main.swift */,
 				CDA9F108242DE44700255373 /* Warn.swift */,
 				CDA9F0D9242D950800255373 /* image.xcassets */,
-				CDA383622433398D00D3EDD9 /* Podspec.swift */,
 				CDA38364243342D500D3EDD9 /* RunError.swift */,
 				CDA3836924334DB500D3EDD9 /* Config.swift */,
+				CD053A3F2435FA7B008A2E56 /* Git.swift */,
 			);
 			path = Autoasset;
 			sourceTree = "<group>";
@@ -179,6 +182,7 @@
 				CD394C0D242B60CF00277F88 /* main.swift in Sources */,
 				CDA3836E243351EC00D3EDD9 /* Asset.swift in Sources */,
 				CDA9F0AC242C9A8700255373 /* Xcassets.swift in Sources */,
+				CD053A402435FA7B008A2E56 /* Git.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -350,8 +354,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-argument-parser";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.0.4;
+				branch = master;
+				kind = branch;
 			};
 		};
 		CD394C17242B734900277F88 /* XCRemoteSwiftPackageReference "Stem" */ = {
