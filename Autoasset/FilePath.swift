@@ -114,10 +114,20 @@ extension FilePath {
     }
     
     func copy(to path: FilePath) throws {
-        if path.isExist() {
-            try path.delete()
+        switch path.type {
+        case .file:
+            if path.isExist() {
+                try path.delete()
+            }
+            try manager.copyItem(at: url, to: path.url)
+        case .folder:
+            let path = try FilePath(url: path.url.appendingPathComponent(fileName), type: type)
+            if path.isExist() {
+                try path.delete()
+            }
+            try manager.copyItem(at: url, to: path.url)
         }
-        try manager.copyItem(at: url, to: path.url)
+
     }
     
 }
@@ -135,7 +145,8 @@ extension FilePath {
         }
         var list = [FilePath]()
         for case let path as String in enumerator {
-            guard path.hasPrefix(".") else {
+            guard path.hasPrefix(".") == false else {
+
                 continue
             }
             guard let fullPath = enumerator.value(forKey: "path") as? String else {

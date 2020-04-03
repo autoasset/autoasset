@@ -13,7 +13,7 @@ class Xcassets {
     static var shared = Xcassets()
 
     func createSourceNameKey(with fileName: String) -> String? {
-        return fileName.split(separator: "@").first?.split(separator: ".").first?.description
+        return fileName.split(separator: "/").last?.split(separator: "@").first?.split(separator: ".").first?.description
     }
 
     func createDataContents(with fileNames: [String]) throws -> Data {

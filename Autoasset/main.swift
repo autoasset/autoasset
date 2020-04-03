@@ -28,7 +28,8 @@ struct Autoasset: ParsableCommand {
     func readImageFilePaths(folders: [FilePath]) throws -> [FilePath] {
         return folders.reduce([FilePath]()) { (result, item) -> [FilePath] in
             do {
-                return result + (try item.subAllFilePaths()).filter({ $0.type == .file })
+                let files = try item.subAllFilePaths()
+                return result + files.filter({ $0.type == .file })
             } catch {
                 return result
             }
@@ -38,10 +39,6 @@ struct Autoasset: ParsableCommand {
     func run() throws {
         let config = try Config(url: FilePath(path: self.config, type: .file).url)
         try start(config: config)
-    }
-
-    func autoassetVersion() throws {
-        print(Bundle.version())
     }
 
     func start(config: Config) throws {
@@ -93,9 +90,6 @@ extension Autoasset {
         var imageFilePaths = [String: [FilePath]]()
         var gifFilePaths = [FilePath]()
         for item in filePaths {
-            guard item.fileName.hasPrefix(".") == false else {
-                continue
-            }
             switch try item.data().st.mimeType {
             case .gif:
                 gifFilePaths.append(item)
@@ -103,6 +97,7 @@ extension Autoasset {
                 guard let name = Xcassets.shared.createSourceNameKey(with: item.fileName) else {
                     continue
                 }
+//                print(item.url.absoluteString)
                 if imageFilePaths[name] == nil {
                     imageFilePaths[name] = [item]
                 } else {
@@ -138,6 +133,7 @@ extension Autoasset {
             var flag = false
             value.forEach { item in
                 do {
+                    print(item.url)
                     try item.copy(to: folder)
                 } catch {
                     flag = true
