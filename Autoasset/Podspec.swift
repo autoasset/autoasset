@@ -60,7 +60,7 @@ private extension Podspec {
         return """
         Pod::Spec.new do |s|
         s.name             = 'Resources'
-        s.version          = [version]
+        s.version          = '[version]'
         s.summary          = 'UI资源包'
 
         s.description      = <<-DESC
