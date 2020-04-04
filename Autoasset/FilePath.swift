@@ -15,8 +15,15 @@ class FilePath: Equatable {
     }
     
     struct FilePathError: Error {
+
         let message: String
         let code: Int
+
+        @discardableResult
+        init(message: String, code: Int = 0) {
+            self.message = message
+            self.code = code
+        }
     }
     
     enum `Type` {
@@ -40,14 +47,14 @@ class FilePath: Equatable {
 
     convenience init(path: String, type: Type? = nil) throws {
         guard let url = URLComponents(url: URL(fileURLWithPath: path), resolvingAgainstBaseURL: true)?.url else {
-            throw FilePathError(message: "path解析错误: \(path)", code: 0)
+            throw FilePathError(message: "path解析错误: \(path)")
         }
         try self.init(url: url, type: type)
     }
     
     init(url: URL, type: Type? = nil) throws {
         guard url.isFileURL else {
-            throw FilePathError(message: "目标路径不是文件路径", code: -1)
+            throw FilePathError(message: "目标路径不是文件路径")
         }
         self.url = url
         if let type = type {
@@ -60,7 +67,7 @@ class FilePath: Equatable {
     /// 创建文件夹
     func create() throws {
         guard isExist() == false else {
-            throw FilePathError(message: "文件存在, 无法创建", code: -1)
+            throw FilePathError(message: "文件存在, 无法创建")
         }
         
         switch type {
@@ -117,13 +124,13 @@ extension FilePath {
         switch path.type {
         case .file:
             if path.isExist() {
-                try path.delete()
+                throw FilePathError(message: "文件重复: \n\(self.url.absoluteString)\n\(path.url.absoluteString)")
             }
             try manager.copyItem(at: url, to: path.url)
         case .folder:
             let path = try FilePath(url: path.url.appendingPathComponent(fileName), type: type)
             if path.isExist() {
-                try path.delete()
+                throw FilePathError(message: "文件夹重复: \n\(self.url.absoluteString)\n\(path.url.absoluteString)")
             }
             try manager.copyItem(at: url, to: path.url)
         }
@@ -138,7 +145,7 @@ extension FilePath {
     /// 递归获取文件夹中所有文件/文件夹
     func subAllFilePaths() throws -> [FilePath] {
         guard self.type == .folder else {
-            throw FilePathError(message: "目标路径不是文件夹类型", code: -1)
+            throw FilePathError(message: "目标路径不是文件夹类型")
         }
         guard let enumerator = manager.enumerator(atPath: url.path) else {
             return []
@@ -163,7 +170,7 @@ extension FilePath {
     /// 获取文件夹中文件/文件夹
     func subFilePaths() throws -> [FilePath] {
         guard self.type == .folder else {
-            throw FilePathError(message: "目标路径不是文件夹类型", code: -1)
+            throw FilePathError(message: "目标路径不是文件夹类型")
         }
         
         return try manager
@@ -187,7 +194,7 @@ extension FilePath {
                 return .file
             }
         } else {
-            throw FilePathError(message: "目标路径文件不存在: \(url.description)", code: -2)
+            throw FilePathError(message: "目标路径文件不存在: \(url.description)")
         }
     }
     

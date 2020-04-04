@@ -18,6 +18,10 @@ extension JSON {
 
 struct Config {
 
+    struct Warn {
+        let outputPath: URL?
+    }
+
     struct Asset {
         let templatePath: URL?
         let outputPath: URL?
@@ -55,6 +59,7 @@ struct Config {
     let podspec: Podspec?
     let xcassets: Xcassets
     let asset: Asset
+    let warn: Warn?
 
     init(json: JSON) throws {
         do {
@@ -62,6 +67,13 @@ struct Config {
             asset = Asset(templatePath: result["template_path"].fileURL,
                             outputPath: result["output_path"].fileURL,
                             isUseInPod: json["podspec"].exists())
+        }
+
+        if json["warn"].exists() {
+            let result = json["warn"]
+            warn = Warn(outputPath: result["output_path"].fileURL)
+        } else {
+            warn = nil
         }
 
         if json["podspec"].exists() {
