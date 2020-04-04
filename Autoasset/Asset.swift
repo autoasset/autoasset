@@ -105,11 +105,12 @@ private extension Asset {
 
         extension AssetImage {
 
-        static let bundle = Bundle(path: Bundle(for: AssetBundle.self).resourcePath!.appending("Asset.bundle"))!
+            static let bundle = Bundle(path: Bundle(for: AssetBundle.self).resourcePath!.appending("/Resources.bundle"))!
 
-        convenience init(asset named: String) {
-        self.init(named: named, in: UIImage.bundle, compatibleWith: nil)!
-        }
+            convenience init(asset named: String) {
+                self.init(named: named, in: UIImage.bundle, compatibleWith: nil)!
+            }
+
         }
         """
         
