@@ -11,8 +11,10 @@ import SwiftyJSON
 
 extension JSON {
     var fileURL: URL? {
-        let url = try? FilePath(path: stringValue, type: .file).url
-        return url
+        guard let value = string else {
+            return nil
+        }
+        return try? FilePath(path: value, type: .file).url
     }
 }
 

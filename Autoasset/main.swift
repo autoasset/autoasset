@@ -41,7 +41,6 @@ struct Autoasset: ParsableCommand {
 
     func start(config: Config) throws {
         var asset = Asset(config: config.asset)
-
         func makeImages() throws {
             var imageFolderPaths = [FilePath]()
             if let path = config.xcassets.input.imagesPath?.path {
@@ -53,16 +52,13 @@ struct Autoasset: ParsableCommand {
                 imageFolderPaths.append(filePath)
             }
             let filePaths = try readImageFilePaths(folders: imageFolderPaths)
-
             let (imageFilePaths, gifFilePaths) = try splitImageFilePaths(filePaths)
-
             if let path = config.xcassets.output.imagesXcassetsPath?.path {
                 let filePath = try FilePath(path: path, type: .folder)
                 try filePath.delete()
                 try filePath.create()
                 try makeImageAsset(imageFilePaths, filePath, asset: &asset)
             }
-
             if let path = config.xcassets.output.gifsXcassetsPath?.path {
                 let filePath = try FilePath(path: path, type: .folder)
                 try filePath.delete()
@@ -70,7 +66,6 @@ struct Autoasset: ParsableCommand {
                 try makeGIFDataAsset(gifFilePaths, filePath, asset: &asset)
             }
         }
-
         try makeImages()
         try asset.output()
 
@@ -129,7 +124,6 @@ extension Autoasset {
             asset.addImageCode(with: key)
             value.forEach { item in
                 do {
-                    print(item.url)
                     try item.copy(to: folder)
                 } catch {
                     Warn((error as? FilePath.FilePathError)?.message ?? "")
