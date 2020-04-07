@@ -153,13 +153,15 @@ extension FilePath {
         var list = [FilePath]()
         for case let path as String in enumerator {
             guard path.hasPrefix(".") == false else {
-
                 continue
             }
             guard let fullPath = enumerator.value(forKey: "path") as? String else {
                 continue
             }
             guard let item = try? FilePath(url: URL(fileURLWithPath: fullPath + path)) else {
+                continue
+            }
+            guard item.fileName.hasPrefix(".") == false else {
                 continue
             }
             list.append(item)
