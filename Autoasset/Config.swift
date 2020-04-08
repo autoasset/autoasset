@@ -73,8 +73,10 @@ struct Config {
     let xcassets: Xcassets
     let asset: Asset
     let warn: Warn?
+    let debug: Bool
 
     init(json: JSON) throws {
+        debug = json["debug"].boolValue
         do {
             let result = json["git"]
             git = Git(projectPath: result["project_path"].string ?? "../",

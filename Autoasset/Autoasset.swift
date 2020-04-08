@@ -10,10 +10,14 @@ import Foundation
 
 class Autoasset {
 
+    static let version = "1"
+    static var isDebug = false
+
     let config: Config
     lazy var asset = Asset(config: config.asset)
 
     init(config: Config) {
+        Autoasset.isDebug = config.debug
         self.config = config
     }
 
@@ -29,17 +33,26 @@ class Autoasset {
             try Warn.output(config: warn)
         }
 
-        if git.diff().isEmpty == false {
-            let version = try git.tag.nextVersion().string
-            print("version: ", version)
-            git.pull()
+        let nextVersion = try git.tag.nextVersion()
+        let isChanged = git.diff().isEmpty == false
+        if nextVersion != nil, isChanged == false {
+            return
+        } else {
+            let version = nextVersion?.string ?? "0"
             if let podspec = config.podspec {
                 try Podspec(config: podspec).output(version: version)
             }
-            git.commit(message: "autoasset: \(version)")
-            git.tag.addTag(version: version)
-            git.push(version: version)
+            let message = "tag: \(version), author: autoasset(\(Autoasset.version))"
+            if isChanged {
+                git.commit(message: message)
+                git.pull()
+                git.push(version: version)
+            }
+            git.tag.remove(version: version)
+            git.tag.add(version: version, message: message)
+            git.tag.push(version: version)
         }
+
     }
 
 }

@@ -40,6 +40,7 @@
 		CD394C09242B60CF00277F88 /* Autoasset */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Autoasset; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD394C0C242B60CF00277F88 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		CD544365243C769A0099C9F0 /* Autoasset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Autoasset.swift; sourceTree = "<group>"; };
+		CD544367243DD8B70099C9F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CD814807242C83B900D2DF0A /* FilePath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilePath.swift; sourceTree = "<group>"; };
 		CDA383622433398D00D3EDD9 /* Podspec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Podspec.swift; sourceTree = "<group>"; };
 		CDA38364243342D500D3EDD9 /* RunError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunError.swift; sourceTree = "<group>"; };
@@ -103,6 +104,7 @@
 				CDA3836924334DB500D3EDD9 /* Config.swift */,
 				CD053A3F2435FA7B008A2E56 /* Git.swift */,
 				CD544365243C769A0099C9F0 /* Autoasset.swift */,
+				CD544367243DD8B70099C9F0 /* Info.plist */,
 			);
 			path = Autoasset;
 			sourceTree = "<group>";
@@ -311,8 +313,13 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3L8RM3MDLS;
 				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/Autoasset/info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MARKETING_VERSION = 1;
+				PRODUCT_BUNDLE_IDENTIFIER = autoassset.linhey.com;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -323,8 +330,13 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3L8RM3MDLS;
 				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/Autoasset/info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MARKETING_VERSION = 1;
+				PRODUCT_BUNDLE_IDENTIFIER = autoassset.linhey.com;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};

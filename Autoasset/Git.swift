@@ -9,6 +9,24 @@
 import Foundation
 import SwiftShell
 
+@discardableResult
+func shell(_ command: String) -> RunOutput {
+    let out = run(bash: command)
+    if Autoasset.isDebug {
+        print([String](repeating: "↓", count: 80).joined())
+        print("command: \(command)")
+        if out.stdout.isEmpty == false {
+            print("stdout: \(out.stdout)")
+        }
+        if out.stderror.isEmpty == false {
+            print("stderror: \(out.stderror)")
+        }
+        print([String](repeating: "↑", count: 80).joined())
+        print("\n")
+    }
+    return out
+}
+
 class Git {
 
     let config: Config.Git
@@ -21,56 +39,65 @@ class Git {
 
     class Tag {
 
-        func nextVersion() throws -> Int {
-            let code = "git ls-remote --tag origin | sort -t '/' -k 3 -V"
-            try runAndPrint(bash: code)
-            let tagVersion = run(bash: code).stdout
+        func nextVersion() throws -> Int? {
+            let tagVersion = shell("git ls-remote --tag origin | sort -t '/' -k 3 -V").stdout
                 .components(separatedBy: "\n")
                 .filter({ $0.last?.isNumber ?? false })
                 .last?
                 .components(separatedBy: "\t")
                 .last?
                 .components(separatedBy: "/")
-                .last ?? "0"
+                .last
 
-            guard let version = Int(argument: tagVersion) else {
-                throw RunError(message: "无法解析版本号, version: \(tagVersion), 请使用 1/2/3/4/5 Int类型")
+            guard let value = tagVersion else {
+                return nil
+            }
+
+            guard let version = Int(argument: value) else {
+                throw RunError(message: "无法解析版本号, version: \(value), 请使用 1/2/3/4/5 Int类型")
             }
 
             return version + 1
         }
 
-        func addTag(version: String) {
-            try? runAndPrint(bash: "git tag -a \(version) -m 'version: \(version)'")
+        func push(version: String) {
+            shell("git push -u origin master \(version)")
+        }
+        
+        func remove(version: String) {
+            shell("git tag -d \(version)")
+        }
+
+        func add(version: String, message: String) {
+            shell("git tag -a \(version) -m 'version: \(message)'")
         }
 
     }
 
     func diff() -> String {
-        return run(bash: "git diff").stdout
+        return shell("git diff").stdout
     }
 
     func commit(message: String) {
-        try? runAndPrint(bash: "git add \(config.projectPath)")
-        try? runAndPrint(bash: "git commit -m '\(message)'")
+        shell("git add \(config.projectPath)")
+        shell("git commit -m '\(message)'")
     }
 
     func fetch() {
-        try? runAndPrint(bash: "git fetch")
+        shell("git fetch")
     }
 
     func pull() {
-        try? runAndPrint(bash: "git pull")
+        shell("git pull")
     }
 
     func push(version: String) {
         switch config.platform {
         case .github:
-            try? runAndPrint(bash: "git push origin master")
+            shell("git push origin master")
         case .gitlab:
-            try? runAndPrint(bash: "git push -u origin master")
+            shell("git push -u origin master")
         }
-        try? runAndPrint(bash: "git push -u origin master \(version)")
     }
 
 }
