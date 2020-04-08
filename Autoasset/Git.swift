@@ -11,18 +11,66 @@ import SwiftShell
 
 class Git {
 
-   static func lastTagVersion() throws -> Int {
-        let hex = run("git", "rev-list", "--tags", "--max-count=1").stdout
-        if hex.isEmpty {
-            return 0
+    let config: Config.Git
+    let tag: Tag
+
+    init(config: Config.Git) {
+        self.config = config
+        self.tag = Tag()
+    }
+
+    class Tag {
+
+        func nextVersion() throws -> Int {
+            let code = "git ls-remote --tag origin | sort -t '/' -k 3 -V"
+            try runAndPrint(bash: code)
+            let tagVersion = run(bash: code).stdout
+                .components(separatedBy: "\n")
+                .filter({ $0.last?.isNumber ?? false })
+                .last?
+                .components(separatedBy: "\t")
+                .last?
+                .components(separatedBy: "/")
+                .last ?? "0"
+
+            guard let version = Int(argument: tagVersion) else {
+                throw RunError(message: "无法解析版本号, version: \(tagVersion), 请使用 1/2/3/4/5 Int类型")
+            }
+
+            return version + 1
         }
 
-        let version = run("git", "describe", "--tags", hex).stdout
-        if let version = Int(argument: version) {
-            return version
+        func addTag(version: String) {
+            try? runAndPrint(bash: "git tag -a \(version) -m 'version: \(version)'")
         }
 
-        throw RunError(message: "无法解析版本号, hex: \(hex), version: \(version), 请使用 1/2/3/4/5 Int类型")
+    }
+
+    func diff() -> String {
+        return run(bash: "git diff").stdout
+    }
+
+    func commit(message: String) {
+        try? runAndPrint(bash: "git add \(config.projectPath)")
+        try? runAndPrint(bash: "git commit -m '\(message)'")
+    }
+
+    func fetch() {
+        try? runAndPrint(bash: "git fetch")
+    }
+
+    func pull() {
+        try? runAndPrint(bash: "git pull")
+    }
+
+    func push(version: String) {
+        switch config.platform {
+        case .github:
+            try? runAndPrint(bash: "git push origin master")
+        case .gitlab:
+            try? runAndPrint(bash: "git push -u origin master")
+        }
+        try? runAndPrint(bash: "git push -u origin master \(version)")
     }
 
 }

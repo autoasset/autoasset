@@ -19,7 +19,7 @@ class Xcassets {
     func createDataContents(with fileNames: [String]) throws -> Data {
         var contents: [String: Any] = ["info": ["version": 1, "author": "xcode"]]
         contents["data"] = fileNames.map { ["idiom": "universal", "filename": $0] }
-        return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted])
+        return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
     }
 
     func createImageContents(with fileNames: [String]) throws -> Data {
@@ -47,7 +47,7 @@ class Xcassets {
             list.append(dict)
         }
         contents["images"] = list
-        return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted])
+        return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
     }
 
 }

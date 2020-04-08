@@ -65,7 +65,8 @@ class Asset {
             .replacingOccurrences(of: Placeholder.datas, with: dataCode.sorted().joined(separator: "\n"))
             .replacingOccurrences(of: Placeholder.colors, with: colorCode.sorted().joined(separator: "\n"))
             .replacingOccurrences(of: Placeholder.fonts, with: fontCode.sorted().joined(separator: "\n"))
-            .data(using: .utf8)?.write(to: output)
+            .data(using: .utf8)?
+            .write(to: output, options: [.atomicWrite])
     }
     
     

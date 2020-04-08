@@ -16,14 +16,13 @@ class Podspec {
 
     enum Placeholder {
         static let version = "[version]"
-        static let resource_bundles = "[resource_bundles]"
     }
 
     init(config: Config.Podspec) {
         self.config = config
     }
 
-    func output() throws {
+    func output(version: String) throws {
         guard let output = config.outputPath else {
             throw RunError(message: "Config: podspec/output_path 不能为空")
         }
@@ -36,11 +35,10 @@ class Podspec {
             template = createTemplate()
         }
 
-        let version = try Git.lastTagVersion() + 1
         try template
-            .replacingOccurrences(of: Placeholder.version, with: "\(version)")
+            .replacingOccurrences(of: Placeholder.version, with: version)
             .data(using: .utf8)?
-            .write(to: output)
+            .write(to: output, options: [.atomicWrite])
     }
 
 
@@ -53,7 +51,7 @@ private extension Podspec {
         Pod::Spec.new do |s|
           s.name             = 'Resources'
           # 内部版本标识
-          s.version          = '1'
+          s.version          = '[version]'
           s.summary          = 'UI资源包'
 
           s.description      = <<-DESC

@@ -27,7 +27,9 @@ class Warn {
             Warn("无法输出 Warn 文件, 配置文件不存在")
             return
         }
-        try list.map({ $0.message })
+        try list
+            .map({ $0.message })
+            .sorted()
             .joined(separator: "\n")
             .write(to: url, atomically: true, encoding: .utf8)
     }

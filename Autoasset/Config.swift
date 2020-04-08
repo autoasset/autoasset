@@ -20,6 +20,16 @@ extension JSON {
 
 struct Config {
 
+    struct Git {
+        enum Platform: String {
+            case github
+            case gitlab
+        }
+
+        let projectPath: String
+        let platform: Platform
+    }
+
     struct Warn {
         let outputPath: URL?
     }
@@ -59,11 +69,18 @@ struct Config {
     }
 
     let podspec: Podspec?
+    let git: Git
     let xcassets: Xcassets
     let asset: Asset
     let warn: Warn?
 
     init(json: JSON) throws {
+        do {
+            let result = json["git"]
+            git = Git(projectPath: result["project_path"].string ?? "../",
+                      platform: Config.Git.Platform(rawValue: result["platform"].stringValue) ?? .github)
+        }
+
         do {
             let result = json["asset"]
             asset = Asset(templatePath: result["template_path"].fileURL,
