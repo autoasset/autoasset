@@ -10,8 +10,6 @@ import Foundation
 
 class Warn {
 
-
-
     let message: String
 
     private static var list = [Warn]()

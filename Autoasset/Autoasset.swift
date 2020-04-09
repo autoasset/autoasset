@@ -23,8 +23,10 @@ class Autoasset {
 
     func start() throws {
         let git = Git(config: config.git)
-        git.fetch()
-        git.pull()
+        let podspec = Podspec(config: config.podspec)
+
+        try git.fetch()
+        try git.pull()
 
         try makeImages()
         try asset.output()
@@ -33,26 +35,28 @@ class Autoasset {
             try Warn.output(config: warn)
         }
 
+        try podspec?.lint()
+        
+        let isChanged = try git.diff().isEmpty == false
         let nextVersion = try git.tag.nextVersion()
-        let isChanged = git.diff().isEmpty == false
         if nextVersion != nil, isChanged == false {
             return
         } else {
             let version = nextVersion?.string ?? "0"
-            if let podspec = config.podspec {
-                try Podspec(config: podspec).output(version: version)
-            }
+            try podspec?.output(version: version)
             let message = "tag: \(version), author: autoasset(\(Autoasset.version))"
             if isChanged {
-                git.commit(message: message)
-                git.pull()
-                git.push(version: version)
+                try git.addAllFile()
+                try git.commit(message: message)
+                try git.pull()
+                try git.push(version: version)
             }
-            git.tag.remove(version: version)
-            git.tag.add(version: version, message: message)
-            git.tag.push(version: version)
+            try git.tag.remove(version: version)
+            try git.tag.add(version: version, message: message)
+            try git.tag.push(version: version)
         }
 
+        try podspec?.push()
     }
 
 }

@@ -18,7 +18,10 @@ class Podspec {
         static let version = "[version]"
     }
 
-    init(config: Config.Podspec) {
+    init?(config: Config.Podspec?) {
+        guard let config = config else {
+            return nil
+        }
         self.config = config
     }
 
@@ -75,6 +78,27 @@ private extension Podspec {
           }
         end
         """
+    }
+
+}
+
+
+// MARK: - shell
+extension Podspec {
+
+    func lint() throws {
+        guard let output = config.outputPath else {
+            throw RunError(message: "Config: podspec/output_path 不能为空")
+        }
+        try shell("pod lib lint \(output) --allow-warnings")
+    }
+
+    func push() throws {
+        if let repo = config.repo {
+            try shell("pod trunk \(repo) push --allow-warnings")
+        } else {
+            try shell("pod trunk push --allow-warnings")
+        }
     }
 
 }

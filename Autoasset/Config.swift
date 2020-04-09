@@ -43,6 +43,7 @@ struct Config {
     struct Podspec {
         let templatePath: URL?
         let outputPath: URL?
+        let repo: String?
     }
 
     struct Xcassets {
@@ -100,7 +101,8 @@ struct Config {
         if json["podspec"].exists() {
             let result = json["podspec"]
             podspec = Podspec(templatePath: result["template_path"].fileURL,
-                                outputPath: result["output_path"].fileURL)
+                                outputPath: result["output_path"].fileURL,
+                                      repo: result["repo"].string)
         } else {
             podspec = nil
         }

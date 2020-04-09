@@ -11,6 +11,7 @@
 		CD394C0D242B60CF00277F88 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD394C0C242B60CF00277F88 /* main.swift */; };
 		CD394C15242B643700277F88 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = CD394C14242B643700277F88 /* ArgumentParser */; };
 		CD544366243C769A0099C9F0 /* Autoasset.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD544365243C769A0099C9F0 /* Autoasset.swift */; };
+		CD6ED852243EF49A002ED925 /* Shell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6ED851243EF49A002ED925 /* Shell.swift */; };
 		CD814806242C589B00D2DF0A /* Stem in Frameworks */ = {isa = PBXBuildFile; productRef = CD814805242C589B00D2DF0A /* Stem */; };
 		CD814808242C83B900D2DF0A /* FilePath.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD814807242C83B900D2DF0A /* FilePath.swift */; };
 		CDA383612433350800D3EDD9 /* SwiftShell in Frameworks */ = {isa = PBXBuildFile; productRef = CDA383602433350800D3EDD9 /* SwiftShell */; };
@@ -41,6 +42,7 @@
 		CD394C0C242B60CF00277F88 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		CD544365243C769A0099C9F0 /* Autoasset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Autoasset.swift; sourceTree = "<group>"; };
 		CD544367243DD8B70099C9F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CD6ED851243EF49A002ED925 /* Shell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shell.swift; sourceTree = "<group>"; };
 		CD814807242C83B900D2DF0A /* FilePath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilePath.swift; sourceTree = "<group>"; };
 		CDA383622433398D00D3EDD9 /* Podspec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Podspec.swift; sourceTree = "<group>"; };
 		CDA38364243342D500D3EDD9 /* RunError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunError.swift; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 				CDA38364243342D500D3EDD9 /* RunError.swift */,
 				CDA3836924334DB500D3EDD9 /* Config.swift */,
 				CD053A3F2435FA7B008A2E56 /* Git.swift */,
+				CD6ED851243EF49A002ED925 /* Shell.swift */,
 				CD544365243C769A0099C9F0 /* Autoasset.swift */,
 				CD544367243DD8B70099C9F0 /* Info.plist */,
 			);
@@ -186,6 +189,7 @@
 				CDA383632433398D00D3EDD9 /* Podspec.swift in Sources */,
 				CD394C0D242B60CF00277F88 /* main.swift in Sources */,
 				CDA3836E243351EC00D3EDD9 /* Asset.swift in Sources */,
+				CD6ED852243EF49A002ED925 /* Shell.swift in Sources */,
 				CDA9F0AC242C9A8700255373 /* Xcassets.swift in Sources */,
 				CD053A402435FA7B008A2E56 /* Git.swift in Sources */,
 				CD544366243C769A0099C9F0 /* Autoasset.swift in Sources */,

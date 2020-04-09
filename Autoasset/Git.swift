@@ -7,25 +7,6 @@
 //
 
 import Foundation
-import SwiftShell
-
-@discardableResult
-func shell(_ command: String) -> RunOutput {
-    let out = run(bash: command)
-    if Autoasset.isDebug {
-        print([String](repeating: "↓", count: 80).joined())
-        print("command: \(command)")
-        if out.stdout.isEmpty == false {
-            print("stdout: \(out.stdout)")
-        }
-        if out.stderror.isEmpty == false {
-            print("stderror: \(out.stderror)")
-        }
-        print([String](repeating: "↑", count: 80).joined())
-        print("\n")
-    }
-    return out
-}
 
 class Git {
 
@@ -40,7 +21,7 @@ class Git {
     class Tag {
 
         func nextVersion() throws -> Int? {
-            let tagVersion = shell("git ls-remote --tag origin | sort -t '/' -k 3 -V").stdout
+            let tagVersion = try shell("git ls-remote --tag origin | sort -t '/' -k 3 -V").stdout
                 .components(separatedBy: "\n")
                 .filter({ $0.last?.isNumber ?? false })
                 .last?
@@ -60,43 +41,46 @@ class Git {
             return version + 1
         }
 
-        func push(version: String) {
-            shell("git push -u origin master \(version)")
+        func push(version: String) throws {
+            try shell("git push -u origin master \(version)")
         }
         
-        func remove(version: String) {
-            shell("git tag -d \(version)")
+        func remove(version: String) throws {
+            try shell("git tag -d \(version)")
         }
 
-        func add(version: String, message: String) {
-            shell("git tag -a \(version) -m 'version: \(message)'")
+        func add(version: String, message: String) throws {
+            try shell("git tag -a \(version) -m 'version: \(message)'")
         }
 
     }
 
-    func diff() -> String {
-        return shell("git diff").stdout
+    func diff() throws -> String {
+        return try shell("git diff").stdout
     }
 
-    func commit(message: String) {
-        shell("git add \(config.projectPath)")
-        shell("git commit -m '\(message)'")
+    func addAllFile() throws {
+        try shell("git add \(config.projectPath)")
     }
 
-    func fetch() {
-        shell("git fetch")
+    func commit(message: String) throws {
+        try shell("git commit -m '\(message)'")
     }
 
-    func pull() {
-        shell("git pull")
+    func fetch() throws {
+        try shell("git fetch")
     }
 
-    func push(version: String) {
+    func pull() throws {
+        try shell("git pull")
+    }
+
+    func push(version: String) throws {
         switch config.platform {
         case .github:
-            shell("git push origin master")
+            try shell("git push origin master")
         case .gitlab:
-            shell("git push -u origin master")
+            try shell("git push -u origin master")
         }
     }
 

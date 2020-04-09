@@ -15,8 +15,12 @@ struct Main: ParsableCommand {
     var config: String
 
     func run() throws {
-        let config = try Config(url: FilePath(path: self.config, type: .file).url)
-        try Autoasset(config: config).start()
+        do {
+            let config = try Config(url: FilePath(path: self.config, type: .file).url)
+            try Autoasset(config: config).start()
+        } catch {
+            print((error as? RunError)?.message ?? "")
+        }
     }
 
 }
