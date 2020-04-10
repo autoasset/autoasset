@@ -20,7 +20,7 @@ class Git {
 
     class Tag {
 
-        func nextVersion() throws -> Int? {
+        func nextVersion() throws -> String? {
             let tagVersion = try shell("git ls-remote --tag origin | sort -t '/' -k 3 -V").stdout
                 .components(separatedBy: "\n")
                 .filter({ $0.last?.isNumber ?? false })
@@ -38,7 +38,7 @@ class Git {
                 throw RunError(message: "无法解析版本号, version: \(value), 请使用 1/2/3/4/5 Int类型")
             }
 
-            return version + 1
+            return (version + 1).string
         }
 
         func push(version: String) throws {
@@ -72,7 +72,7 @@ class Git {
     }
 
     func pull() throws {
-        try shell("git pull")
+        try shell("git pull origin master")
     }
 
     func push(version: String) throws {

@@ -12,6 +12,25 @@ import Stem
 
 class Podspec {
 
+    struct Repo {
+        let name: String
+        let path: String
+        let type: String
+        let url: String
+
+        init?(_ value: String) {
+            let list = value.split(separator: "\n").map({ $0.description })
+            guard list.count == 4 else {
+                return nil
+            }
+            name = list[0]
+            type = list[1].replacingOccurrences(of: "- Type: ", with: "")
+            url  = list[2].replacingOccurrences(of: "- URL:  ", with: "")
+            path = list[1].replacingOccurrences(of: "- Path: ", with: "")
+        }
+
+    }
+
     let config: Config.Podspec
 
     enum Placeholder {
@@ -86,18 +105,48 @@ private extension Podspec {
 // MARK: - shell
 extension Podspec {
 
+    func repoName() throws -> String? {
+        guard let repo = config.repo else {
+            return nil
+        }
+        let repoName = try shell("pod repo list", useAssert: false).stdout
+            .components(separatedBy: "\n\n")
+            .compactMap({ Repo($0) })
+            .first(where: { repo.url == $0.url })?
+            .name
+
+        if repoName == nil {
+            try shell("pod repo add \(repo.name) \(repo.url)", useAssert: false)
+            return repo.name
+        } else {
+            return repoName
+        }
+
+    }
+
+    func noCleanCommond() -> String {
+        return Autoasset.isDebug ? " --no-clean" : ""
+    }
+
+    func allowWarningsCommond() -> String {
+        return " --allow-warnings"
+    }
+
     func lint() throws {
-        guard let output = config.outputPath else {
+        guard let output = config.outputPath?.path else {
             throw RunError(message: "Config: podspec/output_path 不能为空")
         }
-        try shell("pod lib lint \(output) --allow-warnings")
+        try shell("pod lib lint \(output)" + allowWarningsCommond() + noCleanCommond(), useAssert: false)
     }
 
     func push() throws {
-        if let repo = config.repo {
-            try shell("pod trunk \(repo) push --allow-warnings")
+        guard let output = config.outputPath?.path else {
+            throw RunError(message: "Config: podspec/output_path 不能为空")
+        }
+        if let repo = try repoName() {
+            try shell("pod repo push \(repo) \(output)" + allowWarningsCommond(), useAssert: false)
         } else {
-            try shell("pod trunk push --allow-warnings")
+            try shell("pod trunk push \(output)" + allowWarningsCommond(), useAssert: false)
         }
     }
 

@@ -11,3 +11,13 @@ import Foundation
 struct RunError: Error {
     let message: String
 }
+
+
+struct RunPrint {
+
+    @discardableResult
+    init(_ message: String) {
+        print(message)
+    }
+}
+

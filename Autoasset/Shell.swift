@@ -10,20 +10,25 @@ import Foundation
 import SwiftShell
 
 @discardableResult
-func shell(_ command: String) throws -> RunOutput {
+func shell(_ command: String, useAssert: Bool = true) throws -> RunOutput {
     let out = run(bash: command)
     if Autoasset.isDebug {
-        print([String](repeating: "↓", count: 80).joined())
-        print("command: \(command)")
+        RunPrint([String](repeating: "↓", count: 80).joined())
+        RunPrint("command: \(command)")
+        RunPrint([String](repeating: "-", count: 80).joined())
         if out.stdout.isEmpty == false {
-            print("stdout: \(out.stdout)")
+            RunPrint("stdout: \(out.stdout)")
         }
         if out.stderror.isEmpty == false {
-            print("stderror: \(out.stderror)")
-            throw RunError(message: out.stderror)
+            RunPrint("stderror: \(out.stderror)")
+            if useAssert {
+                throw RunError(message: out.stderror)
+            } else {
+                RunPrint(out.stderror)
+            }
         }
-        print([String](repeating: "↑", count: 80).joined())
-        print("\n")
+        RunPrint([String](repeating: "↑", count: 80).joined())
+        RunPrint("\n")
     }
     return out
 }

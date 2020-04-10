@@ -19,7 +19,7 @@ struct Main: ParsableCommand {
             let config = try Config(url: FilePath(path: self.config, type: .file).url)
             try Autoasset(config: config).start()
         } catch {
-            print((error as? RunError)?.message ?? "")
+            RunPrint((error as? RunError)?.message ?? "")
         }
     }
 

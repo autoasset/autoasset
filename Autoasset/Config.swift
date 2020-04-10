@@ -41,9 +41,22 @@ struct Config {
     }
 
     struct Podspec {
+
+        struct Repo {
+            let name: String
+            let url: String
+            init?(json: JSON) {
+                guard let name = json["name"].string, let url = json["url"].string else {
+                    return nil
+                }
+                self.name = name
+                self.url = url
+            }
+        }
+
         let templatePath: URL?
         let outputPath: URL?
-        let repo: String?
+        let repo: Repo?
     }
 
     struct Xcassets {
@@ -102,7 +115,7 @@ struct Config {
             let result = json["podspec"]
             podspec = Podspec(templatePath: result["template_path"].fileURL,
                                 outputPath: result["output_path"].fileURL,
-                                      repo: result["repo"].string)
+                                repo: Podspec.Repo(json: result["repo"]))
         } else {
             podspec = nil
         }
