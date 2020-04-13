@@ -14,11 +14,9 @@
 		CD6ED852243EF49A002ED925 /* Shell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6ED851243EF49A002ED925 /* Shell.swift */; };
 		CD6ED908244411DA002ED925 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6ED907244411DA002ED925 /* Message.swift */; };
 		CD814806242C589B00D2DF0A /* Stem in Frameworks */ = {isa = PBXBuildFile; productRef = CD814805242C589B00D2DF0A /* Stem */; };
-		CD814808242C83B900D2DF0A /* FilePath.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD814807242C83B900D2DF0A /* FilePath.swift */; };
 		CDA383612433350800D3EDD9 /* SwiftShell in Frameworks */ = {isa = PBXBuildFile; productRef = CDA383602433350800D3EDD9 /* SwiftShell */; };
 		CDA383632433398D00D3EDD9 /* Podspec.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA383622433398D00D3EDD9 /* Podspec.swift */; };
 		CDA38365243342D500D3EDD9 /* RunError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA38364243342D500D3EDD9 /* RunError.swift */; };
-		CDA3836824334DA100D3EDD9 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = CDA3836724334DA100D3EDD9 /* SwiftyJSON */; };
 		CDA3836A24334DB500D3EDD9 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA3836924334DB500D3EDD9 /* Config.swift */; };
 		CDA3836E243351EC00D3EDD9 /* Asset.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA3836D243351EC00D3EDD9 /* Asset.swift */; };
 		CDA9F0AC242C9A8700255373 /* Xcassets.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA9F0AB242C9A8700255373 /* Xcassets.swift */; };
@@ -45,7 +43,6 @@
 		CD544367243DD8B70099C9F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CD6ED851243EF49A002ED925 /* Shell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shell.swift; sourceTree = "<group>"; };
 		CD6ED907244411DA002ED925 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
-		CD814807242C83B900D2DF0A /* FilePath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilePath.swift; sourceTree = "<group>"; };
 		CDA383622433398D00D3EDD9 /* Podspec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Podspec.swift; sourceTree = "<group>"; };
 		CDA38364243342D500D3EDD9 /* RunError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunError.swift; sourceTree = "<group>"; };
 		CDA3836924334DB500D3EDD9 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
@@ -62,7 +59,6 @@
 			files = (
 				CD394C15242B643700277F88 /* ArgumentParser in Frameworks */,
 				CD814806242C589B00D2DF0A /* Stem in Frameworks */,
-				CDA3836824334DA100D3EDD9 /* SwiftyJSON in Frameworks */,
 				CDA383612433350800D3EDD9 /* SwiftShell in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -98,7 +94,6 @@
 			isa = PBXGroup;
 			children = (
 				CDA3836924334DB500D3EDD9 /* Config.swift */,
-				CD814807242C83B900D2DF0A /* FilePath.swift */,
 				CDA383622433398D00D3EDD9 /* Podspec.swift */,
 				CDA9F0AB242C9A8700255373 /* Xcassets.swift */,
 				CDA3836D243351EC00D3EDD9 /* Asset.swift */,
@@ -135,7 +130,6 @@
 				CD394C14242B643700277F88 /* ArgumentParser */,
 				CD814805242C589B00D2DF0A /* Stem */,
 				CDA383602433350800D3EDD9 /* SwiftShell */,
-				CDA3836724334DA100D3EDD9 /* SwiftyJSON */,
 			);
 			productName = Autoasset;
 			productReference = CD394C09242B60CF00277F88 /* Autoasset */;
@@ -169,7 +163,6 @@
 				CD394C13242B643700277F88 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
 				CD394C17242B734900277F88 /* XCRemoteSwiftPackageReference "Stem" */,
 				CDA3835F2433350800D3EDD9 /* XCRemoteSwiftPackageReference "SwiftShell" */,
-				CDA3836624334DA100D3EDD9 /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 			);
 			productRefGroup = CD394C0A242B60CF00277F88 /* Products */;
 			projectDirPath = "";
@@ -185,7 +178,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD814808242C83B900D2DF0A /* FilePath.swift in Sources */,
 				CDA9F109242DE44700255373 /* Warn.swift in Sources */,
 				CDA38365243342D500D3EDD9 /* RunError.swift in Sources */,
 				CDA3836A24334DB500D3EDD9 /* Config.swift in Sources */,
@@ -398,14 +390,6 @@
 				minimumVersion = 5.0.1;
 			};
 		};
-		CDA3836624334DA100D3EDD9 /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -423,11 +407,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CDA3835F2433350800D3EDD9 /* XCRemoteSwiftPackageReference "SwiftShell" */;
 			productName = SwiftShell;
-		};
-		CDA3836724334DA100D3EDD9 /* SwiftyJSON */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CDA3836624334DA100D3EDD9 /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
-			productName = SwiftyJSON;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

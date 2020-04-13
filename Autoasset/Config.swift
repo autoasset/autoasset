@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import SwiftyJSON
+import Stem
 
 extension JSON {
     var fileURL: URL? {

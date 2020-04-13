@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Stem
 
 class Autoasset {
 
@@ -115,7 +116,7 @@ extension Autoasset {
             case .gif:
                 gifFilePaths.append(item)
             default:
-                guard let name = Xcassets.shared.createSourceNameKey(with: item.fileName) else {
+                guard let name = Xcassets.shared.createSourceNameKey(with: item.attributes.name) else {
                     continue
                 }
                 if imageFilePaths[name] == nil {
@@ -129,15 +130,15 @@ extension Autoasset {
     }
 
     func makeGIFDataAsset(_ filePaths: [FilePath], _ outputFilePath: FilePath, asset: inout Asset) throws {
-        let keySet = Set(filePaths.compactMap({ Xcassets.shared.createSourceNameKey(with: $0.fileName) }))
+        let keySet = Set(filePaths.compactMap({ Xcassets.shared.createSourceNameKey(with: $0.attributes.name) }))
         try keySet.forEach { key in
             let folderName = key.replacingOccurrences(of: "@2x.", with: ".")
                 .replacingOccurrences(of: "@3x.", with: ".")
             let folder = try outputFilePath.create(folder: "\(folderName).dataset")
-            if let filePath = filePaths.first(where: { $0.fileName.hasPrefix("\(key).") || $0.fileName.hasPrefix("\(key)@") }) {
+            if let filePath = filePaths.first(where: { $0.attributes.name.hasPrefix("\(key).") || $0.attributes.name.hasPrefix("\(key)@") }) {
                 try filePath.copy(to: folder)
                 asset.addGIFCode(with: folderName)
-                try Xcassets.shared.createDataContents(with: [filePath.fileName]).write(to: folder.url.appendingPathComponent("Contents.json"), options: [.atomicWrite])
+                try Xcassets.shared.createDataContents(with: [filePath.attributes.name]).write(to: folder.url.appendingPathComponent("Contents.json"), options: [.atomicWrite])
             }
         }
     }
@@ -157,7 +158,7 @@ extension Autoasset {
         }
 
         try imageFolders.forEach { folder in
-            let fileNames = try folder.subFilePaths().map({ $0.fileName })
+            let fileNames = try folder.subFilePaths().map({ $0.attributes.name })
             try Xcassets.shared.createImageContents(with: fileNames).write(to: folder.url.appendingPathComponent("Contents.json"), options: [.atomicWrite])
         }
     }

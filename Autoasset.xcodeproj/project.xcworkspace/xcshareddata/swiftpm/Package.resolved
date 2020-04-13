@@ -6,7 +6,7 @@
         "repositoryURL": "https://github.com/linhay/Stem",
         "state": {
           "branch": "develop",
-          "revision": "c7fa7ed8607342a7e6d91760e03ab29880552b30",
+          "revision": "1e43e8aa3b89bddea2d7616a78e2b689119bb575",
           "version": null
         }
       },
@@ -15,7 +15,7 @@
         "repositoryURL": "https://github.com/apple/swift-argument-parser",
         "state": {
           "branch": "master",
-          "revision": "0b8a81924dabcfc1854f3f7186d08afed985cc45",
+          "revision": "047ac93a0247a3a0f47580bff9445e9a7acf8d58",
           "version": null
         }
       },
@@ -26,15 +26,6 @@
           "branch": null,
           "revision": "fb7fc2c9ad8811caf324431a508fb79e3fb74f99",
           "version": "5.0.1"
-        }
-      },
-      {
-        "package": "SwiftyJSON",
-        "repositoryURL": "https://github.com/SwiftyJSON/SwiftyJSON.git",
-        "state": {
-          "branch": null,
-          "revision": "2b6054efa051565954e1d2b9da831680026cd768",
-          "version": "5.0.0"
         }
       }
     ]
