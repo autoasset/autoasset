@@ -109,6 +109,7 @@ extension Podspec {
         guard let repo = config.repo else {
             return nil
         }
+
         let repoName = try shell("pod repo list", useAssert: false).stdout
             .components(separatedBy: "\n\n")
             .compactMap({ Repo($0) })

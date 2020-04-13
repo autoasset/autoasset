@@ -20,18 +20,45 @@ extension JSON {
 
 struct Config {
 
+    struct Message {
+        let projectName: String
+        let text: String
+        let outputPath: URL?
+
+        init(json: JSON) {
+            projectName = json["project_name"].stringValue
+                   text = json["text"].stringValue
+             outputPath = json["output_path"].fileURL
+        }
+    }
+
     struct Git {
+
         enum Platform: String {
             case github
             case gitlab
         }
 
+        let branch: String
         let projectPath: String
         let platform: Platform
+
+        init(json: JSON) {
+            branch = json["branch"].string ?? "master"
+            projectPath = json["project_path"].string ?? "../"
+            platform = Config.Git.Platform(rawValue: json["platform"].stringValue) ?? .github
+        }
     }
 
     struct Warn {
         let outputPath: URL?
+
+        init?(json: JSON) {
+            guard json.exists() else {
+                return nil
+            }
+           outputPath = json["output_path"].fileURL
+        }
     }
 
     struct Asset {
@@ -88,27 +115,19 @@ struct Config {
     let asset: Asset
     let warn: Warn?
     let debug: Bool
+    let message: Message
 
     init(json: JSON) throws {
-        debug = json["debug"].boolValue
-        do {
-            let result = json["git"]
-            git = Git(projectPath: result["project_path"].string ?? "../",
-                      platform: Config.Git.Platform(rawValue: result["platform"].stringValue) ?? .github)
-        }
+        debug   = json["debug"].boolValue
+        message = Message(json: json["message"])
+        git     = Git(json: json["git"])
+        warn    = Warn(json: json["warn"])
 
         do {
             let result = json["asset"]
             asset = Asset(templatePath: result["template_path"].fileURL,
                             outputPath: result["output_path"].fileURL,
                             isUseInPod: json["podspec"].exists())
-        }
-
-        if json["warn"].exists() {
-            let result = json["warn"]
-            warn = Warn(outputPath: result["output_path"].fileURL)
-        } else {
-            warn = nil
         }
 
         if json["podspec"].exists() {

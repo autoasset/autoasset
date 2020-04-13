@@ -23,8 +23,8 @@
             filePath = "Autoasset/Config.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "102"
-            endingLineNumber = "102"
+            startingLineNumber = "128"
+            endingLineNumber = "128"
             landmarkName = "init(json:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -39,8 +39,8 @@
             filePath = "Autoasset/Config.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "120"
-            endingLineNumber = "120"
+            startingLineNumber = "139"
+            endingLineNumber = "139"
             landmarkName = "init(json:)"
             landmarkType = "7">
          </BreakpointContent>

@@ -10,7 +10,7 @@ import Foundation
 
 class Autoasset {
 
-    static let version = "1"
+    static let version = "2"
     static var isDebug = false
 
     let config: Config
@@ -23,7 +23,7 @@ class Autoasset {
 
     func start() throws {
         let podspec = Podspec(config: config.podspec)
-        let git = Git(config: config.git)
+        let git = try Git(config: config.git)
         try? git.fetch()
         try? git.pull()
 
@@ -34,24 +34,22 @@ class Autoasset {
             try Warn.output(config: warn)
         }
 
-        try podspec?.lint()
-        
-        let isChanged = try git.diff().isEmpty == false
-        let nextVersion = try git.tag.nextVersion()
-        if nextVersion != nil, isChanged == false {
-            return
-        }
+//        let isChanged = try git.diff().isEmpty == false
+//        if isChanged == false {
+//            return
+//        }
 
-        guard let version = nextVersion else {
-            return
-        }
-
+        let lastVersion = try git.tag.lastVersion()
+        let version = try git.tag.nextVersion(with: lastVersion ?? "0")
         try podspec?.output(version: version)
+        try podspec?.lint()
+
+        let isChanged = try git.diff().isEmpty == false
 
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY-MM-DD HH:MM:SS"
-
+        dateFormatter.dateFormat = "YYYY年MM月DD HH:MM"
         let message = "tag: \(version), author: autoasset(\(Autoasset.version)), date: \(dateFormatter.string(from: Date()))"
+
         if isChanged {
             try git.addAllFile()
             try git.commit(message: message)
@@ -62,6 +60,8 @@ class Autoasset {
         try? git.tag.add(version: version, message: message)
         try? git.tag.push(version: version)
         try podspec?.push()
+
+        try Message(config: config).work(version: version)
     }
 
 }
