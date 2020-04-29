@@ -27,26 +27,31 @@ struct Config {
 
         init(json: JSON) {
             projectName = json["project_name"].stringValue
-                   text = json["text"].stringValue
-             outputPath = json["output_path"].fileURL
+            text = json["text"].stringValue
+            outputPath = json["output_path"].fileURL
         }
     }
 
     struct Git {
 
-        enum Platform: String {
-            case github
-            case gitlab
+        struct Group {
+            let branch: String
+            init?(json: JSON) {
+                if let branch = json["branch"].string {
+                    self.branch = branch
+                } else {
+                    return nil
+                }
+
+            }
         }
 
-        let branch: String
         let projectPath: String
-        let platform: Platform
+        let ui: Group?
 
         init(json: JSON) {
-            branch = json["branch"].string ?? "master"
+            ui = Group(json: json["ui"])
             projectPath = json["project_path"].string ?? "../"
-            platform = Config.Git.Platform(rawValue: json["platform"].stringValue) ?? .github
         }
     }
 
@@ -57,14 +62,68 @@ struct Config {
             guard json.exists() else {
                 return nil
             }
-           outputPath = json["output_path"].fileURL
+            outputPath = json["output_path"].fileURL
         }
     }
 
     struct Asset {
+
+        struct Xcassets {
+
+            let input: Input
+            let output: Output
+
+            struct Input {
+                let appIconPath: URL?
+                let imagesPath: URL?
+                let colorsPath: URL?
+                let fontsPath: URL?
+                let gifsPath: URL?
+
+                init(json: JSON) {
+                    appIconPath = json["app_icon_path"].fileURL
+                    imagesPath  = json["images_path"].fileURL
+                    colorsPath  = json["colors_path"].fileURL
+                    fontsPath   = json["fonts_path"].fileURL
+                    gifsPath    = json["gifs_path"].fileURL
+                }
+
+            }
+
+            struct Output {
+                let appIconXcassetsPath: URL?
+                let imagesXcassetsPath: URL?
+                let colorsXcassetsPath: URL?
+                let fontsXcassetsPath: URL?
+                let gifsXcassetsPath: URL?
+
+                init(json: JSON) {
+                    appIconXcassetsPath = json["app_icon_path"].fileURL
+                    imagesXcassetsPath  = json["images_path"].fileURL
+                    colorsXcassetsPath  = json["colors_path"].fileURL
+                    fontsXcassetsPath   = json["fonts_path"].fileURL
+                    gifsXcassetsPath    = json["gifs_path"].fileURL
+                }
+            }
+
+            init(json: JSON) {
+                input = Input(json: json["input"])
+                output = Output(json: json["output"])
+            }
+
+        }
+
+        let xcassets: Xcassets
         let templatePath: URL?
         let outputPath: URL?
         let isUseInPod: Bool
+
+        init(json: JSON) {
+            xcassets = Xcassets(json: json["xcassets"])
+            templatePath = json["template_path"].fileURL
+            outputPath = json["output_path"].fileURL
+            isUseInPod = json["podspec"].exists()
+        }
     }
 
     struct Podspec {
@@ -86,32 +145,10 @@ struct Config {
         let repo: Repo?
     }
 
-    struct Xcassets {
 
-        let input: Input
-        let output: Output
-
-        struct Input {
-            let appIconPath: URL?
-            let imagesPath: URL?
-            let colorsPath: URL?
-            let fontsPath: URL?
-            let gifsPath: URL?
-        }
-
-        struct Output {
-            let appIconXcassetsPath: URL?
-            let imagesXcassetsPath: URL?
-            let colorsXcassetsPath: URL?
-            let fontsXcassetsPath: URL?
-            let gifsXcassetsPath: URL?
-        }
-
-    }
 
     let podspec: Podspec?
     let git: Git
-    let xcassets: Xcassets
     let asset: Asset
     let warn: Warn?
     let debug: Bool
@@ -120,40 +157,19 @@ struct Config {
     init(json: JSON) throws {
         debug   = json["debug"].boolValue
         message = Message(json: json["message"])
-        git     = Git(json: json["git"])
+        git     = try Git(json: json["git"])
         warn    = Warn(json: json["warn"])
-
-        do {
-            let result = json["asset"]
-            asset = Asset(templatePath: result["template_path"].fileURL,
-                            outputPath: result["output_path"].fileURL,
-                            isUseInPod: json["podspec"].exists())
-        }
-
+        asset   = Asset(json: json["asset"])
         if json["podspec"].exists() {
             let result = json["podspec"]
             podspec = Podspec(templatePath: result["template_path"].fileURL,
-                                outputPath: result["output_path"].fileURL,
-                                repo: Podspec.Repo(json: result["repo"]))
+                              outputPath: result["output_path"].fileURL,
+                              repo: Podspec.Repo(json: result["repo"]))
         } else {
             podspec = nil
         }
 
-        do {
-            let result = json["xcassets"]
-            let input = result["input"]
-            let output = result["output"]
-            xcassets = Xcassets(input: Xcassets.Input(appIconPath: input["app_icon_path"].fileURL,
-                                                       imagesPath: input["images_path"].fileURL,
-                                                       colorsPath: input["colors_path"].fileURL,
-                                                        fontsPath: input["fonts_path"].fileURL,
-                                                         gifsPath: input["gifs_path"].fileURL),
-                                output: Xcassets.Output(appIconXcassetsPath: output["app_icon_path"].fileURL,
-                                                         imagesXcassetsPath: output["images_path"].fileURL,
-                                                         colorsXcassetsPath: output["colors_path"].fileURL,
-                                                          fontsXcassetsPath: output["fonts_path"].fileURL,
-                                                           gifsXcassetsPath: output["gifs_path"].fileURL))
-        }
+
     }
 
     init(url: URL) throws {

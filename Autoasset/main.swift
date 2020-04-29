@@ -10,6 +10,7 @@ import ArgumentParser
 import Stem
 
 struct Main: ParsableCommand {
+
     static let configuration = CommandConfiguration(version: Autoasset.version)
     @Option(name: [.short, .customLong("config")], help: "配置")
     var config: String
@@ -26,6 +27,9 @@ struct Main: ParsableCommand {
             }
         }
     }
+}
+
+extension Main {
 
 }
 

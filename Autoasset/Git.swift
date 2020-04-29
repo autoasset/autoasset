@@ -18,13 +18,24 @@ class Git {
         self.config = config
         self.tag = Tag()
         self.branch = Branch()
-        try branch.switch(to: config.branch)
     }
 
     class Branch {
 
+        func checkout(branch: String) throws {
+            try shell("git checkout \(branch)")
+        }
+
         func `switch`(to branch: String) throws {
-           try shell("git checkout \(branch)")
+            do {
+                try shell("git checkout \(branch)")
+            } catch {
+                try shell("git checkout -b \(branch)")
+            }
+        }
+
+        func merge(with branch: String) throws {
+            try shell("git merge \(branch)")
         }
 
     }
@@ -82,16 +93,11 @@ class Git {
     }
 
     func pull() throws {
-        try shell("git pull origin \(config.branch)")
+        try shell("git pull")
     }
 
-    func push(version: String) throws {
-        switch config.platform {
-        case .github:
-            try shell("git push origin \(config.branch)")
-        case .gitlab:
-            try shell("git push -u origin \(config.branch)")
-        }
+    func push() throws {
+        try shell("git push")
     }
 
 }
