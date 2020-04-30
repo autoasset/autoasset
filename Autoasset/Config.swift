@@ -8,6 +8,7 @@
 
 import Foundation
 import Stem
+import Yams
 
 extension JSON {
     var fileURL: URL? {
@@ -46,11 +47,13 @@ struct Config {
             }
         }
 
+        let pushURL: String?
         let projectPath: String
         let ui: Group?
 
         init(json: JSON) {
             ui = Group(json: json["ui"])
+            pushURL = json["push_url"].string
             projectPath = json["project_path"].string ?? "../"
         }
     }
@@ -157,7 +160,7 @@ struct Config {
     init(json: JSON) throws {
         debug   = json["debug"].boolValue
         message = Message(json: json["message"])
-        git     = try Git(json: json["git"])
+        git     = Git(json: json["git"])
         warn    = Warn(json: json["warn"])
         asset   = Asset(json: json["asset"])
         if json["podspec"].exists() {
@@ -168,16 +171,18 @@ struct Config {
         } else {
             podspec = nil
         }
-
-
     }
 
     init(url: URL) throws {
         let data = try Data(contentsOf: url)
-        try self.init(json: try JSON(data: data))
+        do {
+            try self.init(json: try JSON(data: data))
+        } catch {
+            guard let text = String(data: data, encoding: .utf8), let yml = try Yams.load(yaml: text) else {
+                throw RunError(message: "config: yml 解析失败")
+            }
+            try self.init(json: JSON(yml))
+        }
     }
 
-    init(string: String) throws {
-        try self.init(json: JSON(parseJSON: string))
-    }
 }

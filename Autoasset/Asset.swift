@@ -106,7 +106,7 @@ extension Asset {
     func readImageFilePaths(folders: [FilePath]) throws -> [FilePath] {
         return folders.reduce([FilePath]()) { (result, item) -> [FilePath] in
             do {
-                let files = try item.subAllFilePaths()
+                let files = try item.allSubFilePaths()
                 return result + files.filter({ $0.type == .file })
             } catch {
                 return result

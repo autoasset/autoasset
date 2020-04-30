@@ -7,17 +7,50 @@
 //
 
 import Foundation
+import Stem
 
 class Git {
 
     let config: Config.Git
     let tag: Tag
     let branch: Branch
+    let remote: Remote
 
     init(config: Config.Git) throws {
         self.config = config
         self.tag = Tag()
         self.branch = Branch()
+        self.remote = Remote()
+        if let push = config.pushURL, let pushURL = URL(string: push), let url = try remote.url() {
+            guard url.host == pushURL.host, url.path == pushURL.path else {
+                throw RunError(message: "config: push_url与git remote不一致, \n push_url: \(push) \n remote_url: \(url)")
+            }
+        }
+    }
+
+    class Remote {
+
+        func url() throws -> URL? {
+            guard var str = try shell("git remote -v")
+                .stdout
+                .components(separatedBy: "\n")
+                .first(where: { $0.contains("git@") || $0.contains("http") })?
+                .components(separatedBy: " ")
+                .first(where: { $0.contains("git@") || $0.contains("http") })
+                else {
+                    return nil
+            }
+            if str.contains("git@"), let prefix = str.components(separatedBy: "git@").first {
+                str = String(str.dropFirst(prefix.count))
+            }
+
+            if str.contains("http"), let prefix = str.components(separatedBy: "http").first {
+                str = String(str.dropFirst(prefix.count))
+            }
+
+            return URL(string: String(str))
+        }
+
     }
 
     class Branch {
@@ -62,8 +95,12 @@ class Git {
             return (version + 1).string
         }
 
-        func push(version: String) throws {
-            try shell("git push -u origin \(version)")
+        func push(url: String?, version: String) throws {
+            if let url = url {
+                try shell("git push -u \(url) \(version)")
+            } else {
+                try shell("git push -u origin \(version)")
+            }
         }
         
         func remove(version: String) throws {
@@ -97,7 +134,11 @@ class Git {
     }
 
     func push() throws {
-        try shell("git push")
+        if let url = config.pushURL {
+            try shell("git push \(url)")
+        } else {
+            try shell("git push")
+        }
     }
 
 }

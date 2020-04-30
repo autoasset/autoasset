@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CD053A402435FA7B008A2E56 /* Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD053A3F2435FA7B008A2E56 /* Git.swift */; };
+		CD210B63245AB199008015B3 /* Yams in Frameworks */ = {isa = PBXBuildFile; productRef = CD210B62245AB199008015B3 /* Yams */; };
 		CD394C0D242B60CF00277F88 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD394C0C242B60CF00277F88 /* main.swift */; };
 		CD394C15242B643700277F88 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = CD394C14242B643700277F88 /* ArgumentParser */; };
 		CD544366243C769A0099C9F0 /* Autoasset.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD544365243C769A0099C9F0 /* Autoasset.swift */; };
@@ -58,6 +59,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD394C15242B643700277F88 /* ArgumentParser in Frameworks */,
+				CD210B63245AB199008015B3 /* Yams in Frameworks */,
 				CD814806242C589B00D2DF0A /* Stem in Frameworks */,
 				CDA383612433350800D3EDD9 /* SwiftShell in Frameworks */,
 			);
@@ -130,6 +132,7 @@
 				CD394C14242B643700277F88 /* ArgumentParser */,
 				CD814805242C589B00D2DF0A /* Stem */,
 				CDA383602433350800D3EDD9 /* SwiftShell */,
+				CD210B62245AB199008015B3 /* Yams */,
 			);
 			productName = Autoasset;
 			productReference = CD394C09242B60CF00277F88 /* Autoasset */;
@@ -163,6 +166,7 @@
 				CD394C13242B643700277F88 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
 				CD394C17242B734900277F88 /* XCRemoteSwiftPackageReference "Stem" */,
 				CDA3835F2433350800D3EDD9 /* XCRemoteSwiftPackageReference "SwiftShell" */,
+				CD210B61245AB199008015B3 /* XCRemoteSwiftPackageReference "Yams" */,
 			);
 			productRefGroup = CD394C0A242B60CF00277F88 /* Products */;
 			projectDirPath = "";
@@ -366,6 +370,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		CD210B61245AB199008015B3 /* XCRemoteSwiftPackageReference "Yams" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jpsim/Yams.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
 		CD394C13242B643700277F88 /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-argument-parser";
@@ -393,6 +405,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CD210B62245AB199008015B3 /* Yams */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CD210B61245AB199008015B3 /* XCRemoteSwiftPackageReference "Yams" */;
+			productName = Yams;
+		};
 		CD394C14242B643700277F88 /* ArgumentParser */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CD394C13242B643700277F88 /* XCRemoteSwiftPackageReference "swift-argument-parser" */;

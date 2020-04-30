@@ -36,7 +36,7 @@ class Autoasset {
             try Warn.output(config: warn)
         }
 
-        let lastVersion = try git.tag.lastVersion()
+        let lastVersion = try? git.tag.lastVersion() ?? "0"
         let version = try git.tag.nextVersion(with: lastVersion ?? "0")
         try podspec?.output(version: version)
         try podspec?.lint()
@@ -52,7 +52,7 @@ class Autoasset {
 
         try? git.tag.remove(version: version)
         try? git.tag.add(version: version, message: message)
-        try? git.tag.push(version: version)
+        try? git.tag.push(url: config.git.pushURL, version: version)
     
         try podspec?.push()
 
