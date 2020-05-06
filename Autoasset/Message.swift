@@ -20,8 +20,8 @@ class Message {
         let success = ["cocoapods 构建完成 🎉",
                        [String](repeating: "-", count: 40).joined(),
                        "project: [\(config.message.projectName)]",
-            "version: [\(version)]",
-            "text: \(config.message.text)"].joined()
+                       "version: [\(version)]",
+                       "text: \(config.message.text)"].joined(separator: "\n")
         if let url = config.message.outputPath?.path {
             try success.write(toFile: url, atomically: true, encoding: .utf8)
         }
