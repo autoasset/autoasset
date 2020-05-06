@@ -155,7 +155,6 @@ extension Asset {
             case .gif:
                 result.gifFilePaths.append(item)
             case .pdf:
-                RunPrint(item.attributes.name)
                 result.pdfsFilePaths.append(item)
             default:
                 guard let name = Xcassets.shared.createSourceNameKey(with: item.attributes.name) else {
@@ -179,12 +178,11 @@ extension Asset {
             let folder = try outputFilePath.create(folder: "\(folderName).imageset")
             if let filePath = filePaths.first(where: { $0.attributes.name.hasPrefix("\(key).") || $0.attributes.name.hasPrefix("\(key)@") }) {
                 try filePath.copy(to: folder)
-                addGIFCode(with: folderName)
+                addImageCode(with: key)
                 try Xcassets.shared.createPDFContents(with: [filePath.attributes.name]).write(to: folder.url.appendingPathComponent("Contents.json"), options: [.atomicWrite])
             }
         }
     }
-
 
     func makeGIFDataAsset(_ filePaths: [FilePath], _ outputFilePath: FilePath) throws {
         let keySet = Set(filePaths.compactMap({ Xcassets.shared.createSourceNameKey(with: $0.attributes.name) }))
