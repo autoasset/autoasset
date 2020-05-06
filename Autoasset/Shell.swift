@@ -11,13 +11,12 @@ import SwiftShell
 
 @discardableResult
 func shell(_ command: String, useAssert: Bool = true) throws -> RunOutput {
-    if Autoasset.isDebug {
+    let out = run(bash: command)
+    switch Autoasset.isDebug {
+    case .normal, .local:
         RunPrint([String](repeating: "↓", count: 80).joined())
         RunPrint("command: \(command)")
         RunPrint([String](repeating: "-", count: 80).joined())
-    }
-    let out = run(bash: command)
-    if Autoasset.isDebug {
         if out.stdout.isEmpty == false {
             RunPrint("stdout: \(out.stdout)")
         }
@@ -31,6 +30,8 @@ func shell(_ command: String, useAssert: Bool = true) throws -> RunOutput {
         }
         RunPrint([String](repeating: "↑", count: 80).joined())
         RunPrint("\n")
+    case .none:
+        break
     }
     return out
 }

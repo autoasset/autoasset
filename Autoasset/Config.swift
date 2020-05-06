@@ -21,6 +21,12 @@ extension JSON {
 
 struct Config {
 
+    enum Debug: String {
+        case none
+        case normal
+        case local
+    }
+
     struct Message {
         let projectName: String
         let text: String
@@ -154,11 +160,11 @@ struct Config {
     let git: Git
     let asset: Asset
     let warn: Warn?
-    let debug: Bool
+    let debug: Debug
     let message: Message
 
     init(json: JSON) throws {
-        debug   = json["debug"].boolValue
+        debug   = Debug(rawValue: json["debug"].stringValue) ?? .normal
         message = Message(json: json["message"])
         git     = Git(json: json["git"])
         warn    = Warn(json: json["warn"])

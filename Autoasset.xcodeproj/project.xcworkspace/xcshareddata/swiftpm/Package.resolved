@@ -3,10 +3,10 @@
     "pins": [
       {
         "package": "Stem",
-        "repositoryURL": "https://github.com/linhay/Stem",
+        "repositoryURL": "https://github.com/linhay/Stem.git",
         "state": {
           "branch": "develop",
-          "revision": "8afd800460367666aa8e80f26fe954fc85e225b4",
+          "revision": "c1f8318b3fd4b2d00531c289114a39997b961201",
           "version": null
         }
       },

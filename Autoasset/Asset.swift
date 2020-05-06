@@ -24,6 +24,12 @@ fileprivate extension String {
 class Asset {
     
     let config: Config.Asset
+
+    class SplitImageResult {
+        var imageFilePaths: [String: [FilePath]] = [:]
+        var pdfsFilePaths: [FilePath] = []
+        var gifFilePaths: [FilePath] = []
+    }
     
     enum Placeholder {
         static let images = "[images_code]"
@@ -125,42 +131,60 @@ extension Asset {
             imageFolderPaths.append(filePath)
         }
         let filePaths = try readImageFilePaths(folders: imageFolderPaths)
-        let (imageFilePaths, gifFilePaths) = try splitImageFilePaths(filePaths)
+        let splitImageResult = try splitImageFilePaths(filePaths)
         if let path = config.xcassets.output.imagesXcassetsPath?.path {
             let filePath = try FilePath(path: path, type: .folder)
             try filePath.delete()
             try filePath.create()
-            try makeImageAsset(imageFilePaths, filePath)
+            try makeImageAsset(splitImageResult.imageFilePaths, filePath)
+            try makePDFDataAsset(splitImageResult.pdfsFilePaths, filePath)
         }
         if let path = config.xcassets.output.gifsXcassetsPath?.path {
             let filePath = try FilePath(path: path, type: .folder)
             try filePath.delete()
             try filePath.create()
-            try makeGIFDataAsset(gifFilePaths, filePath)
+            try makeGIFDataAsset(splitImageResult.gifFilePaths, filePath)
         }
     }
 
     /// 分离 image 与 gif 文件
-    func splitImageFilePaths(_ filePaths: [FilePath]) throws -> (imageFilePaths: [String: [FilePath]],  gifFilePaths: [FilePath]) {
-        var imageFilePaths = [String: [FilePath]]()
-        var gifFilePaths = [FilePath]()
+    func splitImageFilePaths(_ filePaths: [FilePath]) throws -> SplitImageResult {
+        let result = SplitImageResult()
         for item in filePaths {
             switch try item.data().st.mimeType {
             case .gif:
-                gifFilePaths.append(item)
+                result.gifFilePaths.append(item)
+            case .pdf:
+                RunPrint(item.attributes.name)
+                result.pdfsFilePaths.append(item)
             default:
                 guard let name = Xcassets.shared.createSourceNameKey(with: item.attributes.name) else {
                     continue
                 }
-                if imageFilePaths[name] == nil {
-                    imageFilePaths[name] = [item]
+                if result.imageFilePaths[name] == nil {
+                    result.imageFilePaths[name] = [item]
                 } else {
-                    imageFilePaths[name]?.append(item)
+                    result.imageFilePaths[name]?.append(item)
                 }
             }
         }
-        return (imageFilePaths, gifFilePaths)
+        return result
     }
+
+    func makePDFDataAsset(_ filePaths: [FilePath], _ outputFilePath: FilePath) throws {
+        let keySet = Set(filePaths.compactMap({ Xcassets.shared.createSourceNameKey(with: $0.attributes.name) }))
+        try keySet.forEach { key in
+            let folderName = key.replacingOccurrences(of: "@2x.", with: ".")
+                .replacingOccurrences(of: "@3x.", with: ".")
+            let folder = try outputFilePath.create(folder: "\(folderName).imageset")
+            if let filePath = filePaths.first(where: { $0.attributes.name.hasPrefix("\(key).") || $0.attributes.name.hasPrefix("\(key)@") }) {
+                try filePath.copy(to: folder)
+                addGIFCode(with: folderName)
+                try Xcassets.shared.createPDFContents(with: [filePath.attributes.name]).write(to: folder.url.appendingPathComponent("Contents.json"), options: [.atomicWrite])
+            }
+        }
+    }
+
 
     func makeGIFDataAsset(_ filePaths: [FilePath], _ outputFilePath: FilePath) throws {
         let keySet = Set(filePaths.compactMap({ Xcassets.shared.createSourceNameKey(with: $0.attributes.name) }))

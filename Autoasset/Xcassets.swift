@@ -16,6 +16,13 @@ class Xcassets {
         return fileName.split(separator: "/").last?.split(separator: "@").first?.split(separator: ".").first?.description
     }
 
+    func createPDFContents(with fileNames: [String]) throws -> Data {
+        var contents: [String: Any] = ["info": ["version": 1, "author": "xcode"],
+                                       "properties": ["preserves-vector-representation": true]]
+        contents["images"] = fileNames.map { ["idiom": "universal", "filename": $0] }
+        return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
+    }
+
     func createDataContents(with fileNames: [String]) throws -> Data {
         var contents: [String: Any] = ["info": ["version": 1, "author": "xcode"]]
         contents["data"] = fileNames.map { ["idiom": "universal", "filename": $0] }

@@ -126,7 +126,7 @@ extension Podspec {
     }
 
     func noCleanCommond() -> String {
-        return Autoasset.isDebug ? " --no-clean" : ""
+        return " --no-clean"
     }
 
     func allowWarningsCommond() -> String {
