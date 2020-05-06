@@ -78,7 +78,7 @@ class Git {
         func lastVersion() throws -> String? {
             let tagVersion = try shell("git ls-remote --tag origin | sort -t '/' -k 3 -V").stdout
                 .components(separatedBy: "\n")
-                .filter({ $0.last?.isNumber ?? false })
+                .filter({ $0.contains(".") == false && $0.last?.isNumber ?? false })
                 .last?
                 .components(separatedBy: "\t")
                 .last?
