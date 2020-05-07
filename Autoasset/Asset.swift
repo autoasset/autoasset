@@ -24,6 +24,7 @@ fileprivate extension String {
 class Asset {
     
     let config: Config.Asset
+    let xcassets: Xcassets
 
     class SplitImageResult {
         var imageFilePaths: [String: [FilePath]] = [:]
@@ -46,13 +47,14 @@ class Asset {
     var fontCode:  [String] = []
 
     static func start(config: Config.Asset) throws {
-        let asset = Asset(config: config)
+        let asset = try Asset(config: config)
         try asset.makeImages()
         try asset.output()
     }
     
-    init(config: Config.Asset) {
+    init(config: Config.Asset) throws {
         self.config = config
+        self.xcassets = try Xcassets(config: config.xcassets)
     }
     
     func output() throws {
@@ -67,7 +69,7 @@ class Asset {
         } else {
             template = createTemplate()
         }
-        
+    
         try template
             .replacingOccurrences(of: Placeholder.images, with: imageCode.sorted().joined(separator: "\n"))
             .replacingOccurrences(of: Placeholder.gifs, with: gifCode.sorted().joined(separator: "\n"))
@@ -84,25 +86,22 @@ class Asset {
 
 // MARK: - add
 extension Asset {
+
+    func variableName(with name: String) -> String {
+        var caseName = name.camelCased()
+        if name.first?.isNumber ?? false {
+            caseName = "_\(caseName)"
+            Warn.caseFirstCharIsNumber(caseName: name)
+        }
+        return caseName
+    }
     
     func addGIFCode(with name: String) {
-        if name.first?.isNumber ?? false {
-            let caseName = name.camelCased()
-            gifCode.append("    static var _\(caseName): Data { NSDataAsset(name: \"\(name)\")!.data }")
-            Warn.caseFirstCharIsNumber(caseName: name)
-        }else {
-            gifCode.append("    static var \(name.camelCased()): Data { NSDataAsset(name: \"\(name)\")!.data }")
-        }
+        gifCode.append("    static var \(variableName(with: name)): AssetSource.Data { AssetSource.Data(asset: \"\(name)\") }")
     }
     
     func addImageCode(with name: String) {
-        if name.first?.isNumber ?? false {
-            let caseName = name.camelCased()
-            imageCode.append("    static var _\(caseName): AssetImage { AssetImage(asset: \"\(name)\") }")
-            Warn.caseFirstCharIsNumber(caseName: name)
-        }else {
-            imageCode.append("    static var \(name.camelCased()): AssetImage { AssetImage(asset: \"\(name)\") }")
-        }
+        imageCode.append("    static var \(variableName(with: name)): AssetSource.Image { AssetSource.Image(asset: \"\(name)\") }")
     }
     
 }
@@ -157,7 +156,7 @@ extension Asset {
             case .pdf:
                 result.pdfsFilePaths.append(item)
             default:
-                guard let name = Xcassets.shared.createSourceNameKey(with: item.attributes.name) else {
+                guard let name = xcassets.createSourceNameKey(with: item.attributes.name) else {
                     continue
                 }
                 if result.imageFilePaths[name] == nil {
@@ -171,7 +170,7 @@ extension Asset {
     }
 
     func makePDFDataAsset(_ filePaths: [FilePath], _ outputFilePath: FilePath) throws {
-        let keySet = Set(filePaths.compactMap({ Xcassets.shared.createSourceNameKey(with: $0.attributes.name) }))
+        let keySet = Set(filePaths.compactMap({ xcassets.createSourceNameKey(with: $0.attributes.name) }))
         try keySet.forEach { key in
             let folderName = key.replacingOccurrences(of: "@2x.", with: ".")
                 .replacingOccurrences(of: "@3x.", with: ".")
@@ -179,13 +178,13 @@ extension Asset {
             if let filePath = filePaths.first(where: { $0.attributes.name.hasPrefix("\(key).") || $0.attributes.name.hasPrefix("\(key)@") }) {
                 try filePath.copy(to: folder)
                 addImageCode(with: key)
-                try Xcassets.shared.createPDFContents(with: [filePath.attributes.name]).write(to: folder.url.appendingPathComponent("Contents.json"), options: [.atomicWrite])
+                try xcassets.createPDFContents(with: [filePath.attributes.name]).write(to: folder.url.appendingPathComponent("Contents.json"), options: [.atomicWrite])
             }
         }
     }
 
     func makeGIFDataAsset(_ filePaths: [FilePath], _ outputFilePath: FilePath) throws {
-        let keySet = Set(filePaths.compactMap({ Xcassets.shared.createSourceNameKey(with: $0.attributes.name) }))
+        let keySet = Set(filePaths.compactMap({ xcassets.createSourceNameKey(with: $0.attributes.name) }))
         try keySet.forEach { key in
             let folderName = key.replacingOccurrences(of: "@2x.", with: ".")
                 .replacingOccurrences(of: "@3x.", with: ".")
@@ -193,7 +192,7 @@ extension Asset {
             if let filePath = filePaths.first(where: { $0.attributes.name.hasPrefix("\(key).") || $0.attributes.name.hasPrefix("\(key)@") }) {
                 try filePath.copy(to: folder)
                 addGIFCode(with: folderName)
-                try Xcassets.shared.createDataContents(with: [filePath.attributes.name]).write(to: folder.url.appendingPathComponent("Contents.json"), options: [.atomicWrite])
+                try xcassets.createDataContents(with: [filePath.attributes.name]).write(to: folder.url.appendingPathComponent("Contents.json"), options: [.atomicWrite])
             }
         }
     }
@@ -214,7 +213,7 @@ extension Asset {
 
         try imageFolders.forEach { folder in
             let fileNames = try folder.subFilePaths().map({ $0.attributes.name })
-            try Xcassets.shared.createImageContents(with: fileNames).write(to: folder.url.appendingPathComponent("Contents.json"), options: [.atomicWrite])
+            try xcassets.createImageContents(with: fileNames).write(to: folder.url.appendingPathComponent("Contents.json"), options: [.atomicWrite])
         }
     }
 
@@ -224,66 +223,63 @@ extension Asset {
 private extension Asset {
     
     func createTemplate() -> String {
-        let staticCode = """
-        fileprivate class AssetBundle { }
-
-        extension AssetImage {
-
-            static let bundle = Bundle(path: Bundle(for: AssetBundle.self).resourcePath!.appending("/Resources.bundle"))!
-
-            convenience init(asset named: String) {
-                self.init(named: named, in: UIImage.bundle, compatibleWith: nil)!
-            }
-
-        }
-        """
-        
-        let frameworkCode = """
-        extension AssetImage {
-            convenience init(asset named: String) {
-                self.init(named: named)!
-            }
-        }
-        """
-        
         return """
         #if os(iOS) || os(tvOS) || os(watchOS)
         import UIKit
-        public typealias AssetImage = UIImage
         #elseif os(OSX)
         import AppKit
-        public typealias AssetImage = NSImage
         #endif
-        
+
         import Foundation
-        
-        \(config.isUseInPod ? staticCode : frameworkCode)
-        
-        public enum Asset {
-        public static let image   = AssetImageSource.self
-        public static let gifData = AssetGIFDataSource.self
-        public static let color   = AssetColorSource.self
-        public static let data    = AssetDataSource.self
+
+        fileprivate class RBundle {
+            static let bundle = Bundle(path: Bundle(for: RBundle.self).resourcePath!.appending("/Resources.bundle"))!
         }
-        
-        public enum AssetImageSource { }
-        public enum AssetGIFDataSource { }
-        public enum AssetColorSource { }
-        public enum AssetDataSource { }
-        
-        public extension AssetImageSource {
+
+        public enum R {
+            public static let images = Image.self
+            public static let gifs   = GIF.self
+            static let colors = Color.self
+            static let datas  = Data.self
+
+            public enum Image { }
+            public enum GIF { }
+            enum Color { }
+            enum Data { }
+        }
+
+        public class AssetSource {
+
+            public class Base {
+                public let name: String
+                init(asset named: String) {
+                    self.name = named
+                }
+            }
+
+            public class Data: Base {
+                public var data: Foundation.Data { NSDataAsset(name: name)!.data }
+            }
+
+            public class Image: Base {
+                public var image: UIImage { UIImage(named: name, in: RBundle.bundle, compatibleWith: nil)! }
+            }
+
+        }
+
+        public extension R.Image {
         [images_code]
         }
-        
-        public extension AssetGIFDataSource {
+
+        public extension R.GIF {
         [gifs_code]
         }
-        
-        public extension AssetColorSource {
+
+        extension R.Color {
         [colors_code]
         }
-        
-        public extension AssetDataSource {
+
+        extension R.Data {
         [datas_code]
         }
         """

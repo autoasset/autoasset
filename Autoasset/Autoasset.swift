@@ -11,14 +11,15 @@ import Stem
 
 class Autoasset {
 
-    static let version = "3"
+    static let version = "4"
     static var isDebug: Config.Debug = .normal
 
     let config: Config
-    lazy var asset = Asset(config: config.asset)
+    let asset: Asset
 
-    init(config: Config) {
+    init(config: Config) throws {
         Autoasset.isDebug = config.debug
+        asset = try Asset(config: config.asset)
         self.config = config
     }
 

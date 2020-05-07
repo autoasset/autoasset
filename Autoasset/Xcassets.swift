@@ -9,8 +9,21 @@ import Foundation
 import Stem
 
 class Xcassets {
+    let config: Config.Asset.Xcassets
+    var imagesContentsFilePath: [String: FilePath] = [:]
 
-    static var shared = Xcassets()
+    init(config: Config.Asset.Xcassets) throws {
+        self.config = config
+        if let url = config.input.imagesContentsPath {
+            try FilePath(url: url, type: .folder).allSubFilePaths().forEach({ filePath in
+                if let name = filePath.attributes.name.split(separator: ".").first?.description {
+                    imagesContentsFilePath[name] = filePath
+                }
+            })
+        } else {
+            imagesContentsFilePath = [:]
+        }
+    }
 
     func createSourceNameKey(with fileName: String) -> String? {
         return fileName.split(separator: "/").last?.split(separator: "@").first?.split(separator: ".").first?.description
@@ -30,6 +43,13 @@ class Xcassets {
     }
 
     func createImageContents(with fileNames: [String]) throws -> Data {
+
+        if let fileName = fileNames.first,
+            let name = createSourceNameKey(with: fileName),
+            let filePath = imagesContentsFilePath[name] {
+            return try filePath.data()
+        }
+
         var contents: [String: Any] = ["info": ["version": 1, "author": "xcode"]]
         var list = [[String: String]]()
         do {

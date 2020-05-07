@@ -85,16 +85,18 @@ struct Config {
             struct Input {
                 let appIconPath: URL?
                 let imagesPath: URL?
+                let imagesContentsPath: URL?
                 let colorsPath: URL?
                 let fontsPath: URL?
                 let gifsPath: URL?
 
                 init(json: JSON) {
-                    appIconPath = json["app_icon_path"].fileURL
-                    imagesPath  = json["images_path"].fileURL
-                    colorsPath  = json["colors_path"].fileURL
-                    fontsPath   = json["fonts_path"].fileURL
-                    gifsPath    = json["gifs_path"].fileURL
+                    appIconPath        = json["app_icon_path"].fileURL
+                    imagesContentsPath = json["images_contents_path"].fileURL
+                    imagesPath         = json["images_path"].fileURL
+                    colorsPath         = json["colors_path"].fileURL
+                    fontsPath          = json["fonts_path"].fileURL
+                    gifsPath           = json["gifs_path"].fileURL
                 }
 
             }
