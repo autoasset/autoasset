@@ -37,7 +37,7 @@ podspec:
   output_path: "../autoasset.podspec"
   # [可选] 上传的私有仓库
   repo:
-  	# [必选] 私有仓库本地名称, 可使用 pod repo list 查看配置
+    # [必选] 私有仓库本地名称, 可使用 pod repo list 查看配置
     name: "myRepo"
     # [必选] 私有仓库远程链接
     url: "git@gitlab.linhey.net:ios/Specs.git"
