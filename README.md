@@ -17,7 +17,7 @@ mode: "normal"
 # 支持替换文本参数
 # - [version]: 版本号
 message:
-	# [可选] 模板文本, 优先级高于 `template_path`
+  # [可选] 模板文本, 优先级高于 `template_path`
   template: ""
   # [可选] 模板文件路径, 优先级低于 `template`
   template_path: "./template/message.template"
@@ -29,7 +29,7 @@ message:
 # 支持替换文本参数
 # - [version]: 版本号
 podspec:
-	# [可选] 模板文本, 优先级高于 `template_path`
+  # [可选] 模板文本, 优先级高于 `template_path`
   template: ""
   # [可选] 模板文件路径, 优先级低于 `template`
   template_path: "./template/podspec.template"
@@ -45,22 +45,22 @@ podspec:
 # Git模块, 用于配置Git相关操作参数
 # [可选]
 git:
-	# [可选] .git文件所在路径, 默认值: ../
+  # [可选] .git文件所在路径, 默认值: ../
   project_path: "../"
-	# [可选] 指定被合并入的git分支
+  # [可选] 指定被合并入的git分支
   ui:
     branch: origin/UI
     
 # 警告⚠️模块, 用于输出一些警告
 # [可选]
 warn:
-	#[可选] 警告文件输出路径
+  #[可选] 警告文件输出路径
   output_path: "./warn.txt"
 
 # 资源处理模块
 # [必选]
 asset:
-	# [可选] asset.swift 模板文本, 优先级高于 `template_path`
+  # [可选] asset.swift 模板文本, 优先级高于 `template_path`
   template: ""
   # [可选] asset.swift 模板文件路径, 优先级低于 `template`
   template_path: "./template/asset.template"
@@ -68,7 +68,7 @@ asset:
   output_path: "../Sources/Asset.swift"
   
   # xcassets 配置
-	# [必选]
+  # [必选]
   xcassets:
     input:
       # [可选] 输入图片路径
@@ -78,7 +78,7 @@ asset:
       # [可选] 输入gifs路径, 可以与 `images_path` 相同
       gifs_path: "../gif"
     output:
-    	# [可选] 输出图片路径
+      # [可选] 输出图片路径
       images_path: "../icon.xcassets"
       # [可选] 输出gifs路径, 可以与 `images_path` 相同
       gifs_path: "../gifs.xcassets"
