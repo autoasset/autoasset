@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CD053A402435FA7B008A2E56 /* Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD053A3F2435FA7B008A2E56 /* Git.swift */; };
+		CD20A0F724644FF500B9CF17 /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD20A0F624644FF500B9CF17 /* Placeholder.swift */; };
 		CD210B63245AB199008015B3 /* Yams in Frameworks */ = {isa = PBXBuildFile; productRef = CD210B62245AB199008015B3 /* Yams */; };
 		CD394C0D242B60CF00277F88 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD394C0C242B60CF00277F88 /* main.swift */; };
 		CD394C15242B643700277F88 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = CD394C14242B643700277F88 /* ArgumentParser */; };
@@ -38,6 +39,7 @@
 
 /* Begin PBXFileReference section */
 		CD053A3F2435FA7B008A2E56 /* Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Git.swift; sourceTree = "<group>"; };
+		CD20A0F624644FF500B9CF17 /* Placeholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Placeholder.swift; sourceTree = "<group>"; };
 		CD394C09242B60CF00277F88 /* Autoasset */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Autoasset; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD394C0C242B60CF00277F88 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		CD544365243C769A0099C9F0 /* Autoasset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Autoasset.swift; sourceTree = "<group>"; };
@@ -108,6 +110,7 @@
 				CD544365243C769A0099C9F0 /* Autoasset.swift */,
 				CD544367243DD8B70099C9F0 /* Info.plist */,
 				CD6ED907244411DA002ED925 /* Message.swift */,
+				CD20A0F624644FF500B9CF17 /* Placeholder.swift */,
 			);
 			path = Autoasset;
 			sourceTree = "<group>";
@@ -193,6 +196,7 @@
 				CD6ED908244411DA002ED925 /* Message.swift in Sources */,
 				CD053A402435FA7B008A2E56 /* Git.swift in Sources */,
 				CD544366243C769A0099C9F0 /* Autoasset.swift in Sources */,
+				CD20A0F724644FF500B9CF17 /* Placeholder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

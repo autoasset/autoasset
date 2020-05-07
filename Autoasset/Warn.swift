@@ -20,16 +20,15 @@ class Warn {
         Warn.list.append(self)
     }
 
-    static func output(config: Config.Warn) throws {
-        guard let url = config.outputPath else {
-            Warn("无法输出 Warn 文件, 配置文件不存在")
+    static func output(config: Config.Warn?) throws {
+        guard let config = config, config.outputPath.path.isEmpty else {
             return
         }
         try list
             .map({ $0.message })
             .sorted()
             .joined(separator: "\n")
-            .write(to: url, atomically: true, encoding: .utf8)
+            .write(to: config.outputPath, atomically: true, encoding: .utf8)
     }
 
 }

@@ -11,23 +11,29 @@ import Stem
 
 class Autoasset {
 
-    static let version = "4"
-    static var isDebug: Config.Debug = .normal
+    static let version = "5"
+    static var mode: Config.Mode = .normal
 
     let config: Config
     let asset: Asset
 
     init(config: Config) throws {
-        Autoasset.isDebug = config.debug
+        Autoasset.mode = config.mode
         asset = try Asset(config: config.asset)
         self.config = config
     }
 
     func start() throws {
 
-        switch config.debug {
+        switch config.mode {
+        case .test_message:
+            try Message(config: config.message)?.output(version: "1")
+        case .test_podspec:
+            let podspec = Podspec(config: config.podspec)
+            try podspec?.output(version: "1")
         case .local:
             try Asset.start(config: config.asset)
+            try Warn.output(config: config.warn)
         case .none, .normal:
             let podspec = Podspec(config: config.podspec)
             let git = try Git(config: config.git)
@@ -37,16 +43,10 @@ class Autoasset {
             }
 
             try Asset.start(config: config.asset)
-
-            if let warn = config.warn {
-                try Warn.output(config: warn)
-            }
-
             let lastVersion = try? git.tag.lastVersion() ?? "0"
             let version = try git.tag.nextVersion(with: lastVersion ?? "0")
             try podspec?.output(version: version)
             try podspec?.lint()
-
 
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "YYYY年MM月DD HH:MM"
@@ -62,7 +62,8 @@ class Autoasset {
 
             try podspec?.push()
 
-            try Message(config: config).work(version: version)
+            try Warn.output(config: config.warn)
+            try Message(config: config.message)?.output(version: version)
         }
     }
 

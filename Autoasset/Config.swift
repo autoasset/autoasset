@@ -19,24 +19,54 @@ extension JSON {
     }
 }
 
+class TemplateInputModel {
+    let outputPath: URL
+    let template: String
+
+    init?(json: JSON, onlyOutput: Bool = false) {
+        guard let output = json["output_path"].fileURL else {
+            return nil
+        }
+
+        self.outputPath = output
+
+        if onlyOutput {
+            self.template = ""
+            return
+        }
+
+        if let template = json["template"].string {
+            self.template = template
+            return
+        }
+
+        guard let path = json["template_path"].fileURL?.path, let template = try? String(contentsOfFile: path, encoding: .utf8) else {
+            return nil
+        }
+
+        self.template = template
+    }
+}
+
+protocol TemplateInputProtocol {
+    var templateInputModel: TemplateInputModel? { get }
+}
+
+extension TemplateInputProtocol {
+
+    var template: String? { templateInputModel?.template }
+    var outputPath: URL? { templateInputModel?.outputPath }
+
+}
+
 struct Config {
 
-    enum Debug: String {
+    enum Mode: String {
         case none
         case normal
         case local
-    }
-
-    struct Message {
-        let projectName: String
-        let text: String
-        let outputPath: URL?
-
-        init(json: JSON) {
-            projectName = json["project_name"].stringValue
-            text = json["text"].stringValue
-            outputPath = json["output_path"].fileURL
-        }
+        case test_message
+        case test_podspec
     }
 
     struct Git {
@@ -64,18 +94,7 @@ struct Config {
         }
     }
 
-    struct Warn {
-        let outputPath: URL?
-
-        init?(json: JSON) {
-            guard json.exists() else {
-                return nil
-            }
-            outputPath = json["output_path"].fileURL
-        }
-    }
-
-    struct Asset {
+    struct Asset: TemplateInputProtocol {
 
         struct Xcassets {
 
@@ -124,20 +143,18 @@ struct Config {
 
         }
 
+        let templateInputModel: TemplateInputModel?
         let xcassets: Xcassets
-        let templatePath: URL?
-        let outputPath: URL?
         let isUseInPod: Bool
 
         init(json: JSON) {
             xcassets = Xcassets(json: json["xcassets"])
-            templatePath = json["template_path"].fileURL
-            outputPath = json["output_path"].fileURL
+            templateInputModel = TemplateInputModel(json: json)
             isUseInPod = json["podspec"].exists()
         }
     }
 
-    struct Podspec {
+    struct Podspec: TemplateInputProtocol {
 
         struct Repo {
             let name: String
@@ -151,34 +168,33 @@ struct Config {
             }
         }
 
-        let templatePath: URL?
-        let outputPath: URL?
+        let templateInputModel: TemplateInputModel?
         let repo: Repo?
+
+        init(json: JSON) {
+            templateInputModel = TemplateInputModel(json: json)
+            repo = Repo(json: json["repo"])
+        }
     }
 
+    class Message: TemplateInputModel { }
+    class Warn: TemplateInputModel { }
 
 
     let podspec: Podspec?
     let git: Git
     let asset: Asset
+    let mode: Mode
     let warn: Warn?
-    let debug: Debug
-    let message: Message
+    let message: Message?
 
     init(json: JSON) throws {
-        debug   = Debug(rawValue: json["debug"].stringValue) ?? .normal
+        mode    = Mode(rawValue: json["mode"].stringValue) ?? .normal
         message = Message(json: json["message"])
         git     = Git(json: json["git"])
-        warn    = Warn(json: json["warn"])
+        warn    = Warn(json: json["warn"], onlyOutput: true)
         asset   = Asset(json: json["asset"])
-        if json["podspec"].exists() {
-            let result = json["podspec"]
-            podspec = Podspec(templatePath: result["template_path"].fileURL,
-                              outputPath: result["output_path"].fileURL,
-                              repo: Podspec.Repo(json: result["repo"]))
-        } else {
-            podspec = nil
-        }
+        podspec = Podspec(json: json["podspec"])
     }
 
     init(url: URL) throws {

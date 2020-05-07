@@ -12,8 +12,8 @@ import SwiftShell
 @discardableResult
 func shell(_ command: String, useAssert: Bool = true) throws -> RunOutput {
     let out = run(bash: command)
-    switch Autoasset.isDebug {
-    case .normal, .local:
+    switch Autoasset.mode {
+    case .normal, .local, .test_message, .test_podspec:
         RunPrint([String](repeating: "↓", count: 80).joined())
         RunPrint("command: \(command)")
         RunPrint([String](repeating: "-", count: 80).joined())

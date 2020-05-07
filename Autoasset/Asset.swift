@@ -58,18 +58,10 @@ class Asset {
     }
     
     func output() throws {
-        guard let output = config.outputPath else {
+        guard let output = config.outputPath, let template = config.template else {
             throw RunError(message: "Config: asset/output_path 不能为空")
         }
-        
-        var template = ""
-        
-        if let path = config.templatePath?.path {
-            template = try String(contentsOfFile: path, encoding: .utf8)
-        } else {
-            template = createTemplate()
-        }
-    
+
         try template
             .replacingOccurrences(of: Placeholder.images, with: imageCode.sorted().joined(separator: "\n"))
             .replacingOccurrences(of: Placeholder.gifs, with: gifCode.sorted().joined(separator: "\n"))

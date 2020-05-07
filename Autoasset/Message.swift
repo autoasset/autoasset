@@ -10,21 +10,19 @@ import Foundation
 
 class Message {
 
-    let config: Config
+    let config: Config.Message
 
-    init(config: Config) {
+    init?(config: Config.Message?) {
+        guard let config = config else {
+            return nil
+        }
         self.config = config
     }
 
-    func work(version: String) throws {
-        let success = ["cocoapods 构建完成 🎉",
-                       [String](repeating: "-", count: 40).joined(),
-                       "project: [\(config.message.projectName)]",
-                       "version: [\(version)]",
-                       "\(config.message.text)"].joined(separator: "\n")
-        if let url = config.message.outputPath?.path {
-            try success.write(toFile: url, atomically: true, encoding: .utf8)
-        }
-        RunPrint(success)
+    func output(version: String) throws {
+        let message = config.template.replacingOccurrences(of: Placeholder.version, with: version)
+        try message.data(using: .utf8)?.write(to: config.outputPath, options: [.atomicWrite])
+        RunPrint(message)
     }
+
 }
