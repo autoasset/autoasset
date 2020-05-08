@@ -11,13 +11,32 @@ import Stem
 
 fileprivate extension String {
     func camelCased() -> String {
-        return self
-            .replacingOccurrences(of: " ", with: "_")
-            .lowercased()
-            .split(separator: "_")
-            .enumerated()
-            .map { $0.offset > 0 ? $0.element.capitalized : $0.element.lowercased() }
-            .joined()
+        let splitChars = [" ", "-", "_"]
+        var words = [String]()
+        var buffer = ""
+
+        for index in 0..<count {
+            let char = self[String.Index(utf16Offset: index, in: self)]
+
+            if splitChars.contains(char.description) {
+                if buffer.isEmpty == false {
+                    words.append(buffer)
+                    buffer = ""
+                }
+                continue
+            }
+
+            if char.uppercased() == char.description, buffer.isEmpty == false {
+                words.append(buffer)
+                buffer = char.description
+                continue
+            }
+
+            buffer.append(char)
+        }
+
+        words.append(buffer)
+        return words.enumerated().map { $0.offset > 0 ? $0.element.capitalized : $0.element.lowercased() }.joined()
     }
 }
 
