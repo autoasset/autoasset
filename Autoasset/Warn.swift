@@ -39,6 +39,11 @@ class Warn {
 extension Warn {
 
     @discardableResult
+    static func test() -> Warn {
+        return Warn("test: 测试")
+    }
+
+    @discardableResult
     static func caseFirstCharIsNumber(caseName: String) -> Warn {
         return Warn("首字母不能为数字: \n\(caseName), 已更替为 _\(caseName)")
     }
