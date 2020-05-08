@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CD053A402435FA7B008A2E56 /* Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD053A3F2435FA7B008A2E56 /* Git.swift */; };
 		CD20A0F724644FF500B9CF17 /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD20A0F624644FF500B9CF17 /* Placeholder.swift */; };
+		CD20A0FC2465009D00B9CF17 /* Stem in Frameworks */ = {isa = PBXBuildFile; productRef = CD20A0FB2465009D00B9CF17 /* Stem */; };
 		CD210B63245AB199008015B3 /* Yams in Frameworks */ = {isa = PBXBuildFile; productRef = CD210B62245AB199008015B3 /* Yams */; };
 		CD394C0D242B60CF00277F88 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD394C0C242B60CF00277F88 /* main.swift */; };
 		CD394C15242B643700277F88 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = CD394C14242B643700277F88 /* ArgumentParser */; };
@@ -22,7 +23,6 @@
 		CDA3836E243351EC00D3EDD9 /* Asset.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA3836D243351EC00D3EDD9 /* Asset.swift */; };
 		CDA9F0AC242C9A8700255373 /* Xcassets.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA9F0AB242C9A8700255373 /* Xcassets.swift */; };
 		CDA9F109242DE44700255373 /* Warn.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA9F108242DE44700255373 /* Warn.swift */; };
-		CDB3FA7D2462B3F0002A0A9D /* Stem in Frameworks */ = {isa = PBXBuildFile; productRef = CDB3FA7C2462B3F0002A0A9D /* Stem */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -61,7 +61,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD394C15242B643700277F88 /* ArgumentParser in Frameworks */,
-				CDB3FA7D2462B3F0002A0A9D /* Stem in Frameworks */,
+				CD20A0FC2465009D00B9CF17 /* Stem in Frameworks */,
 				CD210B63245AB199008015B3 /* Yams in Frameworks */,
 				CDA383612433350800D3EDD9 /* SwiftShell in Frameworks */,
 			);
@@ -135,7 +135,7 @@
 				CD394C14242B643700277F88 /* ArgumentParser */,
 				CDA383602433350800D3EDD9 /* SwiftShell */,
 				CD210B62245AB199008015B3 /* Yams */,
-				CDB3FA7C2462B3F0002A0A9D /* Stem */,
+				CD20A0FB2465009D00B9CF17 /* Stem */,
 			);
 			productName = Autoasset;
 			productReference = CD394C09242B60CF00277F88 /* Autoasset */;
@@ -169,7 +169,7 @@
 				CD394C13242B643700277F88 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
 				CDA3835F2433350800D3EDD9 /* XCRemoteSwiftPackageReference "SwiftShell" */,
 				CD210B61245AB199008015B3 /* XCRemoteSwiftPackageReference "Yams" */,
-				CDB3FA7B2462B3F0002A0A9D /* XCRemoteSwiftPackageReference "Stem" */,
+				CD20A0FA2465009D00B9CF17 /* XCRemoteSwiftPackageReference "Stem" */,
 			);
 			productRefGroup = CD394C0A242B60CF00277F88 /* Products */;
 			projectDirPath = "";
@@ -374,6 +374,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		CD20A0FA2465009D00B9CF17 /* XCRemoteSwiftPackageReference "Stem" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/linhay/Stem.git";
+			requirement = {
+				branch = develop;
+				kind = branch;
+			};
+		};
 		CD210B61245AB199008015B3 /* XCRemoteSwiftPackageReference "Yams" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/jpsim/Yams.git";
@@ -398,17 +406,14 @@
 				minimumVersion = 5.0.1;
 			};
 		};
-		CDB3FA7B2462B3F0002A0A9D /* XCRemoteSwiftPackageReference "Stem" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/linhay/Stem.git";
-			requirement = {
-				branch = develop;
-				kind = branch;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CD20A0FB2465009D00B9CF17 /* Stem */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CD20A0FA2465009D00B9CF17 /* XCRemoteSwiftPackageReference "Stem" */;
+			productName = Stem;
+		};
 		CD210B62245AB199008015B3 /* Yams */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CD210B61245AB199008015B3 /* XCRemoteSwiftPackageReference "Yams" */;
@@ -423,11 +428,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CDA3835F2433350800D3EDD9 /* XCRemoteSwiftPackageReference "SwiftShell" */;
 			productName = SwiftShell;
-		};
-		CDB3FA7C2462B3F0002A0A9D /* Stem */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CDB3FA7B2462B3F0002A0A9D /* XCRemoteSwiftPackageReference "Stem" */;
-			productName = Stem;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

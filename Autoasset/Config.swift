@@ -40,7 +40,7 @@ class TemplateInputModel {
             return
         }
 
-        guard let path = json["template_path"].fileURL?.path, let template = try? String(contentsOfFile: path, encoding: .utf8) else {
+        guard let path = json["template_path"].url?.path, let template = try? String(contentsOfFile: path, encoding: .utf8) else {
             return nil
         }
 
@@ -67,6 +67,7 @@ struct Config {
         case local
         case test_message
         case test_podspec
+        case test_warn
     }
 
     struct Git {

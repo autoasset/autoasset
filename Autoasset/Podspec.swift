@@ -44,10 +44,11 @@ class Podspec {
         guard let template = config.template, let output = config.outputPath else {
             return
         }
-        try template
-            .replacingOccurrences(of: Placeholder.version, with: version)
-            .data(using: .utf8)?
-            .write(to: output, options: [.atomicWrite])
+
+        let filePath = try FilePath(url: output, type: .file)
+        let data = template.replacingOccurrences(of: Placeholder.version, with: version).data(using: .utf8)
+        try filePath.delete()
+        try filePath.create(with: data)
     }
 
 }

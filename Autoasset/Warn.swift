@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Stem
 
 class Warn {
 
@@ -21,14 +22,15 @@ class Warn {
     }
 
     static func output(config: Config.Warn?) throws {
-        guard let config = config, config.outputPath.path.isEmpty else {
+        guard let config = config else {
             return
         }
-        try list
-            .map({ $0.message })
-            .sorted()
-            .joined(separator: "\n")
-            .write(to: config.outputPath, atomically: true, encoding: .utf8)
+
+        let filePath = try FilePath(url: config.outputPath, type: .file)
+        let message = list.map({ $0.message }).sorted().joined(separator: "\n")
+        let data = message.data(using: .utf8)
+        try filePath.delete()
+        try filePath.create(with: data)
     }
 
 }

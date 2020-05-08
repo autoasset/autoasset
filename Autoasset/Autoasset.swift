@@ -26,6 +26,9 @@ class Autoasset {
     func start() throws {
 
         switch config.mode {
+        case .test_warn:
+            Warn("test: 测试")
+            try Warn.output(config: config.warn)
         case .test_message:
             try Message(config: config.message)?.output(version: "1")
         case .test_podspec:

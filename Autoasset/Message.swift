@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Stem
 
 class Message {
 
@@ -20,8 +21,11 @@ class Message {
     }
 
     func output(version: String) throws {
+        let filePath = try FilePath(url: config.outputPath, type: .file)
         let message = config.template.replacingOccurrences(of: Placeholder.version, with: version)
-        try message.data(using: .utf8)?.write(to: config.outputPath, options: [.atomicWrite])
+        let data = message.data(using: .utf8)
+        try filePath.delete()
+        try filePath.create(with: data)
         RunPrint(message)
     }
 

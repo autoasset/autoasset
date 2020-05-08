@@ -13,7 +13,7 @@ import SwiftShell
 func shell(_ command: String, useAssert: Bool = true) throws -> RunOutput {
     let out = run(bash: command)
     switch Autoasset.mode {
-    case .normal, .local, .test_message, .test_podspec:
+    case .normal, .local, .test_message, .test_podspec, .test_warn:
         RunPrint([String](repeating: "↓", count: 80).joined())
         RunPrint("command: \(command)")
         RunPrint([String](repeating: "-", count: 80).joined())
