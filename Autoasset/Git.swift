@@ -55,6 +55,10 @@ class Git {
 
     class Branch {
 
+        func currentName() throws -> String {
+            return try shell("git rev-parse --abbrev-ref HEAD").stdout
+        }
+
         func checkout(branch: String) throws {
             try shell("git checkout \(branch)")
         }

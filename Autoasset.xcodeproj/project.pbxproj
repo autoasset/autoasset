@@ -40,6 +40,7 @@
 /* Begin PBXFileReference section */
 		CD053A3F2435FA7B008A2E56 /* Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Git.swift; sourceTree = "<group>"; };
 		CD20A0F624644FF500B9CF17 /* Placeholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Placeholder.swift; sourceTree = "<group>"; };
+		CD20A1152466807C00B9CF17 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		CD394C09242B60CF00277F88 /* Autoasset */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Autoasset; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD394C0C242B60CF00277F88 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		CD544365243C769A0099C9F0 /* Autoasset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Autoasset.swift; sourceTree = "<group>"; };
@@ -80,6 +81,7 @@
 		CD394C00242B60CF00277F88 = {
 			isa = PBXGroup;
 			children = (
+				CD20A1152466807C00B9CF17 /* README.md */,
 				CD394C0B242B60CF00277F88 /* Autoasset */,
 				CD394C0A242B60CF00277F88 /* Products */,
 				4747788A6CDF472CA243142D /* Frameworks */,

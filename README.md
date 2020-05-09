@@ -1,4 +1,4 @@
-### version: 7
+### version: 8
 
 ---
 
@@ -8,9 +8,25 @@
 ---
 # 执行模式,  默认值: normal
 # [可选]
-# local: 只执行 asset & warn 模块操作
-# none | normal: 执行全模块流程
+# normal: 
+# - 执行全模块流程
+# local: 
+# - 只执行 asset & warn 模块操作
+# pod_with_branch: 
+# - pod 以 branch 方式接入, git 将不生成相对应的tag
+# - variables: [version]
 mode: "normal"
+
+# 执行模式可能需要的参数
+mode_variables:
+
+# [可选] 版本号
+# 模式: 
+# - pod_with_branch
+#   - 不填则以分支名作为版本号
+  version: null
+    
+    
 
 # 消息模块, 用于输出带特定参数的文本
 # [可选]

@@ -11,7 +11,7 @@ import Stem
 
 class Autoasset {
 
-    static let version = "7"
+    static let version = "8"
     static var mode: Config.Mode = .normal
 
     let config: Config
@@ -26,6 +26,23 @@ class Autoasset {
     func start() throws {
 
         switch config.mode {
+        case .pod_with_branch:
+            let podspec = Podspec(config: config.podspec)
+            let git = try Git(config: config.git)
+            try Asset.start(config: config.asset)
+            let branchName = try git.branch.currentName()
+            let lastVersion = branchName.split(separator: "/").last?.description ?? branchName
+            let version = try git.tag.nextVersion(with: lastVersion)
+            try podspec?.output(version: version)
+            try podspec?.lint()
+            try git.addAllFile()
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "YYYY年MM月DD HH:MM"
+            let message = "branch: \(version), author: autoasset(\(Autoasset.version)), date: \(dateFormatter.string(from: Date()))"
+            try git.commit(message: message)
+            try? git.push()
+            try Warn.output(config: config.warn)
+            try Message(config: config.message)?.output(version: version)
         case .test_warn:
             Warn.test()
             try Warn.output(config: config.warn)
@@ -37,7 +54,7 @@ class Autoasset {
         case .local:
             try Asset.start(config: config.asset)
             try Warn.output(config: config.warn)
-        case .none, .normal:
+        case .normal:
             let podspec = Podspec(config: config.podspec)
             let git = try Git(config: config.git)
 

@@ -62,16 +62,23 @@ extension TemplateInputProtocol {
 struct Config {
 
     enum Mode: String {
-        case none
         case normal
         case local
+        case pod_with_branch
         case test_message
         case test_podspec
         case test_warn
     }
 
-    struct Git {
+    struct ModeVariables {
+        let version: String
 
+        init(json: JSON) {
+            version = json["version"].stringValue
+         }
+    }
+
+    struct Git {
         struct Group {
             let branch: String
             init?(json: JSON) {
@@ -157,6 +164,11 @@ struct Config {
 
     struct Podspec: TemplateInputProtocol {
 
+        enum Mode: String {
+            case tag
+            case branch
+        }
+
         struct Repo {
             let name: String
             let url: String
@@ -186,16 +198,18 @@ struct Config {
     let git: Git
     let asset: Asset
     let mode: Mode
+    let modeVariables: ModeVariables
     let warn: Warn?
     let message: Message?
 
     init(json: JSON) throws {
+        modeVariables = ModeVariables(json: json["mode_variables"])
         mode    = Mode(rawValue: json["mode"].stringValue) ?? .normal
+        podspec = Podspec(json: json["podspec"])
         message = Message(json: json["message"])
         git     = Git(json: json["git"])
         warn    = Warn(json: json["warn"], onlyOutput: true)
         asset   = Asset(json: json["asset"])
-        podspec = Podspec(json: json["podspec"])
     }
 
     init(url: URL) throws {
