@@ -11,9 +11,9 @@ import Stem
 
 class Message {
 
-    let config: Config.Message
+    let config: MessageModel
 
-    init?(config: Config.Message?) {
+    init?(config: MessageModel?) {
         guard let config = config else {
             return nil
         }
@@ -21,8 +21,8 @@ class Message {
     }
 
     func output(version: String) throws {
-        let filePath = try FilePath(url: config.outputPath, type: .file)
-        let message = config.template.replacingOccurrences(of: Placeholder.version, with: version)
+        let filePath = try FilePath(url: config.output, type: .file)
+        let message = config.text.replacingOccurrences(of: Placeholder.version, with: version)
         let data = message.data(using: .utf8)
         try filePath.delete()
         try filePath.create(with: data)

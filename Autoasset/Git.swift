@@ -11,12 +11,12 @@ import Stem
 
 class Git {
 
-    let config: Config.Git
+    let config: GitModel
     let tag: Tag
     let branch: Branch
     let remote: Remote
 
-    init(config: Config.Git) throws {
+    init(config: GitModel) throws {
         self.config = config
         self.tag = Tag()
         self.branch = Branch()

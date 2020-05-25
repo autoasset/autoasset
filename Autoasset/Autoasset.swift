@@ -11,25 +11,23 @@ import Stem
 
 class Autoasset {
 
-    static let version = "8"
-    static var mode: Config.Mode = .normal
+    static let version = "9"
+    static var mode: ModeModel = .init(type: .normal, variables: .init(version: Autoasset.version))
 
     let config: Config
-    let asset: Asset
 
     init(config: Config) throws {
         Autoasset.mode = config.mode
-        asset = try Asset(config: config.asset)
         self.config = config
     }
 
     func start() throws {
 
-        switch config.mode {
+        switch config.mode.type {
         case .pod_with_branch:
             let podspec = Podspec(config: config.podspec)
             let git = try Git(config: config.git)
-            try Asset.start(config: config.asset)
+            try Asset(config: config.asset).run()
             let branchName = try git.branch.currentName()
             let lastVersion = branchName.split(separator: "/").last?.description ?? branchName
             let version = try git.tag.nextVersion(with: lastVersion)
@@ -52,17 +50,21 @@ class Autoasset {
             let podspec = Podspec(config: config.podspec)
             try podspec?.output(version: "1")
         case .local:
-            try Asset.start(config: config.asset)
+            try Asset(config: config.asset).run()
             try Warn.output(config: config.warn)
         case .normal:
             let podspec = Podspec(config: config.podspec)
             let git = try Git(config: config.git)
 
-            if let uiBranch = config.git.ui?.branch {
-                try git.branch.merge(with: uiBranch)
+            config.git.branchs.forEach { branch in
+                do {
+                    try git.branch.merge(with: branch)
+                } catch {
+                    Warn.gitMerge(branch: branch)
+                }
             }
 
-            try Asset.start(config: config.asset)
+            try Asset(config: config.asset).run()
             let lastVersion = try? git.tag.lastVersion() ?? "0"
             let version = try git.tag.nextVersion(with: lastVersion ?? "0")
             try podspec?.output(version: version)

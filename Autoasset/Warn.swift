@@ -26,7 +26,7 @@ class Warn {
             return
         }
 
-        let filePath = try FilePath(url: config.outputPath, type: .file)
+        let filePath = try FilePath(url: config.output, type: .file)
         let message = list.map({ $0.message }).sorted().joined(separator: "\n")
         let data = message.data(using: .utf8)
         try filePath.delete()
@@ -48,4 +48,13 @@ extension Warn {
         return Warn("首字母不能为数字: \n\(caseName), 已更替为 _\(caseName)")
     }
 
+    @discardableResult
+    static func duplicateFiles(_ files: [FilePath]) -> Warn {
+        return Warn("文件重复: \n" + files.map({ $0.path }).joined(separator: "\n"))
+    }
+
+    @discardableResult
+    static func gitMerge(branch: String) -> Warn {
+        return Warn("git merge error: 未能合并 \(branch)")
+    }
 }

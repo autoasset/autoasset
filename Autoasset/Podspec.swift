@@ -31,9 +31,9 @@ class Podspec {
 
     }
 
-    let config: Config.Podspec
+    let config: PodspecModel
 
-    init?(config: Config.Podspec?) {
+    init?(config: PodspecModel?) {
         guard let config = config else {
             return nil
         }
@@ -41,12 +41,8 @@ class Podspec {
     }
 
     func output(version: String) throws {
-        guard let template = config.template, let output = config.outputPath else {
-            return
-        }
-
-        let filePath = try FilePath(url: output, type: .file)
-        let data = template.replacingOccurrences(of: Placeholder.version, with: version).data(using: .utf8)
+        let filePath = try FilePath(url: config.output, type: .file)
+        let data = config.text.replacingOccurrences(of: Placeholder.version, with: version).data(using: .utf8)
         try filePath.delete()
         try filePath.create(with: data)
     }
@@ -85,20 +81,14 @@ extension Podspec {
     }
 
     func lint() throws {
-        guard let output = config.outputPath else {
-            throw RunError(message: "Config: podspec/output_path 不能为空")
-        }
-        try shell("pod lib lint \(output)" + allowWarningsCommond() + noCleanCommond(), useAssert: false)
+        try shell("pod lib lint \(config.output)" + allowWarningsCommond() + noCleanCommond(), useAssert: false)
     }
 
     func push() throws {
-        guard let output = config.outputPath?.path else {
-            throw RunError(message: "Config: podspec/output_path 不能为空")
-        }
         if let repo = try repoName() {
-            try shell("pod repo push \(repo) \(output)" + allowWarningsCommond(), useAssert: false)
+            try shell("pod repo push \(repo) \(config.output.path)" + allowWarningsCommond(), useAssert: false)
         } else {
-            try shell("pod trunk push \(output)" + allowWarningsCommond(), useAssert: false)
+            try shell("pod trunk push \(config.output)" + allowWarningsCommond(), useAssert: false)
         }
     }
 

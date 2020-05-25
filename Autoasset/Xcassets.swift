@@ -9,71 +9,265 @@ import Foundation
 import Stem
 
 class Xcassets {
-    let config: Config.Asset.Xcassets
-    var imagesContentsFilePath: [String: FilePath] = [:]
 
-    init(config: Config.Asset.Xcassets) throws {
+    enum ResourceType {
+        case image
+        case data
+        case color
+    }
+
+    let type: ResourceType
+    let config: AssetModel.Xcasset
+    var contentsFilePath: [String: FilePath] = [:]
+
+    init(config: AssetModel.Xcasset, use type: ResourceType) throws {
         self.config = config
-        if let url = config.input.imagesContentsPath {
-            try FilePath(url: url, type: .folder).allSubFilePaths().forEach({ filePath in
-                if let name = filePath.attributes.name.split(separator: ".").first?.description {
-                    imagesContentsFilePath[name] = filePath
-                }
-            })
-        } else {
-            imagesContentsFilePath = [:]
+        self.type = type
+        try createContentsFilePath(with: config.contentsPath)
+    }
+
+    func createContentsFilePath(with path: URL?) throws {
+        guard let url = config.contentsPath else {
+            return
+        }
+
+        try FilePath(url: url, type: .folder).allSubFilePaths().forEach({ filePath in
+            if let name = filePath.attributes.name.split(separator: ".").first?.description {
+                contentsFilePath[name] = filePath
+            }
+        })
+    }
+
+    func run() throws -> [String] {
+        switch type {
+        case .image:
+           return try runImage()
+        case .data:
+            // try runData()
+            break
+        case .color:
+            // try runColor()
+            break
+        }
+
+        return []
+    }
+
+}
+
+extension Xcassets {
+
+    func removeDuplicate(in group: [FilePath]) -> [FilePath] {
+        var dict = [String: [FilePath]]()
+
+        for file in group {
+            let name = file.attributes.name.split(separator: ".").first?.description ?? file.attributes.name
+            if dict[name] == nil {
+                dict[name] = [file]
+            } else {
+                dict[name]?.append(file)
+            }
+        }
+
+        return dict.compactMap { _, files -> FilePath? in
+            if files.count > 1 {
+                Warn.duplicateFiles(files)
+            }
+            return files.first
         }
     }
 
-    func createSourceNameKey(with fileName: String) -> String? {
-        return fileName.split(separator: "/").last?.split(separator: "@").first?.split(separator: ".").first?.description
+}
+
+// MARK: - image
+extension Xcassets {
+
+    struct Appearances {
+        enum ValueType: String {
+            case light
+            case dark
+        }
+
+        let appearance = "luminosity"
+        let value: ValueType
+
+        var dict: [String: Any]? {
+            return ["value": value.rawValue,
+                    "appearance": appearance]
+        }
+
     }
 
-    func createPDFContents(with fileNames: [String]) throws -> Data {
-        var contents: [String: Any] = ["info": ["version": 1, "author": "xcode"],
-                                       "properties": ["preserves-vector-representation": true]]
-        contents["images"] = fileNames.map { ["idiom": "universal", "filename": $0] }
-        return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
+    struct ImageItem {
+
+        enum SourceType {
+            case image
+            case vector
+        }
+
+        let name: String
+        let type: SourceType
+
+        init(name: String, type: SourceType) {
+            self.name = name
+            self.type = type
+        }
+
+        var dict: [String: Any] {
+            var dict = [String: Any]()
+
+            if name.contains("_dark@") || name.contains("_dark.") || name.hasSuffix("_dark") {
+                let appearances = Appearances(value: .dark)
+                dict["appearances"] = appearances.dict
+            }
+
+            if name.contains("_light@") || name.contains("_light.") || name.hasSuffix("_light") {
+                let appearances = Appearances(value: .light)
+                dict["appearances"] = appearances.dict
+            }
+
+            dict["idiom"] = "universal"
+            dict["filename"] = name
+
+            switch type {
+            case .vector:
+                break
+            case .image:
+                if name.contains("@1x") {
+                    dict["scale"] = "1x"
+                } else if name.contains("@2x") {
+                    dict["scale"] = "2x"
+                } else if name.contains("@3x") {
+                    dict["scale"] = "3x"
+                } else {
+                    dict["scale"] = "2x"
+                }
+            }
+
+            return dict
+        }
     }
+
+    func runImage() throws -> [String] {
+        let sources = try readImageFiles()
+        let groups = try groupImageFiles(from: sources)
+        var names = [String]()
+        for (name, files) in groups {
+            if let name = try createImageXcasset(name: name, files: files) {
+                names.append(name)
+            }
+        }
+        return names
+    }
+
+    func readImageFiles() throws -> [FilePath] {
+        var files = [FilePath]()
+
+        for input in config.inputs {
+            let input = try FilePath(url: input)
+            let subFiles = try input.allSubFilePaths().filter { file -> Bool in
+                switch try file.data().st.mimeType {
+                case .jpeg, .png, .pdf:
+                    return true
+                default:
+                    return false
+                }
+            }
+            files.append(contentsOf: subFiles)
+        }
+
+        return files
+    }
+
+    func groupImageFiles(from filePaths: [FilePath]) throws -> [String: [FilePath]] {
+        var groups = [String: [FilePath]]()
+
+        for file in filePaths {
+            let name = file.attributes.name
+                .components(separatedBy: "_dark@").first?
+                .split(separator: "@").first?
+                .split(separator: ".").first?.description ?? file.attributes.name
+
+            if groups[name] != nil {
+                groups[name]?.append(file)
+            } else {
+                groups[name] = [file]
+            }
+        }
+
+        return groups
+    }
+
+    func createImageXcasset(name: String, files: [FilePath]) throws -> String? {
+        guard files.isEmpty == false else {
+            return nil
+        }
+
+        let folder = try FilePath(url: config.output, type: .folder)
+        try folder.create()
+        try folder.create(folder: "\(name).imageset")
+        let files = removeDuplicate(in: files)
+
+        for file in files {
+            do {
+                try file.copy(to: folder)
+            } catch {
+                Warn((error as? FilePath.FilePathError)?.message ?? "")
+            }
+        }
+
+        let contents = try createImageContents(name: name, files: files)
+        try folder.create(file: "Contents.json", data: contents)
+
+        return name
+    }
+
+    func createImageContents(name: String, files: [FilePath]) throws -> Data {
+        if let file = contentsFilePath[name] { return try file.data() }
+
+        let pdfFiles = try files.filter { file -> Bool in
+            switch try file.data().st.mimeType {
+            case .pdf:
+                return true
+            default:
+                return false
+            }
+        }
+
+        if pdfFiles.isEmpty == false {
+            let info: [String: Any] = ["info": ["version": 1, "author": "xcode"]]
+            let properties: [String: Any] = ["compression-type": "automatic", "preserves-vector-representation": true]
+            let images = files.map{( ImageItem(name: $0.attributes.name, type: .image).dict )}
+            let contents: [String: Any] = ["info": info, "properties": properties, "images": images]
+            return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
+        }
+
+        let imageFiles = try files.filter { file -> Bool in
+            switch try file.data().st.mimeType {
+            case .jpeg, .png:
+                return true
+            default:
+                return false
+            }
+        }
+
+        if imageFiles.isEmpty == false {
+            let info: [String: Any] = ["info": ["version": 1, "author": "xcode"]]
+            let images = files.map{( ImageItem(name: $0.attributes.name, type: .image).dict )}
+            let contents = ["info": info, "images": images] as [String : Any]
+            return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
+        }
+
+        throw RunError(message: "xcassets: 文件格式匹配错误 现支持 png | jpg | pdf,\n path:\(config.inputs)")
+    }
+
+}
+
+extension Xcassets {
 
     func createDataContents(with fileNames: [String]) throws -> Data {
         var contents: [String: Any] = ["info": ["version": 1, "author": "xcode"]]
         contents["data"] = fileNames.map { ["idiom": "universal", "filename": $0] }
-        return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
-    }
-
-    func createImageContents(with fileNames: [String]) throws -> Data {
-
-        if let fileName = fileNames.first,
-            let name = createSourceNameKey(with: fileName),
-            let filePath = imagesContentsFilePath[name] {
-            return try filePath.data()
-        }
-
-        var contents: [String: Any] = ["info": ["version": 1, "author": "xcode"]]
-        var list = [[String: String]]()
-        do {
-            var dict = ["idiom": "universal", "scale": "3x"]
-            if let name = fileNames.first(where: { $0.contains("@3x.") }) {
-                dict["filename"] = name
-            }
-            list.append(dict)
-        }
-        do {
-            var dict = ["idiom": "universal", "scale": "2x"]
-            if let name = fileNames.first(where: { $0.contains("@2x.") }) {
-                dict["filename"] = name
-            }
-            list.append(dict)
-        }
-        do {
-            var dict = ["idiom": "universal", "scale": "1x"]
-            if let name = fileNames.first(where: { $0.contains("@2x.") == false && $0.contains("@3x.") == false }) {
-                dict["filename"] = name
-            }
-            list.append(dict)
-        }
-        contents["images"] = list
         return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
     }
 

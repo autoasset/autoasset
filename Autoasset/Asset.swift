@@ -14,10 +14,10 @@ fileprivate extension String {
         let splitChars = [" ", "-", "_"]
         var words = [String]()
         var buffer = ""
-
+        
         for index in 0..<count {
             let char = self[String.Index(utf16Offset: index, in: self)]
-
+            
             if splitChars.contains(char.description) {
                 if buffer.isEmpty == false {
                     words.append(buffer)
@@ -25,16 +25,16 @@ fileprivate extension String {
                 }
                 continue
             }
-
+            
             if char.uppercased() == char.description, buffer.isEmpty == false {
                 words.append(buffer)
                 buffer = char.description
                 continue
             }
-
+            
             buffer.append(char)
         }
-
+        
         words.append(buffer)
         return words.enumerated().map { $0.offset > 0 ? $0.element.capitalized : $0.element.lowercased() }.joined()
     }
@@ -42,8 +42,7 @@ fileprivate extension String {
 
 class Asset {
     
-    let config: Config.Asset
-    let xcassets: Xcassets
+    let config: AssetModel
 
     class SplitImageResult {
         var imageFilePaths: [String: [FilePath]] = [:]
@@ -57,6 +56,8 @@ class Asset {
         static let datas  = "[datas_code]"
         static let colors = "[colors_code]"
         static let fonts  = "[fonts_code]"
+        static let variableName = "[variable_name]"
+        static let name = "[name]"
     }
     
     var imageCode: [String] = []
@@ -65,40 +66,47 @@ class Asset {
     var colorCode: [String] = []
     var fontCode:  [String] = []
 
-    static func start(config: Config.Asset) throws {
-        let asset = try Asset(config: config)
-        try asset.makeImages()
-        try asset.output()
-    }
-    
-    init(config: Config.Asset) throws {
+    init(config: AssetModel) {
         self.config = config
-        self.xcassets = try Xcassets(config: config.xcassets)
+    }
+
+    func run() throws {
+        if let xcasset = config.images {
+            try Xcassets(config: xcasset, use: .image).run().forEach { name in
+                self.add(toImage: name)
+            }
+        }
+
+        if let xcasset = config.gifs {
+            try Xcassets(config: xcasset, use: .data).run().forEach { name in
+                self.add(toGIF: name)
+            }
+        }
+
+        try output()
     }
     
     func output() throws {
-        guard let output = config.outputPath, let template = config.template else {
+        guard let template = config.template else {
             throw RunError(message: "Config: asset/output_path 不能为空")
         }
-
-        try template
+        
+        try template.text
             .replacingOccurrences(of: Placeholder.images, with: imageCode.sorted().joined(separator: "\n"))
             .replacingOccurrences(of: Placeholder.gifs, with: gifCode.sorted().joined(separator: "\n"))
             .replacingOccurrences(of: Placeholder.datas, with: dataCode.sorted().joined(separator: "\n"))
             .replacingOccurrences(of: Placeholder.colors, with: colorCode.sorted().joined(separator: "\n"))
             .replacingOccurrences(of: Placeholder.fonts, with: fontCode.sorted().joined(separator: "\n"))
             .data(using: .utf8)?
-            .write(to: output, options: [.atomicWrite])
+            .write(to: template.output, options: [.atomicWrite])
     }
-    
-    
-    
+
 }
 
 // MARK: - add
 extension Asset {
 
-    func variableName(with name: String) -> String {
+    func format(name: String) -> String {
         var caseName = name.camelCased()
         if name.first?.isNumber ?? false {
             caseName = "_\(caseName)"
@@ -106,126 +114,24 @@ extension Asset {
         }
         return caseName
     }
-    
-    func addGIFCode(with name: String) {
-        gifCode.append("    static var \(variableName(with: name)): AssetSource.Data { AssetSource.Data(asset: \"\(name)\") }")
+
+    func add(toImage name: String) {
+        guard let text = config.template?.imageCode else {
+            return
+        }
+        imageCode.append(text
+            .replacingOccurrences(of: Placeholder.variableName, with: format(name: name))
+            .replacingOccurrences(of: Placeholder.name, with: format(name: name)))
     }
     
-    func addImageCode(with name: String) {
-        imageCode.append("    static var \(variableName(with: name)): AssetSource.Image { AssetSource.Image(asset: \"\(name)\") }")
+    func add(toGIF name: String) {
+        guard let text = config.template?.gifCode else {
+            return
+        }
+
+        gifCode.append(text
+            .replacingOccurrences(of: Placeholder.variableName, with: format(name: name))
+            .replacingOccurrences(of: Placeholder.name, with: format(name: name)))
     }
     
-}
-
-extension Asset {
-
-    func readImageFilePaths(folders: [FilePath]) throws -> [FilePath] {
-        return folders.reduce([FilePath]()) { (result, item) -> [FilePath] in
-            do {
-                let files = try item.allSubFilePaths()
-                return result + files.filter({ $0.type == .file })
-            } catch {
-                return result
-            }
-        }
-    }
-
-    func makeImages() throws {
-        var imageFolderPaths = [FilePath]()
-        if let path = config.xcassets.input.imagesPath?.path {
-            let filePath = try FilePath(path: path, type: .folder)
-            imageFolderPaths.append(filePath)
-        }
-        if let path = config.xcassets.input.gifsPath?.path {
-            let filePath = try FilePath(path: path, type: .folder)
-            imageFolderPaths.append(filePath)
-        }
-        let filePaths = try readImageFilePaths(folders: imageFolderPaths)
-        let splitImageResult = try splitImageFilePaths(filePaths)
-        if let path = config.xcassets.output.imagesXcassetsPath?.path {
-            let filePath = try FilePath(path: path, type: .folder)
-            try filePath.delete()
-            try filePath.create()
-            try makeImageAsset(splitImageResult.imageFilePaths, filePath)
-            try makePDFDataAsset(splitImageResult.pdfsFilePaths, filePath)
-        }
-        if let path = config.xcassets.output.gifsXcassetsPath?.path {
-            let filePath = try FilePath(path: path, type: .folder)
-            try filePath.delete()
-            try filePath.create()
-            try makeGIFDataAsset(splitImageResult.gifFilePaths, filePath)
-        }
-    }
-
-    /// 分离 image 与 gif 文件
-    func splitImageFilePaths(_ filePaths: [FilePath]) throws -> SplitImageResult {
-        let result = SplitImageResult()
-        for item in filePaths {
-            switch try item.data().st.mimeType {
-            case .gif:
-                result.gifFilePaths.append(item)
-            case .pdf:
-                result.pdfsFilePaths.append(item)
-            default:
-                guard let name = xcassets.createSourceNameKey(with: item.attributes.name) else {
-                    continue
-                }
-                if result.imageFilePaths[name] == nil {
-                    result.imageFilePaths[name] = [item]
-                } else {
-                    result.imageFilePaths[name]?.append(item)
-                }
-            }
-        }
-        return result
-    }
-
-    func makePDFDataAsset(_ filePaths: [FilePath], _ outputFilePath: FilePath) throws {
-        let keySet = Set(filePaths.compactMap({ xcassets.createSourceNameKey(with: $0.attributes.name) }))
-        try keySet.forEach { key in
-            let folderName = key.replacingOccurrences(of: "@2x.", with: ".")
-                .replacingOccurrences(of: "@3x.", with: ".")
-            let folder = try outputFilePath.create(folder: "\(folderName).imageset")
-            if let filePath = filePaths.first(where: { $0.attributes.name.hasPrefix("\(key).") || $0.attributes.name.hasPrefix("\(key)@") }) {
-                try filePath.copy(to: folder)
-                addImageCode(with: key)
-                try xcassets.createPDFContents(with: [filePath.attributes.name]).write(to: folder.url.appendingPathComponent("Contents.json"), options: [.atomicWrite])
-            }
-        }
-    }
-
-    func makeGIFDataAsset(_ filePaths: [FilePath], _ outputFilePath: FilePath) throws {
-        let keySet = Set(filePaths.compactMap({ xcassets.createSourceNameKey(with: $0.attributes.name) }))
-        try keySet.forEach { key in
-            let folderName = key.replacingOccurrences(of: "@2x.", with: ".")
-                .replacingOccurrences(of: "@3x.", with: ".")
-            let folder = try outputFilePath.create(folder: "\(folderName).dataset")
-            if let filePath = filePaths.first(where: { $0.attributes.name.hasPrefix("\(key).") || $0.attributes.name.hasPrefix("\(key)@") }) {
-                try filePath.copy(to: folder)
-                addGIFCode(with: folderName)
-                try xcassets.createDataContents(with: [filePath.attributes.name]).write(to: folder.url.appendingPathComponent("Contents.json"), options: [.atomicWrite])
-            }
-        }
-    }
-
-    func makeImageAsset(_ filePathMap: [String : [FilePath]], _ outputFilePath: FilePath) throws {
-        let imageFolders = try filePathMap.map { key, value -> FilePath in
-            let folder = try outputFilePath.create(folder: "\(key).imageset")
-            addImageCode(with: key)
-            value.forEach { item in
-                do {
-                    try item.copy(to: folder)
-                } catch {
-                    Warn((error as? FilePath.FilePathError)?.message ?? "")
-                }
-            }
-            return folder
-        }
-
-        try imageFolders.forEach { folder in
-            let fileNames = try folder.subFilePaths().map({ $0.attributes.name })
-            try xcassets.createImageContents(with: fileNames).write(to: folder.url.appendingPathComponent("Contents.json"), options: [.atomicWrite])
-        }
-    }
-
 }

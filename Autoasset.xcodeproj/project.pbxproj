@@ -9,20 +9,29 @@
 /* Begin PBXBuildFile section */
 		CD053A402435FA7B008A2E56 /* Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD053A3F2435FA7B008A2E56 /* Git.swift */; };
 		CD20A0F724644FF500B9CF17 /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD20A0F624644FF500B9CF17 /* Placeholder.swift */; };
-		CD20A0FC2465009D00B9CF17 /* Stem in Frameworks */ = {isa = PBXBuildFile; productRef = CD20A0FB2465009D00B9CF17 /* Stem */; };
 		CD210B63245AB199008015B3 /* Yams in Frameworks */ = {isa = PBXBuildFile; productRef = CD210B62245AB199008015B3 /* Yams */; };
+		CD3459412473D82C00B88F2F /* IconFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3459402473D82C00B88F2F /* IconFont.swift */; };
 		CD394C0D242B60CF00277F88 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD394C0C242B60CF00277F88 /* main.swift */; };
 		CD394C15242B643700277F88 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = CD394C14242B643700277F88 /* ArgumentParser */; };
+		CD4C23A82475256C00BA4D35 /* Stem in Frameworks */ = {isa = PBXBuildFile; productRef = CD4C23A72475256C00BA4D35 /* Stem */; };
 		CD544366243C769A0099C9F0 /* Autoasset.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD544365243C769A0099C9F0 /* Autoasset.swift */; };
 		CD6ED852243EF49A002ED925 /* Shell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6ED851243EF49A002ED925 /* Shell.swift */; };
 		CD6ED908244411DA002ED925 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6ED907244411DA002ED925 /* Message.swift */; };
+		CD999177247A37AD00248856 /* Template.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD999176247A37AD00248856 /* Template.swift */; };
 		CDA383612433350800D3EDD9 /* SwiftShell in Frameworks */ = {isa = PBXBuildFile; productRef = CDA383602433350800D3EDD9 /* SwiftShell */; };
 		CDA383632433398D00D3EDD9 /* Podspec.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA383622433398D00D3EDD9 /* Podspec.swift */; };
 		CDA38365243342D500D3EDD9 /* RunError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA38364243342D500D3EDD9 /* RunError.swift */; };
-		CDA3836A24334DB500D3EDD9 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA3836924334DB500D3EDD9 /* Config.swift */; };
 		CDA3836E243351EC00D3EDD9 /* Asset.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA3836D243351EC00D3EDD9 /* Asset.swift */; };
 		CDA9F0AC242C9A8700255373 /* Xcassets.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA9F0AB242C9A8700255373 /* Xcassets.swift */; };
 		CDA9F109242DE44700255373 /* Warn.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA9F108242DE44700255373 /* Warn.swift */; };
+		CDC3AEAA247B98280012F630 /* TemplateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC3AEA9247B98280012F630 /* TemplateProtocol.swift */; };
+		CDC3AEAC247B98AF0012F630 /* TemplateModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC3AEAB247B98AF0012F630 /* TemplateModel.swift */; };
+		CDC3AEAE247B9A990012F630 /* ModeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC3AEAD247B9A990012F630 /* ModeModel.swift */; };
+		CDC3AEB0247B9E410012F630 /* GitModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC3AEAF247B9E410012F630 /* GitModel.swift */; };
+		CDC3AEB2247B9E830012F630 /* PodspecModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC3AEB1247B9E830012F630 /* PodspecModel.swift */; };
+		CDC3AEB4247BA01A0012F630 /* AssetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC3AEB3247BA01A0012F630 /* AssetModel.swift */; };
+		CDC3AEB6247BA1D70012F630 /* MessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC3AEB5247BA1D70012F630 /* MessageModel.swift */; };
+		CDC3AEB7247BB0A90012F630 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA3836924334DB500D3EDD9 /* Config.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -41,19 +50,28 @@
 		CD053A3F2435FA7B008A2E56 /* Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Git.swift; sourceTree = "<group>"; };
 		CD20A0F624644FF500B9CF17 /* Placeholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Placeholder.swift; sourceTree = "<group>"; };
 		CD20A1152466807C00B9CF17 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		CD3459402473D82C00B88F2F /* IconFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconFont.swift; sourceTree = "<group>"; };
 		CD394C09242B60CF00277F88 /* Autoasset */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Autoasset; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD394C0C242B60CF00277F88 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		CD544365243C769A0099C9F0 /* Autoasset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Autoasset.swift; sourceTree = "<group>"; };
 		CD544367243DD8B70099C9F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CD6ED851243EF49A002ED925 /* Shell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shell.swift; sourceTree = "<group>"; };
 		CD6ED907244411DA002ED925 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		CD999176247A37AD00248856 /* Template.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Template.swift; sourceTree = "<group>"; };
+		CD999178247A388500248856 /* asset.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = asset.yml; sourceTree = "<group>"; };
 		CDA383622433398D00D3EDD9 /* Podspec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Podspec.swift; sourceTree = "<group>"; };
 		CDA38364243342D500D3EDD9 /* RunError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunError.swift; sourceTree = "<group>"; };
 		CDA3836924334DB500D3EDD9 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		CDA3836D243351EC00D3EDD9 /* Asset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Asset.swift; sourceTree = "<group>"; };
 		CDA9F0AB242C9A8700255373 /* Xcassets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Xcassets.swift; sourceTree = "<group>"; };
-		CDA9F0D9242D950800255373 /* image.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = image.xcassets; sourceTree = "<group>"; };
 		CDA9F108242DE44700255373 /* Warn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Warn.swift; sourceTree = "<group>"; };
+		CDC3AEA9247B98280012F630 /* TemplateProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateProtocol.swift; sourceTree = "<group>"; };
+		CDC3AEAB247B98AF0012F630 /* TemplateModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateModel.swift; sourceTree = "<group>"; };
+		CDC3AEAD247B9A990012F630 /* ModeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeModel.swift; sourceTree = "<group>"; };
+		CDC3AEAF247B9E410012F630 /* GitModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitModel.swift; sourceTree = "<group>"; };
+		CDC3AEB1247B9E830012F630 /* PodspecModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodspecModel.swift; sourceTree = "<group>"; };
+		CDC3AEB3247BA01A0012F630 /* AssetModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetModel.swift; sourceTree = "<group>"; };
+		CDC3AEB5247BA1D70012F630 /* MessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,7 +80,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD394C15242B643700277F88 /* ArgumentParser in Frameworks */,
-				CD20A0FC2465009D00B9CF17 /* Stem in Frameworks */,
+				CD4C23A82475256C00BA4D35 /* Stem in Frameworks */,
 				CD210B63245AB199008015B3 /* Yams in Frameworks */,
 				CDA383612433350800D3EDD9 /* SwiftShell in Frameworks */,
 			);
@@ -99,13 +117,13 @@
 		CD394C0B242B60CF00277F88 /* Autoasset */ = {
 			isa = PBXGroup;
 			children = (
-				CDA3836924334DB500D3EDD9 /* Config.swift */,
+				CDC3AEA8247B98130012F630 /* Config */,
+				CD578533247A3EA100366DFB /* Template */,
 				CDA383622433398D00D3EDD9 /* Podspec.swift */,
 				CDA9F0AB242C9A8700255373 /* Xcassets.swift */,
 				CDA3836D243351EC00D3EDD9 /* Asset.swift */,
 				CD394C0C242B60CF00277F88 /* main.swift */,
 				CDA9F108242DE44700255373 /* Warn.swift */,
-				CDA9F0D9242D950800255373 /* image.xcassets */,
 				CDA38364243342D500D3EDD9 /* RunError.swift */,
 				CD053A3F2435FA7B008A2E56 /* Git.swift */,
 				CD6ED851243EF49A002ED925 /* Shell.swift */,
@@ -113,8 +131,33 @@
 				CD544367243DD8B70099C9F0 /* Info.plist */,
 				CD6ED907244411DA002ED925 /* Message.swift */,
 				CD20A0F624644FF500B9CF17 /* Placeholder.swift */,
+				CD3459402473D82C00B88F2F /* IconFont.swift */,
 			);
 			path = Autoasset;
+			sourceTree = "<group>";
+		};
+		CD578533247A3EA100366DFB /* Template */ = {
+			isa = PBXGroup;
+			children = (
+				CD999176247A37AD00248856 /* Template.swift */,
+				CD999178247A388500248856 /* asset.yml */,
+			);
+			path = Template;
+			sourceTree = "<group>";
+		};
+		CDC3AEA8247B98130012F630 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				CDA3836924334DB500D3EDD9 /* Config.swift */,
+				CDC3AEA9247B98280012F630 /* TemplateProtocol.swift */,
+				CDC3AEAB247B98AF0012F630 /* TemplateModel.swift */,
+				CDC3AEAD247B9A990012F630 /* ModeModel.swift */,
+				CDC3AEAF247B9E410012F630 /* GitModel.swift */,
+				CDC3AEB1247B9E830012F630 /* PodspecModel.swift */,
+				CDC3AEB3247BA01A0012F630 /* AssetModel.swift */,
+				CDC3AEB5247BA1D70012F630 /* MessageModel.swift */,
+			);
+			path = Config;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,7 +180,7 @@
 				CD394C14242B643700277F88 /* ArgumentParser */,
 				CDA383602433350800D3EDD9 /* SwiftShell */,
 				CD210B62245AB199008015B3 /* Yams */,
-				CD20A0FB2465009D00B9CF17 /* Stem */,
+				CD4C23A72475256C00BA4D35 /* Stem */,
 			);
 			productName = Autoasset;
 			productReference = CD394C09242B60CF00277F88 /* Autoasset */;
@@ -171,7 +214,7 @@
 				CD394C13242B643700277F88 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
 				CDA3835F2433350800D3EDD9 /* XCRemoteSwiftPackageReference "SwiftShell" */,
 				CD210B61245AB199008015B3 /* XCRemoteSwiftPackageReference "Yams" */,
-				CD20A0FA2465009D00B9CF17 /* XCRemoteSwiftPackageReference "Stem" */,
+				CD4C23A62475256C00BA4D35 /* XCRemoteSwiftPackageReference "Stem" */,
 			);
 			productRefGroup = CD394C0A242B60CF00277F88 /* Products */;
 			projectDirPath = "";
@@ -187,15 +230,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CDC3AEAA247B98280012F630 /* TemplateProtocol.swift in Sources */,
 				CDA9F109242DE44700255373 /* Warn.swift in Sources */,
 				CDA38365243342D500D3EDD9 /* RunError.swift in Sources */,
-				CDA3836A24334DB500D3EDD9 /* Config.swift in Sources */,
+				CD3459412473D82C00B88F2F /* IconFont.swift in Sources */,
+				CDC3AEB0247B9E410012F630 /* GitModel.swift in Sources */,
 				CDA383632433398D00D3EDD9 /* Podspec.swift in Sources */,
+				CD999177247A37AD00248856 /* Template.swift in Sources */,
+				CDC3AEB4247BA01A0012F630 /* AssetModel.swift in Sources */,
 				CD394C0D242B60CF00277F88 /* main.swift in Sources */,
 				CDA3836E243351EC00D3EDD9 /* Asset.swift in Sources */,
 				CD6ED852243EF49A002ED925 /* Shell.swift in Sources */,
 				CDA9F0AC242C9A8700255373 /* Xcassets.swift in Sources */,
+				CDC3AEAC247B98AF0012F630 /* TemplateModel.swift in Sources */,
 				CD6ED908244411DA002ED925 /* Message.swift in Sources */,
+				CDC3AEB2247B9E830012F630 /* PodspecModel.swift in Sources */,
+				CDC3AEB6247BA1D70012F630 /* MessageModel.swift in Sources */,
+				CDC3AEAE247B9A990012F630 /* ModeModel.swift in Sources */,
+				CDC3AEB7247BB0A90012F630 /* Config.swift in Sources */,
 				CD053A402435FA7B008A2E56 /* Git.swift in Sources */,
 				CD544366243C769A0099C9F0 /* Autoasset.swift in Sources */,
 				CD20A0F724644FF500B9CF17 /* Placeholder.swift in Sources */,
@@ -376,14 +428,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		CD20A0FA2465009D00B9CF17 /* XCRemoteSwiftPackageReference "Stem" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/linhay/Stem.git";
-			requirement = {
-				branch = develop;
-				kind = branch;
-			};
-		};
 		CD210B61245AB199008015B3 /* XCRemoteSwiftPackageReference "Yams" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/jpsim/Yams.git";
@@ -400,6 +444,14 @@
 				minimumVersion = 0.0.5;
 			};
 		};
+		CD4C23A62475256C00BA4D35 /* XCRemoteSwiftPackageReference "Stem" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/linhay/Stem.git";
+			requirement = {
+				branch = develop;
+				kind = branch;
+			};
+		};
 		CDA3835F2433350800D3EDD9 /* XCRemoteSwiftPackageReference "SwiftShell" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kareman/SwiftShell.git";
@@ -411,11 +463,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		CD20A0FB2465009D00B9CF17 /* Stem */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CD20A0FA2465009D00B9CF17 /* XCRemoteSwiftPackageReference "Stem" */;
-			productName = Stem;
-		};
 		CD210B62245AB199008015B3 /* Yams */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CD210B61245AB199008015B3 /* XCRemoteSwiftPackageReference "Yams" */;
@@ -425,6 +472,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CD394C13242B643700277F88 /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
 			productName = ArgumentParser;
+		};
+		CD4C23A72475256C00BA4D35 /* Stem */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CD4C23A62475256C00BA4D35 /* XCRemoteSwiftPackageReference "Stem" */;
+			productName = Stem;
 		};
 		CDA383602433350800D3EDD9 /* SwiftShell */ = {
 			isa = XCSwiftPackageProductDependency;
