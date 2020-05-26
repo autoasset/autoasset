@@ -43,7 +43,7 @@ class ModeModel {
     }
 
     init(json: JSON) {
-        type = Style(rawValue: json["mode"].stringValue) ?? .normal
+        type = Style(rawValue: json["type"].stringValue) ?? .normal
         variables = Variables(json: json["variables"])
     }
 

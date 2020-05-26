@@ -22,6 +22,8 @@ struct Main: ParsableCommand {
         } catch {
             if let error = error as? RunError {
                 RunPrint(error.message)
+            } else if let error = error as? FilePath.Error {
+                RunPrint(error.message)
             } else {
                 RunPrint(error.localizedDescription)
             }
@@ -33,23 +35,4 @@ extension Main {
 
 }
 
-extension CharacterSet {
-    func allUnicodeScalars() -> [UnicodeScalar] {
-        var result: [UnicodeScalar] = []
-        for plane in Unicode.UTF8.CodeUnit.min...16 where self.hasMember(inPlane: plane) {
-            for unicode in Unicode.UTF32.CodeUnit(plane) << 16 ..< Unicode.UTF32.CodeUnit(plane + 1) << 16 {
-                if let uniChar = UnicodeScalar(unicode), self.contains(uniChar) {
-                    result.append(uniChar)
-                }
-            }
-        }
-        return result
-    }
-}
-
-//Main.main()
-
-
-
-let icon = IconFont(from: URL(fileURLWithPath: "/Users/linhey/Downloads/font_j2y0smuu1vs/iconfont.ttf"))!
-RunPrint(icon.font.st.glyphsForCharacters.description)
+Main.main()

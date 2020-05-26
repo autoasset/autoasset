@@ -149,6 +149,7 @@ extension Xcassets {
     }
 
     func runImage() throws -> [String] {
+        try? FilePath(url: config.output, type: .folder).delete()
         let sources = try readImageFiles()
         let groups = try groupImageFiles(from: sources)
         var names = [String]()
@@ -202,22 +203,21 @@ extension Xcassets {
         guard files.isEmpty == false else {
             return nil
         }
+        let files = removeDuplicate(in: files)
 
         let folder = try FilePath(url: config.output, type: .folder)
-        try folder.create()
-        try folder.create(folder: "\(name).imageset")
-        let files = removeDuplicate(in: files)
+        let imageset = try folder.create(folder: "\(name).imageset")
 
         for file in files {
             do {
-                try file.copy(to: folder)
+                try file.copy(to: imageset)
             } catch {
-                Warn((error as? FilePath.FilePathError)?.message ?? "")
+                Warn((error as? FilePath.Error)?.message ?? "")
             }
         }
 
         let contents = try createImageContents(name: name, files: files)
-        try folder.create(file: "Contents.json", data: contents)
+        try imageset.create(file: "Contents.json", data: contents)
 
         return name
     }

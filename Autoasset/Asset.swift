@@ -88,9 +88,9 @@ class Asset {
     
     func output() throws {
         guard let template = config.template else {
-            throw RunError(message: "Config: asset/output_path 不能为空")
+            RunPrint("Config: asset/output 不能为空")
+            return
         }
-        
         try template.text
             .replacingOccurrences(of: Placeholder.images, with: imageCode.sorted().joined(separator: "\n"))
             .replacingOccurrences(of: Placeholder.gifs, with: gifCode.sorted().joined(separator: "\n"))
