@@ -71,6 +71,9 @@ class Asset {
     }
 
     func run() throws {
+        let xcassets = [config.images, config.gifs, config.datas, config.colors].compactMap({ $0 })
+        Xcassets.deleteOutput(folders: xcassets)
+        
         if let xcasset = config.images {
             try Xcassets(config: xcasset, use: .image).run().forEach { name in
                 self.add(toImage: name)

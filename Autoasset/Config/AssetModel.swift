@@ -85,17 +85,17 @@ struct AssetModel {
 
     var images: Xcasset?
     var gifs: Xcasset?
+    var datas: Xcasset?
     var colors: Xcasset?
     var fonts: Resource?
-    let isUseInPod: Bool
 
     init(json: JSON) {
         images = Xcasset(json: json["images"])
+        datas = Xcasset(json: json["datas"])
         gifs = Xcasset(json: json["gifs"])
         colors = Xcasset(json: json["colors"])
         fonts = Resource(json: json["fonts"])
         template = Template(json: json["template"], default: ASTemplate.asset)
-        isUseInPod = json["podspec"].exists()
     }
 
 }

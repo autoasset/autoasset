@@ -38,13 +38,16 @@ class Xcassets {
         })
     }
 
+    static func deleteOutput(folders: [AssetModel.Xcasset]) {
+        folders.forEach({ try? FilePath(url: $0.output, type: .folder).delete() })
+    }
+
     func run() throws -> [String] {
         switch type {
         case .image:
            return try runImage()
         case .data:
-            // try runData()
-            break
+            return try runData()
         case .color:
             // try runColor()
             break
@@ -75,6 +78,30 @@ extension Xcassets {
             }
             return files.first
         }
+    }
+
+    func read(types: [Data.MimeType]) throws -> [FilePath] {
+        var files = [FilePath]()
+
+        for input in config.inputs {
+            let input = try FilePath(url: input)
+            let subFiles = try input.allSubFilePaths().filter { types.contains(try $0.data().st.mimeType) }
+            files.append(contentsOf: subFiles)
+        }
+
+        return files
+    }
+
+    func read(without types: [Data.MimeType]) throws -> [FilePath] {
+        var files = [FilePath]()
+
+        for input in config.inputs {
+            let input = try FilePath(url: input)
+            let subFiles = try input.allSubFilePaths().filter { types.contains(try $0.data().st.mimeType) == false }
+            files.append(contentsOf: subFiles)
+        }
+
+        return files
     }
 
 }
@@ -149,35 +176,11 @@ extension Xcassets {
     }
 
     func runImage() throws -> [String] {
-        try? FilePath(url: config.output, type: .folder).delete()
-        let sources = try readImageFiles()
+        let sources = try read(types: [.jpeg, .png, .pdf])
         let groups = try groupImageFiles(from: sources)
-        var names = [String]()
-        for (name, files) in groups {
-            if let name = try createImageXcasset(name: name, files: files) {
-                names.append(name)
-            }
+        return try groups.compactMap { (name, files) -> String? in
+            return try createImageXcasset(name: name, files: files)
         }
-        return names
-    }
-
-    func readImageFiles() throws -> [FilePath] {
-        var files = [FilePath]()
-
-        for input in config.inputs {
-            let input = try FilePath(url: input)
-            let subFiles = try input.allSubFilePaths().filter { file -> Bool in
-                switch try file.data().st.mimeType {
-                case .jpeg, .png, .pdf:
-                    return true
-                default:
-                    return false
-                }
-            }
-            files.append(contentsOf: subFiles)
-        }
-
-        return files
     }
 
     func groupImageFiles(from filePaths: [FilePath]) throws -> [String: [FilePath]] {
@@ -258,16 +261,51 @@ extension Xcassets {
             return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
         }
 
-        throw RunError(message: "xcassets: 文件格式匹配错误 现支持 png | jpg | pdf,\n path:\(config.inputs)")
+        throw RunError(message: "xcassets: 文件格式匹配错误 现支持 png | jpg | pdf, \n path:\(config.inputs)")
     }
 
 }
 
 extension Xcassets {
 
-    func createDataContents(with fileNames: [String]) throws -> Data {
+    func runData() throws -> [String] {
+        let sources = try read(without: [.jpeg, .png, .pdf])
+        let groups  = try groupDataFiles(from: sources)
+        return try groups.compactMap { (name, file) -> String? in
+            return try createDataXcasset(name: name, file: file)
+        }
+    }
+
+    func groupDataFiles(from filePaths: [FilePath]) throws -> [String: FilePath] {
+        var groups = [String: FilePath]()
+
+        for file in filePaths {
+            let name = file.attributes.name
+                .split(separator: "@").first?
+                .split(separator: ".").first?.description ?? file.attributes.name
+
+            if let oldFile = groups[name] {
+                Warn.duplicateFiles([oldFile, file])
+            } else {
+                groups[name] = file
+            }
+        }
+
+        return groups
+    }
+
+    func createDataXcasset(name: String, file: FilePath) throws -> String? {
+        let folder = try FilePath(url: config.output, type: .folder)
+        let imageset = try folder.create(folder: "\(name).dataset")
+        try file.copy(to: imageset)
+        let contents = try createDataContents(name: name, file: file)
+        try imageset.create(file: "Contents.json", data: contents)
+        return name
+    }
+
+    func createDataContents(name: String, file: FilePath) throws -> Data {
         var contents: [String: Any] = ["info": ["version": 1, "author": "xcode"]]
-        contents["data"] = fileNames.map { ["idiom": "universal", "filename": $0] }
+        contents["data"] = [["idiom": "universal", "filename": file.attributes.name]]
         return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
     }
 
