@@ -56,6 +56,14 @@ struct AssetModel {
 
     }
 
+    class Trash {
+        let inputs: [URL]
+
+        init?(json: JSON) {
+            inputs = json["inputs"].arrayValue.compactMap({ $0.fileURL })
+        }
+    }
+    
     class Resource {
         let inputs: [URL]
         let output: URL
@@ -67,7 +75,6 @@ struct AssetModel {
             }
             self.output = output
         }
-
     }
 
     class Xcasset: Resource {
@@ -88,6 +95,7 @@ struct AssetModel {
     var datas: Xcasset?
     var colors: Xcasset?
     var fonts: Resource?
+    var trash: Trash?
 
     init(json: JSON) {
         images = Xcasset(json: json["images"])
@@ -95,6 +103,7 @@ struct AssetModel {
         gifs = Xcasset(json: json["gifs"])
         colors = Xcasset(json: json["colors"])
         fonts = Resource(json: json["fonts"])
+        trash = Trash(json: json["trash"])
         template = Template(json: json["template"], default: ASTemplate.asset)
     }
 

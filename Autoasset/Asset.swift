@@ -71,9 +71,13 @@ class Asset {
     }
 
     func run() throws {
+        /// 文件清理
         let xcassets = [config.images, config.gifs, config.datas, config.colors].compactMap({ $0 })
         Xcassets.deleteOutput(folders: xcassets)
-        
+        RunPrint(config.trash?.inputs)
+        config.trash?.inputs.forEach({ try? FilePath(url: $0, type: .folder).delete() })
+
+        /// 文件创建
         if let xcasset = config.images {
             try Xcassets(config: xcasset, use: .image).run().forEach { name in
                 self.add(toImage: name)
