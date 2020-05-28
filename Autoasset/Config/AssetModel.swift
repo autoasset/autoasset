@@ -61,7 +61,7 @@ struct AssetModel {
 
         init?(json: JSON) {
             let inputs = json["inputs"].arrayValue.compactMap({ $0.fileURL })
-            guard inputs.isEmpty else {
+            guard inputs.isEmpty == false else {
                 return nil
             }
             self.inputs = inputs
@@ -112,7 +112,7 @@ struct AssetModel {
         gifs = Xcasset(json: json["gifs"])
         colors = Xcasset(json: json["colors"])
         fonts = Resource(json: json["fonts"])
-        clear = Inputs(json: json["trash"])
+        clear = Inputs(json: json["clear"])
         template = Template(json: json["template"], default: ASTemplate.asset)
     }
 
