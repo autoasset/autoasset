@@ -74,7 +74,7 @@ class Asset {
         /// 文件清理
         let xcassets = [config.images, config.gifs, config.datas, config.colors].compactMap({ $0 })
         Xcassets.deleteOutput(folders: xcassets)
-        config.trash?.inputs.forEach({ try? FilePath(url: $0, type: .folder).delete() })
+        config.clear?.inputs.forEach({ try? FilePath(url: $0, type: .folder).delete() })
 
         /// 文件创建
         if let xcasset = config.images {

@@ -56,33 +56,42 @@ struct AssetModel {
 
     }
 
-    class Trash {
+    class Inputs {
         let inputs: [URL]
 
         init?(json: JSON) {
+            let inputs = json["inputs"].arrayValue.compactMap({ $0.fileURL })
+            guard inputs.isEmpty else {
+                return nil
+            }
+            self.inputs = inputs
+        }
+
+        init(inputs json: JSON) {
             inputs = json["inputs"].arrayValue.compactMap({ $0.fileURL })
         }
     }
-    
-    class Resource {
-        let inputs: [URL]
+
+    class Resource: Inputs {
+
         let output: URL
 
-        init?(json: JSON) {
-            inputs = json["inputs"].arrayValue.compactMap({ $0.fileURL })
-            guard inputs.isEmpty == false, let output = json["output"].fileURL else {
+        override init?(json: JSON) {
+            guard let output = json["output"].fileURL else {
                 return nil
             }
             self.output = output
+
+            super.init(json: json)
         }
     }
 
     class Xcasset: Resource {
 
-        let contentsPath: URL?
+        let contents: Inputs
 
         override init?(json: JSON) {
-            contentsPath = json["contents_path"].fileURL
+            self.contents = Inputs(inputs: json["contents"])
             super.init(json: json)
         }
 
@@ -95,7 +104,7 @@ struct AssetModel {
     var datas: Xcasset?
     var colors: Xcasset?
     var fonts: Resource?
-    var trash: Trash?
+    var clear: Inputs?
 
     init(json: JSON) {
         images = Xcasset(json: json["images"])
@@ -103,7 +112,7 @@ struct AssetModel {
         gifs = Xcasset(json: json["gifs"])
         colors = Xcasset(json: json["colors"])
         fonts = Resource(json: json["fonts"])
-        trash = Trash(json: json["trash"])
+        clear = Inputs(json: json["trash"])
         template = Template(json: json["template"], default: ASTemplate.asset)
     }
 
