@@ -57,7 +57,9 @@ extension Xcassets {
 
     func read(from inputs: AssetModel.Inputs, predicate: ((FilePath) throws -> Bool)? = nil) throws -> [FilePath] {
         return try inputs.inputs.compactMap({ try FilePath(url: $0, type: .folder) }).reduce([FilePath](), { (result, file) -> [FilePath] in
-            try file.allSubFilePaths(predicate: predicate)
+            var result = result
+            result.append(contentsOf: try file.allSubFilePaths(predicate: predicate))
+            return result
         })
     }
 
@@ -172,6 +174,7 @@ extension Xcassets {
         let types: [Data.MimeType] = [.png, .jpeg, .pdf]
         let sources = try read(from: config, predicate: { try types.contains($0.data().st.mimeType) })
         let groups = try group(from: sources, namePredicate: { file -> String in
+
             return file.attributes.name
                 .components(separatedBy: "_dark@").first?
                 .split(separator: "@").first?

@@ -127,7 +127,7 @@ extension Asset {
         }
         imageCode.append(text
             .replacingOccurrences(of: Placeholder.variableName, with: format(name: name))
-            .replacingOccurrences(of: Placeholder.name, with: format(name: name)))
+            .replacingOccurrences(of: Placeholder.name, with: name))
     }
     
     func add(toGIF name: String) {
@@ -137,7 +137,7 @@ extension Asset {
 
         gifCode.append(text
             .replacingOccurrences(of: Placeholder.variableName, with: format(name: name))
-            .replacingOccurrences(of: Placeholder.name, with: format(name: name)))
+            .replacingOccurrences(of: Placeholder.name, with: name))
     }
     
 }
