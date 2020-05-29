@@ -45,10 +45,11 @@ class Autoasset {
             Warn.test()
             try Warn.output(config: config.warn)
         case .test_message:
-            try Message(config: config.message)?.output(version: "1")
+            try Message(config: config.message)?.output(version: config.mode.variables.version)
         case .test_podspec:
             let podspec = Podspec(config: config.podspec)
-            try podspec?.output(version: "1")
+            try podspec?.output(version: config.mode.variables.version)
+            try podspec?.lint()
         case .local:
             try Asset(config: config.asset).run()
             try Warn.output(config: config.warn)
@@ -65,8 +66,8 @@ class Autoasset {
             }
 
             try Asset(config: config.asset).run()
-            let lastVersion = try? git.tag.lastVersion() ?? "0"
-            let version = try git.tag.nextVersion(with: lastVersion ?? "0")
+            let lastVersion = try? git.tag.lastVersion() ?? config.mode.variables.version
+            let version = try git.tag.nextVersion(with: lastVersion ?? config.mode.variables.version)
             try podspec?.output(version: version)
             try podspec?.lint()
 

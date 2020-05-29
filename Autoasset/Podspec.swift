@@ -26,7 +26,7 @@ class Podspec {
             name = list[0]
             type = list[1].replacingOccurrences(of: "- Type: ", with: "")
             url  = list[2].replacingOccurrences(of: "- URL:  ", with: "")
-            path = list[1].replacingOccurrences(of: "- Path: ", with: "")
+            path = list[3].replacingOccurrences(of: "- Path: ", with: "")
         }
 
     }
@@ -81,7 +81,7 @@ extension Podspec {
     }
 
     func lint() throws {
-        try shell("pod lib lint \(config.output)" + allowWarningsCommond() + noCleanCommond(), useAssert: false)
+        try shell("pod lib lint \(config.output.path)" + allowWarningsCommond() + noCleanCommond(), useAssert: false)
     }
 
     func push() throws {

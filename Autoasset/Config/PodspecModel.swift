@@ -30,12 +30,20 @@ struct PodspecModel: TemplateModelProtocol {
 
     var templateModel: TemplateModel
     let repo: Repo?
+    let type: Mode
 
     init?(json: JSON) {
-        guard let templateModel = TemplateModel(json: json) else {
+        guard let templateModel = TemplateModel(json: json["template"]) else {
             return nil
         }
         self.templateModel = templateModel
-        repo = Repo(json: json["repo"])
+        type = Mode(rawValue: json["type"].stringValue) ?? .tag
+
+        switch type {
+        case .branch:
+            repo = nil
+        case .tag:
+            repo = Repo(json: json["repo"])
+        }
     }
 }

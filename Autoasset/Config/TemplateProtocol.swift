@@ -21,7 +21,8 @@ extension TemplateInputProtocol {
             return text
         }
 
-        guard let path = json["path"].url?.path, let text = try? String(contentsOfFile: path, encoding: .utf8) else {
+        guard let path = json["input"].url?.path ?? json["path"].url?.path
+            , let text = try? String(contentsOfFile: path, encoding: .utf8) else {
             return nil
         }
 

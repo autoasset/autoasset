@@ -16,7 +16,7 @@ struct RunError: Error {
 struct RunPrint {
 
     @discardableResult
-    init(_ message: Any, function: String = #function, line: Int = #line, file: String = #file) {
+    init(_ message: Any, function: StaticString = #function, line: UInt = #line, file: StaticString = #file) {
         print("\(file) - \(line) - \(function): ", message)
     }
 }
