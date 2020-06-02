@@ -55,10 +55,14 @@ class Xcassets {
 
 extension Xcassets {
 
-    func read(from inputs: AssetModel.Inputs, predicate: ((FilePath) throws -> Bool)? = nil) throws -> [FilePath] {
+    func read(from inputs: Inputs, predicate: ((FilePath) throws -> Bool)? = nil) throws -> [FilePath] {
         return try inputs.inputs.compactMap({ try FilePath(url: $0, type: .folder) }).reduce([FilePath](), { (result, file) -> [FilePath] in
             var result = result
-            result.append(contentsOf: try file.allSubFilePaths(predicate: predicate))
+            if let predicate = predicate {
+                result.append(contentsOf: try file.allSubFilePaths(predicates: [.custom(predicate), .skipsHiddenFiles]))
+            } else {
+                result.append(contentsOf: try file.allSubFilePaths())
+            }
             return result
         })
     }

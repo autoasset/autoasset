@@ -15,17 +15,30 @@ class Git {
     let tag: Tag
     let branch: Branch
     let remote: Remote
+    let dirPath: FilePath
 
     init(config: GitModel) throws {
         self.config = config
         self.tag = Tag()
         self.branch = Branch()
         self.remote = Remote()
-        if let push = config.pushURL, let pushURL = URL(string: push), let url = try remote.url() {
-            guard url.host == pushURL.host, url.path == pushURL.path else {
-                throw RunError(message: "config: push_url与git remote不一致, \n push_url: \(push) \n remote_url: \(url)")
+        var filePath = try FilePath(path: "./")
+
+        while true {
+            if try filePath
+                .subFilePaths(predicates: [.custom({ $0.type == .folder })])
+                .contains(where: { $0.type == .folder && $0.attributes.name == ".git" }) {
+                break
             }
+
+            guard let parentFolder = filePath.parentFolder() else {
+                break
+            }
+
+            filePath = parentFolder
         }
+
+        dirPath = filePath
     }
 
     class Remote {
@@ -99,12 +112,8 @@ class Git {
             return (version + 1).string
         }
 
-        func push(url: String?, version: String) throws {
-            if let url = url {
-                try shell("git push -u \(url) \(version)")
-            } else {
-                try shell("git push -u origin \(version)")
-            }
+        func push(version: String) throws {
+            try shell("git push -u origin \(version)")
         }
         
         func remove(version: String) throws {
@@ -122,7 +131,7 @@ class Git {
     }
 
     func addAllFile() throws {
-        try shell("git add \(config.projectPath)")
+        try shell("git add \(dirPath)")
     }
 
     func commit(message: String) throws {
@@ -138,11 +147,7 @@ class Git {
     }
 
     func push() throws {
-        if let url = config.pushURL {
-            try shell("git push \(url)")
-        } else {
-            try shell("git push")
-        }
+        try shell("git push")
     }
 
 }

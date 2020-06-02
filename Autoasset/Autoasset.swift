@@ -57,7 +57,7 @@ class Autoasset {
             let podspec = Podspec(config: config.podspec)
             let git = try Git(config: config.git)
 
-            config.git.branchs.forEach { branch in
+            config.git.inputs.forEach { branch in
                 do {
                     try git.branch.merge(with: branch)
                 } catch {
@@ -81,7 +81,7 @@ class Autoasset {
 
             try? git.tag.remove(version: version)
             try? git.tag.add(version: version, message: message)
-            try? git.tag.push(url: config.git.pushURL, version: version)
+            try? git.tag.push(version: version)
 
             try podspec?.push()
 

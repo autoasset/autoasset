@@ -14,6 +14,7 @@
 		CD394C0D242B60CF00277F88 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD394C0C242B60CF00277F88 /* main.swift */; };
 		CD394C15242B643700277F88 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = CD394C14242B643700277F88 /* ArgumentParser */; };
 		CD4C23A82475256C00BA4D35 /* Stem in Frameworks */ = {isa = PBXBuildFile; productRef = CD4C23A72475256C00BA4D35 /* Stem */; };
+		CD52EEB52480FDA70038666B /* Inputs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD52EEB42480FDA70038666B /* Inputs.swift */; };
 		CD544366243C769A0099C9F0 /* Autoasset.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD544365243C769A0099C9F0 /* Autoasset.swift */; };
 		CD6ED852243EF49A002ED925 /* Shell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6ED851243EF49A002ED925 /* Shell.swift */; };
 		CD6ED908244411DA002ED925 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6ED907244411DA002ED925 /* Message.swift */; };
@@ -53,6 +54,7 @@
 		CD3459402473D82C00B88F2F /* IconFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconFont.swift; sourceTree = "<group>"; };
 		CD394C09242B60CF00277F88 /* Autoasset */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Autoasset; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD394C0C242B60CF00277F88 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		CD52EEB42480FDA70038666B /* Inputs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Inputs.swift; sourceTree = "<group>"; };
 		CD544365243C769A0099C9F0 /* Autoasset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Autoasset.swift; sourceTree = "<group>"; };
 		CD544367243DD8B70099C9F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CD6ED851243EF49A002ED925 /* Shell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shell.swift; sourceTree = "<group>"; };
@@ -116,36 +118,29 @@
 		CD394C0B242B60CF00277F88 /* Autoasset */ = {
 			isa = PBXGroup;
 			children = (
-				CDC3AEA8247B98130012F630 /* Config */,
-				CD578533247A3EA100366DFB /* Template */,
-				CDA383622433398D00D3EDD9 /* Podspec.swift */,
-				CDA9F0AB242C9A8700255373 /* Xcassets.swift */,
-				CDA3836D243351EC00D3EDD9 /* Asset.swift */,
+				CDF2DBC32485177400A91AF9 /* libs */,
+				CDF2DBC22485171D00A91AF9 /* scripts */,
+				CDC3AEA8247B98130012F630 /* config */,
+				CD578533247A3EA100366DFB /* template */,
 				CD394C0C242B60CF00277F88 /* main.swift */,
-				CDA9F108242DE44700255373 /* Warn.swift */,
-				CDA38364243342D500D3EDD9 /* RunError.swift */,
-				CD053A3F2435FA7B008A2E56 /* Git.swift */,
-				CD6ED851243EF49A002ED925 /* Shell.swift */,
 				CD544365243C769A0099C9F0 /* Autoasset.swift */,
 				CD544367243DD8B70099C9F0 /* Info.plist */,
-				CD6ED907244411DA002ED925 /* Message.swift */,
-				CD20A0F624644FF500B9CF17 /* Placeholder.swift */,
-				CD3459402473D82C00B88F2F /* IconFont.swift */,
 			);
 			path = Autoasset;
 			sourceTree = "<group>";
 		};
-		CD578533247A3EA100366DFB /* Template */ = {
+		CD578533247A3EA100366DFB /* template */ = {
 			isa = PBXGroup;
 			children = (
 				CD999176247A37AD00248856 /* Template.swift */,
 			);
-			path = Template;
+			path = template;
 			sourceTree = "<group>";
 		};
-		CDC3AEA8247B98130012F630 /* Config */ = {
+		CDC3AEA8247B98130012F630 /* config */ = {
 			isa = PBXGroup;
 			children = (
+				CD20A0F624644FF500B9CF17 /* Placeholder.swift */,
 				CDA3836924334DB500D3EDD9 /* Config.swift */,
 				CDC3AEA9247B98280012F630 /* TemplateProtocol.swift */,
 				CDC3AEAB247B98AF0012F630 /* TemplateModel.swift */,
@@ -154,8 +149,32 @@
 				CDC3AEB1247B9E830012F630 /* PodspecModel.swift */,
 				CDC3AEB3247BA01A0012F630 /* AssetModel.swift */,
 				CDC3AEB5247BA1D70012F630 /* MessageModel.swift */,
+				CD52EEB42480FDA70038666B /* Inputs.swift */,
 			);
-			path = Config;
+			path = config;
+			sourceTree = "<group>";
+		};
+		CDF2DBC22485171D00A91AF9 /* scripts */ = {
+			isa = PBXGroup;
+			children = (
+				CDA383622433398D00D3EDD9 /* Podspec.swift */,
+				CDA9F0AB242C9A8700255373 /* Xcassets.swift */,
+				CDA3836D243351EC00D3EDD9 /* Asset.swift */,
+				CD053A3F2435FA7B008A2E56 /* Git.swift */,
+				CD6ED907244411DA002ED925 /* Message.swift */,
+				CD3459402473D82C00B88F2F /* IconFont.swift */,
+			);
+			path = scripts;
+			sourceTree = "<group>";
+		};
+		CDF2DBC32485177400A91AF9 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				CD6ED851243EF49A002ED925 /* Shell.swift */,
+				CDA9F108242DE44700255373 /* Warn.swift */,
+				CDA38364243342D500D3EDD9 /* RunError.swift */,
+			);
+			path = libs;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -248,6 +267,7 @@
 				CDC3AEB7247BB0A90012F630 /* Config.swift in Sources */,
 				CD053A402435FA7B008A2E56 /* Git.swift in Sources */,
 				CD544366243C769A0099C9F0 /* Autoasset.swift in Sources */,
+				CD52EEB52480FDA70038666B /* Inputs.swift in Sources */,
 				CD20A0F724644FF500B9CF17 /* Placeholder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

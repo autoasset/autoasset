@@ -56,22 +56,6 @@ struct AssetModel {
 
     }
 
-    class Inputs {
-        let inputs: [URL]
-
-        init?(json: JSON) {
-            let inputs = json["inputs"].arrayValue.compactMap({ $0.fileURL })
-            guard inputs.isEmpty == false else {
-                return nil
-            }
-            self.inputs = inputs
-        }
-
-        init(inputs json: JSON) {
-            inputs = json["inputs"].arrayValue.compactMap({ $0.fileURL })
-        }
-    }
-
     class Resource: Inputs {
 
         let output: URL
