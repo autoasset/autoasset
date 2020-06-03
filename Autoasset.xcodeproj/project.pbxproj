@@ -158,6 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				CDA383622433398D00D3EDD9 /* Podspec.swift */,
+				CDA9F108242DE44700255373 /* Warn.swift */,
 				CDA9F0AB242C9A8700255373 /* Xcassets.swift */,
 				CDA3836D243351EC00D3EDD9 /* Asset.swift */,
 				CD053A3F2435FA7B008A2E56 /* Git.swift */,
@@ -171,7 +172,6 @@
 			isa = PBXGroup;
 			children = (
 				CD6ED851243EF49A002ED925 /* Shell.swift */,
-				CDA9F108242DE44700255373 /* Warn.swift */,
 				CDA38364243342D500D3EDD9 /* RunError.swift */,
 			);
 			path = libs;

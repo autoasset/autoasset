@@ -31,8 +31,4 @@ struct Main: ParsableCommand {
     }
 }
 
-extension Main {
-
-}
-
 Main.main()

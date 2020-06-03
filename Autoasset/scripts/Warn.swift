@@ -28,6 +28,11 @@ class Warn {
 
         let filePath = try FilePath(url: config.output, type: .file)
         let message = list.map({ $0.message }).sorted().joined(separator: "\n")
+
+        RunPrint("WARN: " + [String](repeating: "👮", count: 37).joined())
+        RunPrint(message)
+        RunPrint([String](repeating: "-", count: 80).joined())
+
         let data = message.data(using: .utf8)
         try filePath.delete()
         try filePath.create(with: data)
@@ -53,8 +58,4 @@ extension Warn {
         return Warn("文件重复: \n" + files.map({ $0.path }).joined(separator: "\n"))
     }
 
-    @discardableResult
-    static func gitMerge(branch: String) -> Warn {
-        return Warn("git merge error: 未能合并 \(branch)")
-    }
 }

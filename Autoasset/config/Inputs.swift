@@ -10,17 +10,33 @@ import Foundation
 import Stem
 
 class Inputs {
+
     let inputs: [URL]
 
-    init?(json: JSON) {
-        let inputs = json["inputs"].arrayValue.compactMap({ $0.fileURL })
-        guard inputs.isEmpty == false else {
+    init?(json: JSON, base: URL? = nil) {
+        guard json["inputs"].arrayValue.isEmpty == false else {
             return nil
         }
-        self.inputs = inputs
+
+        if let base = base {
+            inputs = json["inputs"]
+                .arrayValue
+                .compactMap({ $0.string })
+                .map({ base.appendingPathComponent($0) })
+        } else {
+            inputs = json["inputs"].arrayValue.compactMap({ $0.fileURL })
+        }
     }
 
-    init(inputs json: JSON) {
-        inputs = json["inputs"].arrayValue.compactMap({ $0.fileURL })
+    init(inputs json: JSON, base: URL? = nil) {
+        if let base = base {
+            inputs = json["inputs"]
+                .arrayValue
+                .compactMap({ $0.string })
+                .map({ base.appendingPathComponent($0) })
+        } else {
+            inputs = json["inputs"].arrayValue.compactMap({ $0.fileURL })
+        }
     }
+    
 }

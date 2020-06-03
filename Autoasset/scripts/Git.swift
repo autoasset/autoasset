@@ -11,34 +11,18 @@ import Stem
 
 class Git {
 
-    let config: GitModel
-    let tag: Tag
-    let branch: Branch
-    let remote: Remote
-    let dirPath: FilePath
+    let tag    = Tag()
+    let branch = Branch()
+    let remote = Remote()
+    let clone  = Clone()
+    let info   = Info()
 
-    init(config: GitModel) throws {
-        self.config = config
-        self.tag = Tag()
-        self.branch = Branch()
-        self.remote = Remote()
-        var filePath = try FilePath(path: "./")
+    class Info {
 
-        while true {
-            if try filePath
-                .subFilePaths(predicates: [.custom({ $0.type == .folder })])
-                .contains(where: { $0.type == .folder && $0.attributes.name == ".git" }) {
-                break
-            }
-
-            guard let parentFolder = filePath.parentFolder() else {
-                break
-            }
-
-            filePath = parentFolder
+        func url() throws -> String {
+            return  try shell("git ls-remote --get-url").stdout
         }
 
-        dirPath = filePath
     }
 
     class Remote {
@@ -62,6 +46,14 @@ class Git {
             }
 
             return URL(string: String(str))
+        }
+
+    }
+
+    class Clone {
+
+        func get(url: String, branch: String? = nil, to folder: String) throws {
+            try shell("git clone \(branch == nil ? "" : "-b \(branch!)") \(url) \(folder)")
         }
 
     }
@@ -130,8 +122,8 @@ class Git {
         return try shell("git diff").stdout
     }
 
-    func addAllFile() throws {
-        try shell("git add \(dirPath)")
+    func addAllFile(path: String) throws {
+        try shell("git add \(path)")
     }
 
     func commit(message: String) throws {

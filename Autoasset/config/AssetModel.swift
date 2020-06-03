@@ -60,23 +60,23 @@ struct AssetModel {
 
         let output: URL
 
-        override init?(json: JSON) {
+        override init?(json: JSON, base: URL? = nil) {
             guard let output = json["output"].fileURL else {
                 return nil
             }
             self.output = output
-
-            super.init(json: json)
+            super.init(json: json, base: base)
         }
+
     }
 
     class Xcasset: Resource {
 
         let contents: Inputs
 
-        override init?(json: JSON) {
+        override init?(json: JSON, base: URL? = nil) {
             self.contents = Inputs(inputs: json["contents"])
-            super.init(json: json)
+            super.init(json: json, base: base)
         }
 
     }
@@ -89,15 +89,18 @@ struct AssetModel {
     var colors: Xcasset?
     var fonts: Resource?
     var clear: Inputs?
+    var rawValue: JSON
 
-    init(json: JSON) {
-        images = Xcasset(json: json["images"])
-        datas = Xcasset(json: json["datas"])
-        gifs = Xcasset(json: json["gifs"])
-        colors = Xcasset(json: json["colors"])
-        fonts = Resource(json: json["fonts"])
+    init(json: JSON, base: URL?) {
+        self.rawValue = json
+        images = Xcasset(json: json["images"], base: base)
+        datas = Xcasset(json: json["datas"], base: base)
+        gifs = Xcasset(json: json["gifs"], base: base)
+        colors = Xcasset(json: json["colors"], base: base)
+        fonts = Resource(json: json["fonts"], base: base)
         clear = Inputs(json: json["clear"])
         template = Template(json: json["template"], default: ASTemplate.asset)
     }
+
 
 }

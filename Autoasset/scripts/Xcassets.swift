@@ -59,9 +59,12 @@ extension Xcassets {
         return try inputs.inputs.compactMap({ try FilePath(url: $0, type: .folder) }).reduce([FilePath](), { (result, file) -> [FilePath] in
             var result = result
             if let predicate = predicate {
-                result.append(contentsOf: try file.allSubFilePaths(predicates: [.custom(predicate), .skipsHiddenFiles]))
+                result.append(contentsOf: try file.allSubFilePaths(predicates: [.skipsHiddenFiles,
+                                                                                .custom({ $0.type == .file }),
+                                                                                .custom(predicate)]))
             } else {
-                result.append(contentsOf: try file.allSubFilePaths())
+                result.append(contentsOf: try file.allSubFilePaths(predicates: [.skipsHiddenFiles,
+                                                                                .custom({ $0.type == .file })]))
             }
             return result
         })

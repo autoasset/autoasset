@@ -22,18 +22,17 @@ class Autoasset {
     }
 
     func start() throws {
-
         switch config.mode.type {
         case .pod_with_branch:
             let podspec = Podspec(config: config.podspec)
-            let git = try Git(config: config.git)
+            let git = Git()
             try Asset(config: config.asset).run()
             let branchName = try git.branch.currentName()
             let lastVersion = branchName.split(separator: "/").last?.description ?? branchName
             let version = try git.tag.nextVersion(with: lastVersion)
             try podspec?.output(version: version)
             try podspec?.lint()
-            try git.addAllFile()
+            try git.addAllFile(path: config.dirPath.path)
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "YYYY年MM月DD HH:MM"
             let message = "branch: \(version), author: autoasset(\(Autoasset.version)), date: \(dateFormatter.string(from: Date()))"
@@ -54,40 +53,55 @@ class Autoasset {
             try Asset(config: config.asset).run()
             try Warn.output(config: config.warn)
         case .normal:
-            let podspec = Podspec(config: config.podspec)
-            let git = try Git(config: config.git)
+            try normalMode()
+        }
+    }
 
-            config.git.inputs.forEach { branch in
+}
+
+
+private extension Autoasset {
+
+    func normalMode() throws {
+        let podspec = Podspec(config: config.podspec)
+        let git = Git()
+
+        /// 下载目标文件
+        try FilePath(path: GitModel.Clone.output, type: .folder).delete()
+        config.git.inputs.forEach { item in
+            item.branchs.forEach { branch in
                 do {
-                    try git.branch.merge(with: branch)
+                    try git.clone.get(url: item.url, branch: branch, to: item.folder(for: branch))
                 } catch {
-                    Warn.gitMerge(branch: branch)
+                    RunPrint("git-error: \(item.url) branch: \(branch) 下载失败")
                 }
             }
-
-            try Asset(config: config.asset).run()
-            let lastVersion = try? git.tag.lastVersion() ?? config.mode.variables.version
-            let version = try git.tag.nextVersion(with: lastVersion ?? config.mode.variables.version)
-            try podspec?.output(version: version)
-            try podspec?.lint()
-
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "YYYY年MM月DD HH:MM"
-            let message = "tag: \(version), author: autoasset(\(Autoasset.version)), date: \(dateFormatter.string(from: Date()))"
-
-            try git.addAllFile()
-            try git.commit(message: message)
-            try? git.push()
-
-            try? git.tag.remove(version: version)
-            try? git.tag.add(version: version, message: message)
-            try? git.tag.push(version: version)
-
-            try podspec?.push()
-
-            try Warn.output(config: config.warn)
-            try Message(config: config.message)?.output(version: version)
         }
+
+        try Asset(config: config.asset).run()
+//        try FilePath(path: GitModel.Clone.output, type: .folder).delete()
+
+        let lastVersion = try? git.tag.lastVersion() ?? config.mode.variables.version
+        let version = try git.tag.nextVersion(with: lastVersion ?? config.mode.variables.version)
+        try podspec?.output(version: version)
+        try podspec?.lint()
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY年MM月DD HH:MM"
+        let message = "tag: \(version), author: autoasset(\(Autoasset.version)), date: \(dateFormatter.string(from: Date()))"
+
+        try git.addAllFile(path: config.dirPath.path)
+        try git.commit(message: message)
+        try? git.push()
+
+        try? git.tag.remove(version: version)
+        try? git.tag.add(version: version, message: message)
+        try? git.tag.push(version: version)
+
+        try podspec?.push()
+
+        try Warn.output(config: config.warn)
+        try Message(config: config.message)?.output(version: version)
     }
 
 }

@@ -81,14 +81,14 @@ extension Podspec {
     }
 
     func lint() throws {
-        try shell("pod lib lint \(config.output.path)" + allowWarningsCommond() + noCleanCommond(), useAssert: false)
+        try shell("pod lib lint \(config.output.path)" + allowWarningsCommond() + noCleanCommond())
     }
 
     func push() throws {
         if let repo = try repoName() {
-            try shell("pod repo push \(repo) \(config.output.path)" + allowWarningsCommond(), useAssert: false)
+            try shell("pod repo push \(repo) \(config.output.path)" + allowWarningsCommond())
         } else {
-            try shell("pod trunk push \(config.output)" + allowWarningsCommond(), useAssert: false)
+            try shell("pod trunk push \(config.output)" + allowWarningsCommond())
         }
     }
 
