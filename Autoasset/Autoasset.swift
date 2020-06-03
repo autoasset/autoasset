@@ -22,29 +22,34 @@ class Autoasset {
     }
 
     func start() throws {
-        switch config.mode.type {
+        do {
+            try start(with: config.mode.type)
+        } catch {
+            try Warn.output(config: config.warn)
+            throw error
+        }
+    }
+
+}
+
+
+private extension Autoasset {
+
+    func start(with type: ModeModel.Style) throws {
+        switch type {
         case .pod_with_branch:
-            let podspec = Podspec(config: config.podspec)
             let git = Git()
             try Asset(config: config.asset).run()
-            let branchName = try git.branch.currentName()
-            let lastVersion = branchName.split(separator: "/").last?.description ?? branchName
-            let version = try git.tag.nextVersion(with: lastVersion)
-            try podspec?.output(version: version)
-            try podspec?.lint()
-            try git.addAllFile(path: config.dirPath.path)
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "YYYY年MM月DD HH:MM"
-            let message = "branch: \(version), author: autoasset(\(Autoasset.version)), date: \(dateFormatter.string(from: Date()))"
-            try git.commit(message: message)
-            try? git.push()
+            let name = try git.branch.currentName()
+            try start(with: .test_podspec)
+            try pushToGit(git)
             try Warn.output(config: config.warn)
-            try Message(config: config.message)?.output(version: version)
+            try Message(config: config.message)?.output(version: config.mode.variables.version, branch: name)
         case .test_warn:
             Warn.test()
             try Warn.output(config: config.warn)
         case .test_message:
-            try Message(config: config.message)?.output(version: config.mode.variables.version)
+            try Message(config: config.message)?.output(version: config.mode.variables.version, branch: "test")
         case .test_podspec:
             let podspec = Podspec(config: config.podspec)
             try podspec?.output(version: config.mode.variables.version)
@@ -57,10 +62,17 @@ class Autoasset {
         }
     }
 
-}
+    func commitMessage() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY年MM月DD HH:MM"
+        return "author: autoasset(\(Autoasset.version)), date: \(dateFormatter.string(from: Date()))"
+    }
 
-
-private extension Autoasset {
+    func pushToGit(_ git: Git) throws {
+        try git.addAllFile(path: config.dirPath.path)
+        try git.commit(message: commitMessage())
+        try git.push()
+    }
 
     func normalMode() throws {
         let podspec = Podspec(config: config.podspec)
@@ -79,29 +91,23 @@ private extension Autoasset {
         }
 
         try Asset(config: config.asset).run()
-//        try FilePath(path: GitModel.Clone.output, type: .folder).delete()
+        try FilePath(path: GitModel.Clone.output, type: .folder).delete()
 
         let lastVersion = try? git.tag.lastVersion() ?? config.mode.variables.version
         let version = try git.tag.nextVersion(with: lastVersion ?? config.mode.variables.version)
         try podspec?.output(version: version)
         try podspec?.lint()
 
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY年MM月DD HH:MM"
-        let message = "tag: \(version), author: autoasset(\(Autoasset.version)), date: \(dateFormatter.string(from: Date()))"
-
-        try git.addAllFile(path: config.dirPath.path)
-        try git.commit(message: message)
-        try? git.push()
+        try pushToGit(git)
 
         try? git.tag.remove(version: version)
-        try? git.tag.add(version: version, message: message)
+        try? git.tag.add(version: version, message: commitMessage())
         try? git.tag.push(version: version)
 
         try podspec?.push()
 
         try Warn.output(config: config.warn)
-        try Message(config: config.message)?.output(version: version)
+        try Message(config: config.message)?.output(version: version, branch: version)
     }
 
 }

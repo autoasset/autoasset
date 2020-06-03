@@ -32,14 +32,13 @@ struct Config {
     let message: MessageModel?
     
     init(json: JSON) throws {
-        mode = ModeModel(json: json["mode"])
-
+        mode    = ModeModel(json: json["mode"])
         podspec = PodspecModel(json: json["podspec"])
         message = MessageModel(json: json["message"])
         warn    = Warn(json: json["warn"])
 
         var filePath = try FilePath(path: "./")
-        if mode.type == .normal {
+        if [.normal, .pod_with_branch].contains(mode.type) {
             while true {
                 if try filePath
                     .subFilePaths(predicates: [.custom({ $0.type == .folder })])
@@ -54,13 +53,18 @@ struct Config {
                 filePath = parentFolder
             }
             git = try GitModel(json: json["git"])
+            dirPath = filePath
+        } else {
+            git = try GitModel(json: JSON())
+            dirPath = filePath
+        }
+
+        if mode.type == .normal {
             asset = AssetModel(json: json["asset"], base: filePath.url.appendingPathComponent(GitModel.Clone.output))
         } else {
-            git   = try GitModel(json: JSON())
             asset = AssetModel(json: json["asset"], base: nil)
         }
 
-        dirPath = filePath
     }
     
     init(url: URL) throws {

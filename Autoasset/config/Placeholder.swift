@@ -10,4 +10,6 @@ import Foundation
 
 enum Placeholder {
     static let version = "[version]"
+    static let branch = "[branch]"
+
 }

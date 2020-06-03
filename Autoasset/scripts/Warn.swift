@@ -28,8 +28,10 @@ class Warn {
 
         let filePath = try FilePath(url: config.output, type: .file)
         let message = list.map({ $0.message }).sorted().joined(separator: "\n")
-
+        
+        RunPrint("\n")
         RunPrint("WARN: " + [String](repeating: "👮", count: 37).joined())
+        RunPrint([String](repeating: "-", count: 80).joined())
         RunPrint(message)
         RunPrint([String](repeating: "-", count: 80).joined())
 

@@ -20,13 +20,21 @@ class Message {
         self.config = config
     }
 
-    func output(version: String) throws {
+    func output(version: String, branch: String) throws {
         let filePath = try FilePath(url: config.output, type: .file)
-        let message = config.text.replacingOccurrences(of: Placeholder.version, with: version)
+        let message = config.text
+            .replacingOccurrences(of: Placeholder.branch, with: branch)
+            .replacingOccurrences(of: Placeholder.version, with: version)
+
+        RunPrint("\n")
+        RunPrint("MESSAGE: " + [String](repeating: "😬", count: 35).joined())
+        RunPrint([String](repeating: "-", count: 80).joined())
+        RunPrint(message)
+        RunPrint([String](repeating: "-", count: 80).joined())
+
         let data = message.data(using: .utf8)
         try filePath.delete()
         try filePath.create(with: data)
-        RunPrint(message)
     }
 
 }
