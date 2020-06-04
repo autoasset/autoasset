@@ -62,7 +62,7 @@ struct Config {
         if mode.type == .normal {
             asset = AssetModel(json: json["asset"], base: filePath.url.appendingPathComponent(GitModel.Clone.output))
         } else {
-            asset = AssetModel(json: json["asset"], base: nil)
+            asset = AssetModel(json: json["asset"], base: dirPath.url)
         }
 
     }

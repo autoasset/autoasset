@@ -60,8 +60,12 @@ extension Warn {
     }
 
     @discardableResult
-    static func duplicateFiles(_ files: [FilePath]) -> Warn {
-        return Warn("文件重复: \n" + files.map({ $0.path }).joined(separator: "\n"))
+    static func duplicateFiles(baseURL: URL?, _ files: [FilePath]) -> Warn {
+        if let baseURL = baseURL {
+            return Warn("文件重复: \n" + files.map({ $0.path.replacingOccurrences(of: baseURL.path, with: "") }).joined(separator: "\n"))
+        } else {
+            return Warn("文件重复: \n" + files.map({ $0.path }).joined(separator: "\n"))
+        }
     }
 
 }

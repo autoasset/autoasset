@@ -89,10 +89,10 @@ struct AssetModel {
     var colors: Xcasset?
     var fonts: Resource?
     var clear: Inputs?
-    var rawValue: JSON
+    var base: URL?
 
     init(json: JSON, base: URL?) {
-        self.rawValue = json
+        self.base = base
         images = Xcasset(json: json["images"], base: base)
         datas = Xcasset(json: json["datas"], base: base)
         gifs = Xcasset(json: json["gifs"], base: base)

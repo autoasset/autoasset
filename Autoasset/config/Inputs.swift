@@ -12,8 +12,10 @@ import Stem
 class Inputs {
 
     let inputs: [URL]
+    let base: URL?
 
     init?(json: JSON, base: URL? = nil) {
+        self.base = base
         guard json["inputs"].arrayValue.isEmpty == false else {
             return nil
         }
@@ -29,6 +31,7 @@ class Inputs {
     }
 
     init(inputs json: JSON, base: URL? = nil) {
+        self.base = base
         if let base = base {
             inputs = json["inputs"]
                 .arrayValue

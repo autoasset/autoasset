@@ -100,7 +100,7 @@ extension Xcassets {
 
         return dict.compactMap { _, files -> FilePath? in
             if files.count > 1 {
-                Warn.duplicateFiles(files)
+                Warn.duplicateFiles(baseURL: self.config.base, files)
             }
             return files.first
         }
@@ -325,7 +325,7 @@ extension Xcassets {
         })
         return try groups.compactMap { (name, files) -> String? in
             if files.count > 1 {
-                Warn.duplicateFiles(files)
+                Warn.duplicateFiles(baseURL: self.config.base, files)
             }
             return try createDataXcasset(name: name, file: files[0])
         }

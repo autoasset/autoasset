@@ -33,7 +33,6 @@ class Autoasset {
 
 }
 
-
 private extension Autoasset {
 
     func start(with type: ModeModel.Style) throws {
