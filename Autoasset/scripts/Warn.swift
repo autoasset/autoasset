@@ -27,13 +27,16 @@ class Warn {
         }
 
         let filePath = try FilePath(url: config.output, type: .file)
-        let message = list.map({ $0.message }).sorted().joined(separator: "\n")
-        
-        RunPrint("\n")
-        RunPrint("WARN: " + [String](repeating: "👮", count: 37).joined())
-        RunPrint([String](repeating: "-", count: 80).joined())
-        RunPrint(message)
-        RunPrint([String](repeating: "-", count: 80).joined())
+        var message = ""
+
+        if list.isEmpty == false {
+            message = list.map({ $0.message }).sorted().joined(separator: "\n")
+            RunPrint("\n")
+            RunPrint("WARN: " + [String](repeating: "👮", count: 37).joined())
+            RunPrint([String](repeating: "-", count: 80).joined())
+            RunPrint(message)
+            RunPrint([String](repeating: "-", count: 80).joined())
+        }
 
         let data = message.data(using: .utf8)
         try filePath.delete()
@@ -51,8 +54,9 @@ extension Warn {
     }
 
     @discardableResult
-    static func caseFirstCharIsNumber(caseName: String) -> Warn {
-        return Warn("首字母不能为数字: \n\(caseName), 已更替为 _\(caseName)")
+    static func caseFirstCharIsNumber(caseName: String) -> Warn? {
+        return nil
+        // return Warn("首字母不能为数字: \n\(caseName), 已更替为 _\(caseName)")
     }
 
     @discardableResult
