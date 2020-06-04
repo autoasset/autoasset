@@ -8,8 +8,9 @@
 
 import Foundation
 
-struct RunError: Error {
+struct RunError: LocalizedError {
     let message: String
+    var localizedDescription: String { message }
 }
 
 

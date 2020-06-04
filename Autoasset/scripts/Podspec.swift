@@ -72,23 +72,27 @@ extension Podspec {
 
     }
 
-    func noCleanCommond() -> String {
-        return " --no-clean"
+    func noClean(_ flag: Bool) -> String {
+        return flag ? "--no-clean" : ""
     }
 
-    func allowWarningsCommond() -> String {
-        return " --allow-warnings"
+    func allowWarnings(_ flag: Bool) -> String {
+        return flag ?  "--allow-warnings" : ""
+    }
+
+    func verbose(_ flag: Bool) -> String {
+        return flag ?  "--verbose" : ""
     }
 
     func lint() throws {
-        try shell("pod lib lint \(config.output.path)" + allowWarningsCommond() + noCleanCommond())
+        try shell("pod lib lint \(config.output.path) \(noClean(config.noClean)) \(allowWarnings(config.allowWarnings)) \(verbose(config.verbose))")
     }
 
     func push() throws {
         if let repo = try repoName() {
-            try shell("pod repo push \(repo) \(config.output.path)" + allowWarningsCommond())
+            try shell("pod repo push \(repo) \(config.output.path) \(allowWarnings(config.allowWarnings))")
         } else {
-            try shell("pod trunk push \(config.output)" + allowWarningsCommond())
+            try shell("pod trunk push \(config.output) \(allowWarnings(config.allowWarnings))")
         }
     }
 

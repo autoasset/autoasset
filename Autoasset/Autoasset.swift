@@ -26,6 +26,7 @@ class Autoasset {
             try start(with: config.mode.type)
         } catch {
             try Warn.output(config: config.warn)
+            try Message(config: config.message)?.output(error: error.localizedDescription)
             throw error
         }
     }

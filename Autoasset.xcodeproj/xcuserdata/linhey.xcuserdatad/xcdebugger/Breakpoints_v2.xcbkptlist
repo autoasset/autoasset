@@ -36,5 +36,85 @@
             continueAfterRunningActions = "No">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2A27E14F-DC9B-4553-8CC5-C5075130B345"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Autoasset/scripts/Xcassets.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "140"
+            endingLineNumber = "140"
+            landmarkName = "init(elements:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EE4F9D71-3A58-47BD-97B1-7BF70475838D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Autoasset/scripts/Xcassets.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "163"
+            endingLineNumber = "163"
+            landmarkName = "init(elements:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "67F89761-7856-4558-A2F0-998446314B84"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Autoasset/scripts/Xcassets.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "174"
+            endingLineNumber = "174"
+            landmarkName = "output"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "67F89761-7856-4558-A2F0-998446314B84 - 7c38d24479e306fd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Autoasset.Xcassets.ImageItem.output.getter : Swift.Array&lt;Any&gt;"
+                  moduleName = "Autoasset"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/linhey/Desktop/linhey/autoasset/Autoasset/scripts/Xcassets.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "174"
+                  endingLineNumber = "174"
+                  offsetFromSymbolStart = "44">
+               </Location>
+               <Location
+                  uuid = "67F89761-7856-4558-A2F0-998446314B84 - 2c6742df65a8f13d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Autoasset.Xcassets.ImageItemElemnt) -&gt; Any in Autoasset.Xcassets.ImageItem.output.getter : Swift.Array&lt;Any&gt;"
+                  moduleName = "Autoasset"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/linhey/Desktop/linhey/autoasset/Autoasset/scripts/Xcassets.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "174"
+                  endingLineNumber = "174"
+                  offsetFromSymbolStart = "22">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

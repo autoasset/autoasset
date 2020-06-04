@@ -115,46 +115,120 @@ extension Xcassets {
         enum ValueType: String {
             case light
             case dark
+            case any
         }
 
         let appearance = "luminosity"
-        let value: ValueType
+        var value: ValueType
 
         var dict: [String: Any]? {
-            return ["value": value.rawValue,
-                    "appearance": appearance]
+            switch value {
+            case .any:
+                return nil
+            default:
+                return  ["value": value.rawValue, "appearance": appearance]
+            }
         }
 
     }
 
     struct ImageItem {
 
+        let items: [ImageItemElemnt]
+
+        init(elements: [ImageItemElemnt]) {
+            var items: [ImageItemElemnt] = []
+
+            func isAnyStyle(_ element: ImageItemElemnt) -> Bool {
+                if let appearances = element.appearances {
+                    return appearances.value == .any || appearances.value == .light
+                } else {
+                    return true
+                }
+            }
+
+            if elements.contains(where: { $0.appearances?.value == .dark }) {
+                ImageItemElemnt.Scale.allCases.forEach { scale in
+                    let any = elements.first(where: { $0.scale == scale && isAnyStyle($0) })
+                        ?? ImageItemElemnt(type: .image, scale: scale, appearances: .init(value: .any))
+                    let dark = elements.first(where: { $0.scale == scale && $0.appearances?.value == .dark })
+                    let darkPlaceholder = ImageItemElemnt(type: .image, scale: scale, appearances: .init(value: .dark))
+                    items.append(contentsOf: [any, dark ?? darkPlaceholder])
+                }
+            } else {
+               items = ImageItemElemnt.Scale.allCases.map { scale -> ImageItemElemnt in
+                var element = elements.first(where: { $0.scale == scale && isAnyStyle($0) })
+
+                if element == nil {
+                   element = ImageItemElemnt(type: .image, scale: scale, appearances: .init(value: .any))
+                }
+
+                element!.appearances?.value = .any
+                return element!
+                }
+            }
+            self.items = items
+        }
+
+        var output: [Any] {
+            return items.map({ $0.dict })
+        }
+    }
+
+    struct ImageItemElemnt {
+
         enum SourceType {
             case image
             case vector
         }
 
-        let name: String
+        enum Scale: String, CaseIterable {
+            case x1 = "@1x"
+            case x2 = "@2x"
+            case x3 = "@3x"
+
+            func output() -> String {
+                switch self {
+                case .x1: return "1x"
+                case .x2: return "2x"
+                case .x3: return "3x"
+                }
+            }
+        }
+
+        let name: String?
         let type: SourceType
+        let scale: Scale
+        var appearances: Appearances?
+
+        init(type: SourceType, scale: Scale, appearances: Appearances?) {
+            self.name = nil
+            self.type = type
+            self.scale = scale
+            self.appearances = appearances
+        }
 
         init(name: String, type: SourceType) {
             self.name = name
             self.type = type
+
+            if name.contains(Scale.x1.rawValue) {self.scale = .x1 }
+            else if name.contains(Scale.x2.rawValue) { self.scale = .x2 }
+            else if name.contains(Scale.x3.rawValue) { self.scale = .x3 }
+            else { self.scale = .x2 }
+
+            if name.contains("_dark@") || name.contains("_dark.") || name.hasSuffix("_dark") {
+                appearances = Appearances(value: .dark)
+            } else {
+                appearances = nil
+            }
+
         }
 
         var dict: [String: Any] {
             var dict = [String: Any]()
 
-            if name.contains("_dark@") || name.contains("_dark.") || name.hasSuffix("_dark") {
-                let appearances = Appearances(value: .dark)
-                dict["appearances"] = appearances.dict
-            }
-
-            if name.contains("_light@") || name.contains("_light.") || name.hasSuffix("_light") {
-                let appearances = Appearances(value: .light)
-                dict["appearances"] = appearances.dict
-            }
-
+            dict["appearances"] = appearances?.dict
             dict["idiom"] = "universal"
             dict["filename"] = name
 
@@ -162,15 +236,7 @@ extension Xcassets {
             case .vector:
                 break
             case .image:
-                if name.contains("@1x") {
-                    dict["scale"] = "1x"
-                } else if name.contains("@2x") {
-                    dict["scale"] = "2x"
-                } else if name.contains("@3x") {
-                    dict["scale"] = "3x"
-                } else {
-                    dict["scale"] = "2x"
-                }
+                dict["scale"] = scale.output()
             }
 
             return dict
@@ -217,14 +283,15 @@ extension Xcassets {
 
     func createImageContents(name: String, files: [FilePath]) throws -> Data {
         if let file = contents[name] { return try file.data() }
+
         let pdfFiles = try files.filter { file -> Bool in
             return try file.data().st.mimeType == .pdf
         }
 
         if pdfFiles.isEmpty == false {
-            let info: [String: Any] = ["info": ["version": 1, "author": "xcode"]]
+            let info: [String: Any] = ["version": 1, "author": "xcode"]
             let properties: [String: Any] = ["compression-type": "automatic", "preserves-vector-representation": true]
-            let images = files.map{( ImageItem(name: $0.attributes.name, type: .image).dict )}
+            let images = files.map{( ImageItemElemnt(name: $0.attributes.name, type: .image).dict )}
             let contents: [String: Any] = ["info": info, "properties": properties, "images": images]
             return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
         }
@@ -234,9 +301,10 @@ extension Xcassets {
         }
 
         if imageFiles.isEmpty == false {
-            let info: [String: Any] = ["info": ["version": 1, "author": "xcode"]]
-            let images = files.map{( ImageItem(name: $0.attributes.name, type: .image).dict )}
-            let contents = ["info": info, "images": images] as [String : Any]
+            let info: [String: Any] = ["version": 1, "author": "xcode"]
+            let imageItemElemnts = files.map{( ImageItemElemnt(name: $0.attributes.name, type: .image) )}
+
+            let contents = ["info": info, "images": ImageItem(elements: imageItemElemnts).output] as [String : Any]
             return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
         }
 

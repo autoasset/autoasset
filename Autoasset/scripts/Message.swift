@@ -20,8 +20,24 @@ class Message {
         self.config = config
     }
 
-    func output(version: String, branch: String) throws {
+    private func output(message: String) throws {
         let filePath = try FilePath(url: config.output, type: .file)
+        let data = message.data(using: .utf8)
+        try filePath.delete()
+        try filePath.create(with: data)
+    }
+
+    func output(error message: String) throws {
+        RunPrint("\n")
+        RunPrint("MESSAGE: " + [String](repeating: "🔥", count: 35).joined())
+        RunPrint([String](repeating: "-", count: 80).joined())
+        RunPrint(message)
+        RunPrint([String](repeating: "-", count: 80).joined())
+
+        try output(message: message)
+    }
+
+    func output(version: String, branch: String) throws {
         let message = config.text
             .replacingOccurrences(of: Placeholder.branch, with: branch)
             .replacingOccurrences(of: Placeholder.version, with: version)
@@ -32,9 +48,7 @@ class Message {
         RunPrint(message)
         RunPrint([String](repeating: "-", count: 80).joined())
 
-        let data = message.data(using: .utf8)
-        try filePath.delete()
-        try filePath.create(with: data)
+        try output(message: message)
     }
 
 }

@@ -9,6 +9,12 @@
 import Foundation
 import SwiftShell
 
+func command(_ message: String) {
+    RunPrint([String](repeating: "↓", count: 80).joined())
+    RunPrint("command: \(message)")
+    RunPrint([String](repeating: "↑", count: 80).joined())
+}
+
 @discardableResult
 func shell(_ command: String, useAssert: Bool = true, function: StaticString = #function, line: UInt = #line, file: StaticString = #file) throws -> RunOutput {
     RunPrint([String](repeating: "↓", count: 80).joined())
