@@ -33,13 +33,13 @@ class Inputs {
     init(inputs json: JSON, base: URL? = nil) {
         self.base = base
         if let base = base {
-            inputs = json["inputs"]
+            inputs = json
                 .arrayValue
                 .compactMap({ $0.string })
                 .map({ base.appendingPathComponent($0) })
         } else {
-            inputs = json["inputs"].arrayValue.compactMap({ $0.fileURL })
+            inputs = json.arrayValue.compactMap({ $0.fileURL })
         }
     }
-    
+
 }
