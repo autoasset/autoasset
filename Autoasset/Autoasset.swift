@@ -65,7 +65,7 @@ private extension Autoasset {
     func commitMessage() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY年MM月DD HH:MM"
-        return "author: autoasset(\(Autoasset.version)), date: \(dateFormatter.string(from: Date()))"
+        return "[ci skip] author: autoasset(\(Autoasset.version)), date: \(dateFormatter.string(from: Date()))"
     }
 
     func pushToGit(_ git: Git) throws {
