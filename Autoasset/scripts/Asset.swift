@@ -97,14 +97,16 @@ class Asset {
             RunPrint("Config: asset/output 不能为空")
             return
         }
-        try template.text
+        let message = template.text
             .replacingOccurrences(of: Placeholder.images, with: imageCode.sorted().joined(separator: "\n"))
             .replacingOccurrences(of: Placeholder.gifs, with: gifCode.sorted().joined(separator: "\n"))
             .replacingOccurrences(of: Placeholder.datas, with: dataCode.sorted().joined(separator: "\n"))
             .replacingOccurrences(of: Placeholder.colors, with: colorCode.sorted().joined(separator: "\n"))
             .replacingOccurrences(of: Placeholder.fonts, with: fontCode.sorted().joined(separator: "\n"))
-            .data(using: .utf8)?
-            .write(to: template.output, options: [.atomicWrite])
+            .data(using: .utf8)
+        let file = try FilePath(url: template.output, type: .file)
+        try file.delete()
+        try file.create(with: message)
     }
 
 }

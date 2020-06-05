@@ -80,13 +80,9 @@ private extension Autoasset {
 
         /// 下载目标文件
         try FilePath(path: GitModel.Clone.output, type: .folder).delete()
-        config.git.inputs.forEach { item in
-            item.branchs.forEach { branch in
-                do {
-                    try git.clone.get(url: item.url, branch: branch, to: item.folder(for: branch))
-                } catch {
-                    RunPrint("git-error: \(item.url) branch: \(branch) 下载失败")
-                }
+        try config.git.inputs.forEach { item in
+            try item.branchs.forEach { branch in
+                try git.clone.get(url: item.url, branch: branch, to: item.folder(for: branch))
             }
         }
 
@@ -97,7 +93,7 @@ private extension Autoasset {
         let version = try git.tag.nextVersion(with: lastVersion ?? config.mode.variables.version)
         try podspec?.output(version: version)
         try podspec?.lint()
-
+        
         try pushToGit(git)
 
         try? git.tag.remove(version: version)

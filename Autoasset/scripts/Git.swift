@@ -53,7 +53,7 @@ class Git {
     class Clone {
 
         func get(url: String, branch: String? = nil, to folder: String) throws {
-            try shell("git clone \(branch == nil ? "" : "-b \(branch!)") \(url) \(folder)")
+            try shell("git clone \(branch == nil ? "" : "--single-branch --depth 1 --branch \(branch!)") \(url) \(folder)")
         }
 
     }
