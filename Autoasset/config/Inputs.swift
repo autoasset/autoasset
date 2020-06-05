@@ -24,7 +24,13 @@ class Inputs {
             inputs = json["inputs"]
                 .arrayValue
                 .compactMap({ $0.string })
-                .map({ base.appendingPathComponent($0) })
+                .map({ item -> URL in
+                    if ["file://", "~/"].contains(where: { item.hasPrefix($0) }) {
+                        return URL(string: item)!
+                    } else {
+                       return base.appendingPathComponent(item)
+                    }
+                })
         } else {
             inputs = json["inputs"].arrayValue.compactMap({ $0.fileURL })
         }

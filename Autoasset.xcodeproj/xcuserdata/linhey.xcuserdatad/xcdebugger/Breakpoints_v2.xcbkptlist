@@ -5,9 +5,105 @@
    version = "2.0">
    <Breakpoints>
       <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9E8314CB-0D6C-47CC-8C7C-062292A0A9C1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Autoasset/config/AssetModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "83"
+            endingLineNumber = "83"
+            landmarkName = "init(json:base:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "79F4C683-8BD4-4181-9257-BAD2FE63F5DB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Autoasset-ggumypotynxtcvefmafugkaumhpq/SourcePackages/checkouts/Stem/Sources/Foundation/new/FilePath/FilePath.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "308"
+            endingLineNumber = "308"
+            landmarkName = "allSubFilePaths(predicates:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B03DE197-9AC1-4F28-8280-6E9EA4B3AE6F"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Autoasset-ggumypotynxtcvefmafugkaumhpq/SourcePackages/checkouts/Stem/Sources/Foundation/new/FilePath/FilePath.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "293"
+            endingLineNumber = "293"
+            landmarkName = "allSubFilePaths(predicates:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FE8BBBA6-B93A-49EF-8500-5C9BF7710C93"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Autoasset-ggumypotynxtcvefmafugkaumhpq/SourcePackages/checkouts/Stem/Sources/Foundation/new/FilePath/FilePath.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "302"
+            endingLineNumber = "302"
+            landmarkName = "allSubFilePaths(predicates:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E243BB01-B00C-4062-B8F5-F38A532457CE"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Autoasset-ggumypotynxtcvefmafugkaumhpq/SourcePackages/checkouts/Stem/Sources/Foundation/new/FilePath/FilePath.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "297"
+            endingLineNumber = "297"
+            landmarkName = "allSubFilePaths(predicates:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "38DED284-4E68-4292-845B-4D4F8B7D249A"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Autoasset-ggumypotynxtcvefmafugkaumhpq/SourcePackages/checkouts/Stem/Sources/Foundation/new/FilePath/FilePath.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "305"
+            endingLineNumber = "305"
+            landmarkName = "allSubFilePaths(predicates:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
          <BreakpointContent
-            uuid = "F17D8866-9DE9-40F8-84B3-3F7E290FCD6A"
+            uuid = "0B3EAC9C-A654-4FAF-8587-B0FB48974148"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -17,92 +113,97 @@
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.RuntimeIssueBreakpoint">
-         <BreakpointContent
-            uuid = "308AB526-A32B-4AED-95BC-9CB2D57A00AB"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            breakpointStackSelectionBehavior = "1"
-            type = "65535">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "2A27E14F-DC9B-4553-8CC5-C5075130B345"
-            shouldBeEnabled = "Yes"
+            uuid = "EC7DED85-1C3C-462F-B072-A7265FCF16DE"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Autoasset/scripts/Xcassets.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "140"
-            endingLineNumber = "140"
-            landmarkName = "init(elements:)"
+            startingLineNumber = "62"
+            endingLineNumber = "62"
+            landmarkName = "read(from:predicate:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "EE4F9D71-3A58-47BD-97B1-7BF70475838D"
-            shouldBeEnabled = "Yes"
+            uuid = "621022CE-C9EE-4D02-BECE-53D41581D950"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Autoasset/scripts/Xcassets.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "163"
-            endingLineNumber = "163"
-            landmarkName = "init(elements:)"
+            startingLineNumber = "66"
+            endingLineNumber = "66"
+            landmarkName = "read(from:predicate:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "67F89761-7856-4558-A2F0-998446314B84"
+            uuid = "BFD01B4D-4E83-4ED2-B17C-4AD0B083D203"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Autoasset/scripts/Xcassets.swift"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Autoasset-ggumypotynxtcvefmafugkaumhpq/SourcePackages/checkouts/Stem/Sources/Foundation/new/FilePath/FilePath.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "174"
-            endingLineNumber = "174"
-            landmarkName = "output"
-            landmarkType = "24">
+            startingLineNumber = "325"
+            endingLineNumber = "325"
+            landmarkName = "subFilePaths(predicates:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "49CF9103-7710-49B4-AFBE-52EF9BE0129A"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Autoasset-ggumypotynxtcvefmafugkaumhpq/SourcePackages/checkouts/Stem/Sources/Foundation/new/FilePath/FilePath.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "336"
+            endingLineNumber = "336"
+            landmarkName = "subFilePaths(predicates:)"
+            landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "67F89761-7856-4558-A2F0-998446314B84 - 7c38d24479e306fd"
+                  uuid = "49CF9103-7710-49B4-AFBE-52EF9BE0129A - 689f2bebe7484fa2"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Autoasset.Xcassets.ImageItem.output.getter : Swift.Array&lt;Any&gt;"
+                  symbolName = "closure #2 (Stem.FilePath) throws -&gt; Swift.Bool in Stem.FilePath.subFilePaths(predicates: Swift.Array&lt;Stem.FilePath.SearchPredicate&gt;) throws -&gt; Swift.Array&lt;Stem.FilePath&gt;"
                   moduleName = "Autoasset"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/linhey/Desktop/linhey/autoasset/Autoasset/scripts/Xcassets.swift"
+                  urlString = "file:///Users/linhey/Library/Developer/Xcode/DerivedData/Autoasset-ggumypotynxtcvefmafugkaumhpq/SourcePackages/checkouts/Stem/Sources/Foundation/new/FilePath/FilePath.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "174"
-                  endingLineNumber = "174"
-                  offsetFromSymbolStart = "44">
+                  startingLineNumber = "336"
+                  endingLineNumber = "336"
+                  offsetFromSymbolStart = "37">
                </Location>
                <Location
-                  uuid = "67F89761-7856-4558-A2F0-998446314B84 - 2c6742df65a8f13d"
+                  uuid = "49CF9103-7710-49B4-AFBE-52EF9BE0129A - d5a240e28684edd2"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Autoasset.Xcassets.ImageItemElemnt) -&gt; Any in Autoasset.Xcassets.ImageItem.output.getter : Swift.Array&lt;Any&gt;"
+                  symbolName = "closure #1 ((Stem.FilePath) throws -&gt; Swift.Bool) throws -&gt; Swift.Bool in closure #2 (Stem.FilePath) throws -&gt; Swift.Bool in Stem.FilePath.subFilePaths(predicates: Swift.Array&lt;Stem.FilePath.SearchPredicate&gt;) throws -&gt; Swift.Array&lt;Stem.FilePath&gt;"
                   moduleName = "Autoasset"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/linhey/Desktop/linhey/autoasset/Autoasset/scripts/Xcassets.swift"
+                  urlString = "file:///Users/linhey/Library/Developer/Xcode/DerivedData/Autoasset-ggumypotynxtcvefmafugkaumhpq/SourcePackages/checkouts/Stem/Sources/Foundation/new/FilePath/FilePath.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "174"
-                  endingLineNumber = "174"
-                  offsetFromSymbolStart = "22">
+                  startingLineNumber = "336"
+                  endingLineNumber = "336"
+                  offsetFromSymbolStart = "44">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -110,64 +211,32 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "F95B065E-14BD-4992-B05A-EA546C457648"
+            uuid = "B412D271-C1B3-469B-A312-8726FFBAC6DE"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Autoasset/scripts/Xcassets.swift"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Autoasset-ggumypotynxtcvefmafugkaumhpq/SourcePackages/checkouts/Stem/Sources/Foundation/new/FilePath/FilePath.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "285"
-            endingLineNumber = "285"
-            landmarkName = "createImageContents(name:files:)"
+            startingLineNumber = "330"
+            endingLineNumber = "330"
+            landmarkName = "subFilePaths(predicates:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "351FA3BB-319F-4854-A3EE-6FFB612B7AEC"
+            uuid = "9936B5EB-0D8E-4013-9997-27AA3B7D9ACA"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Autoasset/scripts/Xcassets.swift"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Autoasset-ggumypotynxtcvefmafugkaumhpq/SourcePackages/checkouts/Stem/Sources/Foundation/new/FilePath/FilePath.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "286"
-            endingLineNumber = "286"
-            landmarkName = "createImageContents(name:files:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "87FBF4AA-8320-4B4B-9E7B-3E4DF6D5856C"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Autoasset/scripts/Xcassets.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "24"
-            endingLineNumber = "24"
-            landmarkName = "init(config:use:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "1C4085EF-0AC5-4493-81BB-21091BED2A21"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Autoasset/scripts/Xcassets.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "41"
-            endingLineNumber = "41"
-            landmarkName = "run()"
+            startingLineNumber = "349"
+            endingLineNumber = "349"
+            landmarkName = "checkType(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

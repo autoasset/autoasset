@@ -14,6 +14,11 @@ extension JSON {
         guard let value = string else {
             return nil
         }
+
+        if ["file://", "~/"].contains(where: { value.hasPrefix($0) }) {
+            return URL(string: value)
+        }
+
         return try? FilePath(path: value, type: .file).url
     }
 }
