@@ -33,7 +33,7 @@ func shell(_ command: String, useAssert: Bool = true, function: StaticString = #
         RunPrint([String](repeating: "❌", count: 40).joined())
         RunPrint("stderror: \(out.stderror)")
         if useAssert {
-            throw RunError(message: out.stderror)
+            throw RunError(message: out.stderror.isEmpty ? out.stdout : out.stderror)
         } else {
             RunPrint(out.stderror)
         }

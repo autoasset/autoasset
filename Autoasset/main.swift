@@ -21,7 +21,7 @@ struct Main: ParsableCommand {
             try Autoasset(config: config).start()
         } catch {
             if let error = error as? RunError {
-                RunPrint(error.message)
+                RunPrint(error.localizedDescription)
             } else if let error = error as? FilePath.Error {
                 RunPrint(error.message)
             } else {
