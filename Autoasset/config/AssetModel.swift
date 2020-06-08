@@ -80,7 +80,7 @@ struct AssetModel {
         let contents: Inputs
 
         override init?(json: JSON, base: URL? = nil) {
-            self.contents = Inputs(inputs: json["contents"])
+            self.contents = Inputs(inputs: json["contents"], base: base)
             super.init(json: json, base: base)
         }
 
