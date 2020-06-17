@@ -78,8 +78,10 @@ struct AssetModel {
     class Xcasset: Resource {
 
         let contents: Inputs
+        let bundleName: String
 
         override init?(json: JSON, base: URL? = nil) {
+            self.bundleName = json["bundle_name"].string ?? "Resources"
             self.contents = Inputs(inputs: json["contents"], base: base)
             super.init(json: json, base: base)
         }

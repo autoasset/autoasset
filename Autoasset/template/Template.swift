@@ -16,7 +16,7 @@ class ASTemplate { }
 extension ASTemplate {
 
     static let asset: AssetModel.Template = {
-        let gif_code   = "    static var [variable_name]: AssetSource.Data { AssetSource.Data(asset: \"[name]\") }"
+        let gif_code   = "    static var [variable_name]: AssetSource.GIF { AssetSource.GIF(asset: \"[name]\") }"
         let image_code = "    static var [variable_name]: AssetSource.Image { AssetSource.Image(asset: \"[name]\") }"
         let text = """
 #if os(iOS) || os(tvOS) || os(watchOS)
@@ -24,23 +24,35 @@ import UIKit
 #elseif os(OSX)
 import AppKit
 #endif
-
 import Foundation
 
 fileprivate class RBundle {
-    static let bundle = Bundle(path: Bundle(for: RBundle.self).resourcePath!.appending("/Resources.bundle"))!
-}
 
-public enum R {
-    public static let images = Image.self
-    public static let gifs   = GIF.self
-    static let colors = Color.self
-    static let datas  = Data.self
+    enum `Type` {
+        case image
+        case gif
+        case data
+        case color
 
-    public enum Image { }
-    public enum GIF { }
-    enum Color { }
-    enum Data { }
+        var name: String {
+            switch self {
+            case .image: return "[image_bundle_name]"
+            case .gif:   return "[gif_bundle_name]"
+            case .data:  return "[data_bundle_name]"
+            case .color: return "[color_bundle_name]"
+            }
+        }
+
+    }
+
+  static func bundle(for type: `Type`) -> Bundle {
+        guard let url = Bundle(for: RBundle.self).url(forResource: type.name, withExtension: "bundle"), let bundle = Bundle(url: url) else {
+                assert(false, "未查询到相应资源")
+                return .main
+        }
+
+        return bundle
+    }
 }
 
 public class AssetSource {
@@ -54,7 +66,18 @@ public class AssetSource {
 
     public class Data: Base {
         public var data: Foundation.Data {
-            if let asset = NSDataAsset(name: name, bundle: RBundle.bundle) {
+            if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .data)) {
+                return asset.data
+            } else {
+                assert(false, "未查询到相应资源")
+                return Foundation.Data()
+            }
+        }
+    }
+
+    public class GIF: AssetSource.Data {
+        public override var data: Foundation.Data {
+            if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .gif)) {
                 return asset.data
             } else {
                 assert(false, "未查询到相应资源")
@@ -65,7 +88,7 @@ public class AssetSource {
 
     public class Image: Base {
         public var image: UIImage {
-            if let image = UIImage(named: name, in: RBundle.bundle, compatibleWith: nil) {
+            if let image = UIImage(named: name, in: RBundle.bundle(for: .image), compatibleWith: nil) {
                 return image
             } else {
                 assert(false, "未查询到相应资源")
@@ -74,6 +97,18 @@ public class AssetSource {
         }
     }
 
+}
+
+public enum R {
+    public static let images = Image.self
+    public static let gifs   = GIF.self
+    static let colors = Color.self
+    static let datas  = Data.self
+
+    public enum Image { }
+    public enum GIF { }
+    enum Color { }
+    enum Data { }
 }
 
 public typealias Asset = R.Image

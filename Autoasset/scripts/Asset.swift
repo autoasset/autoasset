@@ -49,8 +49,12 @@ class Asset {
         var pdfsFilePaths: [FilePath] = []
         var gifFilePaths: [FilePath] = []
     }
-    
+
     enum Placeholder {
+        static let imageBundleName = "[image_bundle_name]"
+        static let gifBundleName   = "[gif_bundle_name]"
+        static let dataBundleName  = "[data_bundle_name]"
+        static let colorBundleName = "[color_bundle_name]"
         static let images = "[images_code]"
         static let gifs   = "[gifs_code]"
         static let datas  = "[datas_code]"
@@ -97,16 +101,34 @@ class Asset {
             RunPrint("Config: asset/output 不能为空")
             return
         }
-        let message = template.text
+
+        var message = template.text
             .replacingOccurrences(of: Placeholder.images, with: imageCode.sorted().joined(separator: "\n"))
             .replacingOccurrences(of: Placeholder.gifs, with: gifCode.sorted().joined(separator: "\n"))
             .replacingOccurrences(of: Placeholder.datas, with: dataCode.sorted().joined(separator: "\n"))
             .replacingOccurrences(of: Placeholder.colors, with: colorCode.sorted().joined(separator: "\n"))
             .replacingOccurrences(of: Placeholder.fonts, with: fontCode.sorted().joined(separator: "\n"))
-            .data(using: .utf8)
+
+        if let config = config.images {
+           message = message.replacingOccurrences(of: Placeholder.imageBundleName, with: config.bundleName)
+        }
+
+        if let config = config.gifs {
+           message = message.replacingOccurrences(of: Placeholder.gifBundleName, with: config.bundleName)
+        }
+
+        if let config = config.datas {
+           message = message.replacingOccurrences(of: Placeholder.dataBundleName, with: config.bundleName)
+        }
+
+        if let config = config.colors {
+           message = message.replacingOccurrences(of: Placeholder.colorBundleName, with: config.bundleName)
+        }
+
+        let data = message.data(using: .utf8)
         let file = try FilePath(url: template.output, type: .file)
         try file.delete()
-        try file.create(with: message)
+        try file.create(with: data)
     }
 
 }
