@@ -53,11 +53,25 @@ public class AssetSource {
     }
 
     public class Data: Base {
-        public var data: Foundation.Data { NSDataAsset(name: name)!.data }
+        public var data: Foundation.Data {
+            if let asset = NSDataAsset(name: name, bundle: RBundle.bundle) {
+                return asset.data
+            } else {
+                assert(false, "未查询到相应资源")
+                return Foundation.Data()
+            }
+        }
     }
 
     public class Image: Base {
-        public var image: UIImage { UIImage(named: name, in: RBundle.bundle, compatibleWith: nil)! }
+        public var image: UIImage {
+            if let image = UIImage(named: name, in: RBundle.bundle, compatibleWith: nil) {
+                return image
+            } else {
+                assert(false, "未查询到相应资源")
+                return UIImage()
+            }
+        }
     }
 
 }
