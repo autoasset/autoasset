@@ -28,14 +28,17 @@ import Foundation
 
 fileprivate class RBundle {
 
-    enum `Type` {
-        case image
-        case gif
-        case data
-        case color
+    enum `Type`: String {
+        case none
+        case main
+        case image = "image_bundle_name"
+        case gif   = "gif_bundle_name"
+        case data  = "data_bundle_name"
+        case color = "color_bundle_name"
 
         var name: String {
             switch self {
+            case .none, .main:  return rawValue
             case .image: return "[image_bundle_name]"
             case .gif:   return "[gif_bundle_name]"
             case .data:  return "[data_bundle_name]"
@@ -45,14 +48,26 @@ fileprivate class RBundle {
 
     }
 
-  static func bundle(for type: `Type`) -> Bundle {
-        guard let url = Bundle(for: RBundle.self).url(forResource: type.name, withExtension: "bundle"), let bundle = Bundle(url: url) else {
-                assert(false, "未查询到相应资源")
-                return .main
-        }
+    static func bundle(for type: `Type`) -> Bundle {
+        switch type {
+        case .main:
+            return .main
+        case .none:
+            return Bundle(for: RBundle.self)
+        default:
+            if type.name == type.rawValue {
+                return bundle(for: .none)
+            }
 
-        return bundle
+            guard let url = bundle(for: .none).url(forResource: type.name, withExtension: "bundle")
+                , let bundle = Bundle(url: url) else {
+                    return .main
+            }
+
+            return bundle
+        }
     }
+
 }
 
 public class AssetSource {
@@ -65,36 +80,54 @@ public class AssetSource {
     }
 
     public class Data: Base {
+
         public var data: Foundation.Data {
             if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .data)) {
                 return asset.data
-            } else {
-                assert(false, "未查询到相应资源")
-                return Foundation.Data()
-            }
-        }
-    }
-
-    public class GIF: AssetSource.Data {
-        public override var data: Foundation.Data {
-            if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .gif)) {
+            } else if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .none)) {
+                return asset.data
+            } else if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .main)) {
                 return asset.data
             } else {
                 assert(false, "未查询到相应资源")
                 return Foundation.Data()
             }
         }
+
+    }
+
+    public class GIF: AssetSource.Data {
+
+        public override var data: Foundation.Data {
+            if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .gif)) {
+                return asset.data
+            } else if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .none)) {
+                return asset.data
+            } else if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .main)) {
+                return asset.data
+            } else {
+                assert(false, "未查询到相应资源")
+                return Foundation.Data()
+            }
+        }
+
     }
 
     public class Image: Base {
+
         public var image: UIImage {
             if let image = UIImage(named: name, in: RBundle.bundle(for: .image), compatibleWith: nil) {
+                return image
+            } else if let image = UIImage(named: name, in: RBundle.bundle(for: .none), compatibleWith: nil) {
+                return image
+            } else if let image = UIImage(named: name, in: RBundle.bundle(for: .main), compatibleWith: nil) {
                 return image
             } else {
                 assert(false, "未查询到相应资源")
                 return UIImage()
             }
         }
+
     }
 
 }
