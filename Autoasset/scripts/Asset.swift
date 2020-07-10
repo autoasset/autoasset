@@ -82,14 +82,14 @@ class Asset {
 
         /// 文件创建
         if let xcasset = config.images {
-            try Xcassets(config: xcasset, use: .image).run().forEach { name in
-                self.add(toImage: name)
+            try Xcassets(config: xcasset, use: .image).run().forEach { code in
+                self.add(toImage: code)
             }
         }
 
         if let xcasset = config.gifs {
-            try Xcassets(config: xcasset, use: .data).run().forEach { name in
-                self.add(toGIF: name)
+            try Xcassets(config: xcasset, use: .data).run().forEach { code in
+                self.add(toGIF: code)
             }
         }
 
@@ -109,20 +109,20 @@ class Asset {
             .replacingOccurrences(of: Placeholder.colors, with: colorCode.sorted().joined(separator: "\n"))
             .replacingOccurrences(of: Placeholder.fonts, with: fontCode.sorted().joined(separator: "\n"))
 
-        if let config = config.images {
-           message = message.replacingOccurrences(of: Placeholder.imageBundleName, with: config.bundleName)
+        if let config = config.images, let bundleName = config.bundleName {
+           message = message.replacingOccurrences(of: Placeholder.imageBundleName, with: bundleName)
         }
 
-        if let config = config.gifs {
-           message = message.replacingOccurrences(of: Placeholder.gifBundleName, with: config.bundleName)
+        if let config = config.gifs, let bundleName = config.bundleName {
+           message = message.replacingOccurrences(of: Placeholder.gifBundleName, with: bundleName)
         }
 
-        if let config = config.datas {
-           message = message.replacingOccurrences(of: Placeholder.dataBundleName, with: config.bundleName)
+        if let config = config.datas, let bundleName = config.bundleName {
+           message = message.replacingOccurrences(of: Placeholder.dataBundleName, with: bundleName)
         }
 
-        if let config = config.colors {
-           message = message.replacingOccurrences(of: Placeholder.colorBundleName, with: config.bundleName)
+        if let config = config.colors, let bundleName = config.bundleName {
+           message = message.replacingOccurrences(of: Placeholder.colorBundleName, with: bundleName)
         }
 
         let data = message.data(using: .utf8)
@@ -145,23 +145,22 @@ extension Asset {
         return caseName
     }
 
-    func add(toImage name: String) {
+    func add(toImage code: AssetCode) {
         guard let text = config.template?.imageCode else {
             return
         }
         imageCode.append(text
-            .replacingOccurrences(of: Placeholder.variableName, with: format(name: name))
-            .replacingOccurrences(of: Placeholder.name, with: name))
+            .replacingOccurrences(of: Placeholder.variableName, with: format(name: code.variableName))
+            .replacingOccurrences(of: Placeholder.name, with: code.xcassetName))
     }
     
-    func add(toGIF name: String) {
+    func add(toGIF code: AssetCode) {
         guard let text = config.template?.gifCode else {
             return
         }
-
         gifCode.append(text
-            .replacingOccurrences(of: Placeholder.variableName, with: format(name: name))
-            .replacingOccurrences(of: Placeholder.name, with: name))
+            .replacingOccurrences(of: Placeholder.variableName, with: format(name: code.variableName))
+            .replacingOccurrences(of: Placeholder.name, with: code.xcassetName))
     }
     
 }

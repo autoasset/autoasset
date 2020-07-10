@@ -37,7 +37,7 @@ class Xcassets {
         folders.forEach({ try? FilePath(url: $0.output, type: .folder).delete() })
     }
 
-    func run() throws -> [String] {
+    func run() throws -> [AssetCode] {
         switch type {
         case .image:
             return try runImage()
@@ -243,7 +243,7 @@ extension Xcassets {
         }
     }
 
-    func runImage() throws -> [String] {
+    func runImage() throws -> [AssetCode] {
         let types: [Data.MimeType] = [.png, .jpeg, .pdf]
         let sources = try read(from: config, predicate: { try types.contains($0.data().st.mimeType) })
         let groups = try group(from: sources, namePredicate: { file -> String in
@@ -253,19 +253,20 @@ extension Xcassets {
                 .split(separator: "@").first?
                 .split(separator: ".").first?.description ?? file.attributes.name
         })
-        return try groups.compactMap { (name, files) -> String? in
+        return try groups.compactMap { (name, files) -> AssetCode? in
             return try createImageXcasset(name: name, files: files)
         }
     }
 
-    func createImageXcasset(name: String, files: [FilePath]) throws -> String? {
+    func createImageXcasset(name: String, files: [FilePath]) throws -> AssetCode? {
         guard files.isEmpty == false else {
             return nil
         }
         let files = removeDuplicate(in: files)
 
         let folder = try FilePath(url: config.output, type: .folder)
-        let imageset = try folder.create(folder: "\(name).imageset")
+        let xcassetName = createXcassetName(name: name)
+        let imageset = try folder.create(folder: "\(xcassetName).imageset")
 
         for file in files {
             do {
@@ -278,7 +279,7 @@ extension Xcassets {
         let contents = try createImageContents(name: name, files: files)
         try imageset.create(file: "Contents.json", data: contents)
 
-        return name
+        return AssetCode(variableName: name, xcassetName: xcassetName)
     }
 
     func createImageContents(name: String, files: [FilePath]) throws -> Data {
@@ -315,7 +316,7 @@ extension Xcassets {
 
 extension Xcassets {
 
-    func runData() throws -> [String] {
+    func runData() throws -> [AssetCode] {
         let types: [Data.MimeType] = [.png, .jpeg, .pdf]
         let sources = try read(from: config, predicate: { try types.contains($0.data().st.mimeType) == false })
         let groups = try group(from: sources, namePredicate: { file -> String in
@@ -323,7 +324,7 @@ extension Xcassets {
                 .split(separator: "@").first?
                 .split(separator: ".").first?.description ?? file.attributes.name
         })
-        return try groups.compactMap { (name, files) -> String? in
+        return try groups.compactMap { (name, files) -> AssetCode? in
             if files.count > 1 {
                 Warn.duplicateFiles(baseURL: self.config.base, files)
             }
@@ -331,13 +332,18 @@ extension Xcassets {
         }
     }
 
-    func createDataXcasset(name: String, file: FilePath) throws -> String? {
+    func createXcassetName(name: String) -> String {
+        return "\(config.prefix)\(name)"
+    }
+
+    func createDataXcasset(name: String, file: FilePath) throws -> AssetCode? {
         let folder = try FilePath(url: config.output, type: .folder)
-        let imageset = try folder.create(folder: "\(name).dataset")
+        let xcassetName = createXcassetName(name: name)
+        let imageset = try folder.create(folder: "\(xcassetName).dataset")
         try file.copy(to: imageset)
         let contents = try createDataContents(name: name, file: file)
         try imageset.create(file: "Contents.json", data: contents)
-        return name
+        return AssetCode(variableName: name, xcassetName: xcassetName)
     }
 
     func createDataContents(name: String, file: FilePath) throws -> Data {
