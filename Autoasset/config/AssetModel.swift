@@ -30,12 +30,14 @@ struct AssetModel {
         var output: URL
         let gifCode: String
         let imageCode: String
+        let colorCode: String
 
         init(template json: JSON) {
-            self.text = json["text"].stringValue
-            self.output = URL(stringLiteral: "./")
-            self.gifCode = json["gif_code"].stringValue
+            self.text      = json["text"].stringValue
+            self.output    = URL(stringLiteral: "./")
+            self.gifCode   = json["gif_code"].stringValue
             self.imageCode = json["image_code"].stringValue
+            self.colorCode = json["color_code"].stringValue
         }
 
         init?(json: JSON, default model: Template) {
@@ -56,6 +58,12 @@ struct AssetModel {
                 self.imageCode = code
             } else {
                 self.imageCode = model.imageCode
+            }
+
+            if let code = json["color_code"].string, code.isEmpty == false {
+                self.colorCode = code
+            } else {
+                self.colorCode = model.colorCode
             }
         }
 
@@ -78,14 +86,28 @@ struct AssetModel {
     class Xcasset: Resource {
 
         let contents: Inputs
-        let prefix: String
+        fileprivate(set) var prefix: String
+        fileprivate(set) var variablePrefix: String
         let bundleName: String?
 
         override init?(json: JSON, base: URL? = nil) {
             self.bundleName = json["bundle_name"].string
             self.prefix     = json["prefix"].stringValue
             self.contents   = Inputs(inputs: json["contents"], base: base)
+            self.variablePrefix = json["variable_prefix"].stringValue
             super.init(json: json, base: base)
+        }
+
+    }
+
+    class ColorXcasset: Xcasset {
+
+        let space: String
+
+        override init?(json: JSON, base: URL? = nil) {
+            space = json["space"].string ?? "display-p3"
+            super.init(json: json, base: base)
+            self.variablePrefix = self.variablePrefix.isEmpty ? "_" : self.variablePrefix
         }
 
     }
@@ -103,11 +125,11 @@ struct AssetModel {
     init(json: JSON, base: URL?) {
         self.base = base
         images = Xcasset(json: json["images"], base: base)
-        datas = Xcasset(json: json["datas"], base: base)
-        gifs = Xcasset(json: json["gifs"], base: base)
-        colors = Xcasset(json: json["colors"], base: base)
-        fonts = Resource(json: json["fonts"], base: base)
-        clear = Inputs(json: json["clear"])
+        datas  = Xcasset(json: json["datas"], base: base)
+        gifs   = Xcasset(json: json["gifs"], base: base)
+        colors = ColorXcasset(json: json["colors"], base: base)
+        fonts  = Resource(json: json["fonts"], base: base)
+        clear  = Inputs(json: json["clear"])
         template = Template(json: json["template"], default: ASTemplate.asset)
     }
 

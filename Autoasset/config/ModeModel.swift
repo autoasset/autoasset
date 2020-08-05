@@ -32,18 +32,20 @@ class ModeModel {
         }
     }
     
-    let type: Style
+    let types: [Style]
     let variables: Variables
 
     static let `default` = ModeModel(type: .normal, variables: .init(version: "0"))
 
     init(type: Style, variables: Variables) {
-        self.type = type
+        self.types = [type]
         self.variables = variables
     }
 
     init(json: JSON) {
-        type = Style(rawValue: json["type"].stringValue) ?? .normal
+        let type = Style(rawValue: json["type"].stringValue) ?? .normal
+        let types = json["types"].arrayValue.compactMap({ Style(rawValue: $0.stringValue) })
+        self.types = types.isEmpty ? [type] : types
         variables = Variables(json: json["variables"])
     }
 

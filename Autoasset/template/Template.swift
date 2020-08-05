@@ -16,8 +16,9 @@ class ASTemplate { }
 extension ASTemplate {
 
     static let asset: AssetModel.Template = {
-        let gif_code   = "    static var [variable_name]: AssetSource.GIF { AssetSource.GIF(asset: \"[name]\") }"
-        let image_code = "    static var [variable_name]: AssetSource.Image { AssetSource.Image(asset: \"[name]\") }"
+        let gif_code   = "    static var [variable_name]: AssetSource.GIF { .init(asset: \"[name]\") }"
+        let image_code = "    static var [variable_name]: AssetSource.Image { .init(asset: \"[name]\") }"
+        let color_code = "    static var [variable_name]: AssetSource.Color { .init(asset: \"[name]\") }"
         let text = """
 #if os(iOS) || os(tvOS) || os(watchOS)
 import UIKit
@@ -79,6 +80,18 @@ public class AssetSource {
         }
     }
 
+    public class Color: Base {
+
+        public var color: UIColor {
+            guard #available(iOS 11.0, *), let color = UIColor(named: name) else {
+                assert(false, "未查询到相应资源")
+                return .black
+            }
+            return color
+        }
+
+    }
+
     public class Data: Base {
 
         public var data: Foundation.Data {
@@ -132,38 +145,48 @@ public class AssetSource {
 
 }
 
+public protocol RImageProtocol {}
+public protocol RGIFProtocol { }
+public protocol RColorProtocol { }
+public protocol RDataProtocol { }
+
 public enum R {
+
     public static let images = Image.self
     public static let gifs   = GIF.self
-    static let colors = Color.self
-    static let datas  = Data.self
+    public static let colors = Color.self
+    public static let datas  = Data.self
 
-    public enum Image { }
-    public enum GIF { }
-    enum Color { }
-    enum Data { }
+    public enum Image: RImageProtocol { }
+    public enum GIF: RGIFProtocol { }
+    public enum Color: RColorProtocol { }
+    public enum Data: RDataProtocol { }
+
 }
 
 public typealias Asset = R.Image
 
-public extension R.Image {
+public extension RImageProtocol {
 [images_code]
 }
 
-public extension R.GIF {
+public extension RGIFProtocol {
 [gifs_code]
 }
 
-extension R.Color {
+public extension RColorProtocol {
 [colors_code]
 }
 
-extension R.Data {
+public extension RDataProtocol {
 [datas_code]
 }
 
 """
-        return .init(template: JSON(["text": text, "gif_code": gif_code, "image_code": image_code]))
+        return .init(template: JSON(["text": text,
+                                     "gif_code": gif_code,
+                                     "image_code": image_code,
+                                     "color_code": color_code]))
     }()
     
 }

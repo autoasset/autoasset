@@ -60,8 +60,8 @@ class Asset {
         static let datas  = "[datas_code]"
         static let colors = "[colors_code]"
         static let fonts  = "[fonts_code]"
+        static let name   = "[name]"
         static let variableName = "[variable_name]"
-        static let name = "[name]"
     }
     
     var imageCode: [String] = []
@@ -90,6 +90,12 @@ class Asset {
         if let xcasset = config.gifs {
             try Xcassets(config: xcasset, use: .data).run().forEach { code in
                 self.add(toGIF: code)
+            }
+        }
+
+        if let xcasset = config.colors {
+            try Xcassets(config: xcasset, use: .color).run().forEach { code in
+                self.add(toColor: code)
             }
         }
 
@@ -136,8 +142,18 @@ class Asset {
 // MARK: - add
 extension Asset {
 
-    func format(name: String) -> String {
+    func format(name: String, use config: AssetModel.Xcasset?) -> String {
+        var name = name
+        if let prefix = config?.variablePrefix, prefix.isEmpty == false {
+            name = "\(prefix)_\(name)"
+        }
+
         var caseName = name.camelCased()
+
+        if let prefix = config?.variablePrefix, prefix.isEmpty == false, prefix == "_" {
+            caseName = "\(prefix)\(caseName)"
+        }
+
         if name.first?.isNumber ?? false {
             caseName = "_\(caseName)"
             Warn.caseFirstCharIsNumber(caseName: name)
@@ -145,12 +161,21 @@ extension Asset {
         return caseName
     }
 
+    func add(toColor code: AssetCode) {
+        guard let text = config.template?.colorCode else {
+            return
+        }
+        colorCode.append(text
+            .replacingOccurrences(of: Placeholder.variableName, with: format(name: code.variableName, use: config.colors))
+            .replacingOccurrences(of: Placeholder.name, with: code.xcassetName))
+    }
+
     func add(toImage code: AssetCode) {
         guard let text = config.template?.imageCode else {
             return
         }
         imageCode.append(text
-            .replacingOccurrences(of: Placeholder.variableName, with: format(name: code.variableName))
+            .replacingOccurrences(of: Placeholder.variableName, with: format(name: code.variableName, use: config.images))
             .replacingOccurrences(of: Placeholder.name, with: code.xcassetName))
     }
     
@@ -159,7 +184,7 @@ extension Asset {
             return
         }
         gifCode.append(text
-            .replacingOccurrences(of: Placeholder.variableName, with: format(name: code.variableName))
+            .replacingOccurrences(of: Placeholder.variableName, with: format(name: code.variableName, use: config.gifs))
             .replacingOccurrences(of: Placeholder.name, with: code.xcassetName))
     }
     

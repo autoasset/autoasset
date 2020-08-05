@@ -7,39 +7,28 @@
 ```yml
 ---
 # 执行模式,  默认值: normal
-# [可选]
-# normal: 
-# - 执行全模块流程
-# local: 
-# - 只执行 asset & warn 模块操作
-# pod_with_branch: 
-# - pod 以 branch 方式接入, git 将不生成相对应的tag
-# - variables: [version]
-mode: "normal"
+mode:
+		# normal
+		# local
+    # pod_with_branch
+    # test_message
+    # test_podspec
+    # test_warn
+    type: pod_with_branch
+    variables: 
+        version: 30
 
-# 执行模式可能需要的参数
-mode_variables:
-
-# [可选] 版本号
-# 模式: 
-# - pod_with_branch
-#   - 不填则以分支名作为版本号
-  version: null
-    
-    
+warn: 
+    output: output/warn
 
 # 消息模块, 用于输出带特定参数的文本
 # [可选]
 # 支持替换文本参数
 # - [version]: 版本号
-message:
-  # [必选] 模板模块
-  template: 
-    text: ""
-    # [可选] 模板文件路径, 优先级低于 `text`
-    path: "./template/message.template"
-    # [可选] 文件输出路径
-    output: "./message.txt"
+message: 
+    output: output/message
+    text: |
+        构建成功  🎉🎉🎉
 
 # Cocoapods模块, 用于输出与上传 podspec 文件
 # [可选]
@@ -69,42 +58,36 @@ git:
   # [可选] 指定被合并入的git分支
   branchs:
     - origin/UI
-    
-# 警告⚠️模块, 用于输出一些警告
-# [可选]
-warn:
-  #[必选] 警告文件输出路径
-  output: "./warn.txt"
 
 # 资源处理模块
-# [必选]
 asset:
-
+    clear:
+        inputs:
+            - Sources/Resources
   # [必选] 模板模块
-  template: 
-    text: ""
-    # [可选] 模板文件路径, 优先级低于 `text`
-    path: "./template/asset.template"
-    # [可选] 文件输出路径
-    output: "../Sources/Asset.swift"
+    template:
+        output: Sources/AutoAssets.swift
+
+    colors:
+        inputs:
+            - UI/colors
 
   # [可选] 图片模块
-  images: 
-    # [必选] 模板文件路径
-    path: "../icon"
-    # [必选] 输出文件路径
-    output: "../icon.xcassets"
-    # [可选] 描述文件路径
-    contents_path: "../Contents/images"
+    images:
+        output: Sources/Resources/icon.xcassets
+				bundle_name: Images
+        contents:
+            - Contents/images
+        inputs:
+            - UI
 
   # [可选] 图片模块
-  gifs: 
-    # [必选] 模板文件路径
-    path: "../icon"
-    # [必选] 输出文件路径
-    output: "../icon.xcassets"
-    # [可选] 描述文件路径
-    contents_path: "../Contents/images"
-
+    gifs:
+        output: Sources/Resources/gifs.xcassets
+        bundle_name: GIFs
+				contents:
+            - Contents/gifs
+        inputs:
+            - UI/gifs
 ```
 

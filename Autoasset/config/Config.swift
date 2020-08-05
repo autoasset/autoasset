@@ -24,21 +24,22 @@ struct Config {
         }
     }
     
+    let warn: Warn?
     let git: GitModel
     let mode: ModeModel
-    let podspec: PodspecModel?
     let asset: AssetModel
-    let warn: Warn?
+    let podspec: PodspecModel?
     let message: MessageModel?
     
     init(json: JSON) throws {
-        mode    = ModeModel(json: json["mode"])
+        let mode  = ModeModel(json: json["mode"])
+        self.mode = mode
         podspec = PodspecModel(json: json["podspec"])
         message = MessageModel(json: json["message"])
         warn    = Warn(json: json["warn"])
 
         var filePath = try FilePath(path: "./")
-        if [.normal, .pod_with_branch].contains(mode.type) {
+        if mode.types.contains(.normal) || mode.types.contains(.pod_with_branch) {
             while true {
                 if try filePath
                     .subFilePaths(predicates: [.custom({ $0.type == .folder })])
@@ -59,7 +60,7 @@ struct Config {
             dirPath = filePath
         }
 
-        if mode.type == .normal {
+        if mode.types.contains(.normal) {
             asset = AssetModel(json: json["asset"], base: filePath.url.appendingPathComponent(GitModel.Clone.output))
         } else {
             asset = AssetModel(json: json["asset"], base: dirPath.url)

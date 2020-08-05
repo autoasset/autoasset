@@ -23,7 +23,7 @@ class Autoasset {
 
     func start() throws {
         do {
-            try start(with: config.mode.type)
+            try start(with: config.mode.types)
         } catch {
             try Warn.output(config: config.warn)
             try Message(config: config.message)?.output(error: error.localizedDescription)
@@ -59,6 +59,13 @@ private extension Autoasset {
             try Warn.output(config: config.warn)
         case .normal:
             try normalMode()
+        }
+    }
+
+    func start(with types: [ModeModel.Style]) throws {
+        for type in types {
+            RunPrint("+------------------ mode type: \(type) ------------------+")
+            try start(with: type)
         }
     }
 

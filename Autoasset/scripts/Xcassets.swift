@@ -44,16 +44,144 @@ class Xcassets {
         case .data:
             return try runData()
         case .color:
-            // try runColor()
-            break
+            return try runColor()
         }
-
-        return []
     }
 
 }
 
 extension Xcassets {
+
+    struct Appearances {
+        enum ValueType: String {
+            case light
+            case dark
+            case any
+        }
+
+        let appearance = "luminosity"
+        var value: ValueType
+
+        var dict: [String: Any]? {
+            switch value {
+            case .any:
+                return nil
+            default:
+                return  ["value": value.rawValue, "appearance": appearance]
+            }
+        }
+
+    }
+
+}
+
+// color
+extension Xcassets {
+
+    struct Color {
+        let space: String
+        let any: String
+        let light: String
+        let dark: String
+
+        init?(json: JSON, space: String) {
+            self.space = space
+            self.any   = json["any"].stringValue.uppercased().replacingOccurrences(of: "#", with: "")
+            self.light = json["light"].stringValue.uppercased()
+            self.dark  = json["dark"].stringValue.uppercased()
+            if self.any.isEmpty {
+                return nil
+            }
+        }
+
+        func components(_ value: String) -> Any {
+            let color = StemColor(hex: value)
+            let formatter = NumberFormatter()
+            formatter.numberStyle = .decimal
+            formatter.formatWidth = 4
+            formatter.minimumFractionDigits = 4
+            formatter.maximumFractionDigits = 4
+
+            return ["alpha": formatter.string(from: .init(value: color.alpha)),
+                    "blue" : formatter.string(from: .init(value: color.rgbSpace.blue)),
+                    "green": formatter.string(from: .init(value: color.rgbSpace.green)),
+                    "red"  : formatter.string(from: .init(value: color.rgbSpace.red))]
+        }
+
+        var output: [Any] {
+            var colors = [[String: Any]]()
+
+            if any.isEmpty == false {
+                var item = [String: Any]()
+                item["idiom"] = "universal"
+                item["color"] = ["color-space": space, "components": self.components(any)]
+                colors.append(item)
+            }
+
+            if light.isEmpty == false {
+                var item = [String: Any]()
+                item["idiom"] = "universal"
+                item["appearances"] = [Appearances(value: .light).dict]
+                item["color"] = ["color-space": space, "components": self.components(light)]
+                colors.append(item)
+            }
+
+            if dark.isEmpty == false {
+                var item = [String: Any]()
+                item["idiom"] = "universal"
+                item["appearances"] = [Appearances(value: .dark).dict]
+                item["color"] = ["color-space": space, "components": self.components(dark)]
+                colors.append(item)
+            }
+            return colors
+        }
+
+    }
+
+    func runColor() throws -> [AssetCode] {
+        let sources = try read(from: config)
+        let jsons = try sources.compactMap { file -> JSON? in
+            let data = try file.data()
+            return try JSON(data: data)
+        }
+
+        var codes = [AssetCode]()
+        try jsons.forEach { json in
+            try json.arrayValue.forEach { item in
+                if let config = config as? AssetModel.ColorXcasset,
+                    let color = Color(json: item, space: config.space),
+                let code = try createColorXcasset(name: color.any, color: color) {
+                    codes.append(code)
+                }
+            }
+        }
+        return codes
+    }
+
+    func createColorXcasset(name: String, color: Color) throws -> AssetCode? {
+        let folder = try FilePath(url: config.output, type: .folder)
+        let xcassetName = createXcassetName(name: name)
+        let imageset = try folder.create(folder: "\(xcassetName).colorset")
+        let contents = try createColorContents(name: name, color: color)
+        try imageset.create(file: "Contents.json", data: contents)
+        return AssetCode(variableName: name, xcassetName: xcassetName)
+    }
+
+    func createColorContents(name: String, color: Color) throws -> Data {
+        if let file = contents[name] { return try file.data() }
+        var contents: [String: Any] = ["info": ["version": 1, "author": "xcode"],
+                                       "properties": ["localizable": true]]
+        contents["colors"] = color.output
+        return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
+    }
+
+}
+
+extension Xcassets {
+
+    func createXcassetName(name: String) -> String {
+        return "\(config.prefix)\(name)"
+    }
 
     func read(from inputs: Inputs, predicate: ((FilePath) throws -> Bool)? = nil) throws -> [FilePath] {
         return try inputs.inputs.compactMap({ try FilePath(url: $0, type: .folder) }).reduce([FilePath](), { (result, file) -> [FilePath] in
@@ -111,27 +239,6 @@ extension Xcassets {
 // MARK: - image
 extension Xcassets {
 
-    struct Appearances {
-        enum ValueType: String {
-            case light
-            case dark
-            case any
-        }
-
-        let appearance = "luminosity"
-        var value: ValueType
-
-        var dict: [String: Any]? {
-            switch value {
-            case .any:
-                return nil
-            default:
-                return  ["value": value.rawValue, "appearance": appearance]
-            }
-        }
-
-    }
-
     struct ImageItem {
 
         let items: [ImageItemElemnt]
@@ -156,15 +263,15 @@ extension Xcassets {
                     items.append(contentsOf: [any, dark ?? darkPlaceholder])
                 }
             } else {
-               items = ImageItemElemnt.Scale.allCases.map { scale -> ImageItemElemnt in
-                var element = elements.first(where: { $0.scale == scale && isAnyStyle($0) })
+                items = ImageItemElemnt.Scale.allCases.map { scale -> ImageItemElemnt in
+                    var element = elements.first(where: { $0.scale == scale && isAnyStyle($0) })
 
-                if element == nil {
-                   element = ImageItemElemnt(type: .image, scale: scale, appearances: .init(value: .any))
-                }
+                    if element == nil {
+                        element = ImageItemElemnt(type: .image, scale: scale, appearances: .init(value: .any))
+                    }
 
-                element!.appearances?.value = .any
-                return element!
+                    element!.appearances?.value = .any
+                    return element!
                 }
             }
             self.items = items
@@ -314,6 +421,7 @@ extension Xcassets {
 
 }
 
+// data
 extension Xcassets {
 
     func runData() throws -> [AssetCode] {
@@ -330,10 +438,6 @@ extension Xcassets {
             }
             return try createDataXcasset(name: name, file: files[0])
         }
-    }
-
-    func createXcassetName(name: String) -> String {
-        return "\(config.prefix)\(name)"
     }
 
     func createDataXcasset(name: String, file: FilePath) throws -> AssetCode? {

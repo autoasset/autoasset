@@ -14,6 +14,7 @@ struct Main: ParsableCommand {
     static let configuration = CommandConfiguration(version: Autoasset.version)
     @Option(name: [.short, .customLong("config")], help: "配置")
     var config: String
+    @Flag() var verbose = false
 
     func run() throws {
         do {
