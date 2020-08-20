@@ -16,16 +16,11 @@ class ASTemplate { }
 extension ASTemplate {
 
     static let asset: AssetModel.Template = {
-        let gif_code   = "    static var [variable_name]: AssetSource.GIF { .init(asset: \"[name]\") }"
-        let image_code = "    static var [variable_name]: AssetSource.Image { .init(asset: \"[name]\") }"
-        let color_code = "    static var [variable_name]: AssetSource.Color { .init(asset: \"[name]\") }"
+        let gif_code   = "    static var [variable_name]: AssetSource.GIF { .init(asset: \"[name1]\") }"
+        let image_code = "    static var [variable_name]: AssetSource.Image { .init(asset: \"[name1]\") }"
+        let color_code = "    /// [mark]\n    static var [variable_name]: AssetSource.Color { .init(light: [name1], dark: [name2]) }"
         let text = """
-#if os(iOS) || os(tvOS) || os(watchOS)
 import UIKit
-#elseif os(OSX)
-import AppKit
-#endif
-import Foundation
 
 fileprivate class RBundle {
 
@@ -61,8 +56,8 @@ fileprivate class RBundle {
             }
 
             guard let url = bundle(for: .none).url(forResource: type.name, withExtension: "bundle")
-                , let bundle = Bundle(url: url) else {
-                    return .main
+                  , let bundle = Bundle(url: url) else {
+                return .main
             }
 
             return bundle
@@ -80,14 +75,68 @@ public class AssetSource {
         }
     }
 
-    public class Color: Base {
+    public class Color {
+
+        public enum State {
+            case light
+            case dark
+        }
+
+        public private(set) static var state: State = .light
+
+        public static func enable(_ state: State) {
+            self.state = state
+        }
+
+        let hex1: Int64
+        let hex2: Int64
 
         public var color: UIColor {
-            guard #available(iOS 11.0, *), let color = UIColor(named: name) else {
-                assert(false, "未查询到相应资源")
-                return .black
+            switch Self.state {
+            case .dark: return dark
+            case .light: return light
             }
-            return color
+        }
+        public var light: UIColor { color(hex: hex1) }
+        public var dark: UIColor  { color(hex: hex2) }
+
+        /// 十六进制色: 0x666666
+        ///
+        /// - Parameter RGBValue: 十六进制颜色
+        func color(hex value: Int64) -> UIColor {
+
+            var hex = value
+            var count = 0
+
+            while count <= 8, hex > 0 {
+                hex = hex >> 4
+                count += 1
+                if count > 8 { break }
+            }
+
+            let divisor = CGFloat(255)
+
+            if count <= 6 {
+                let red     = CGFloat((value & 0xFF0000) >> 16) / divisor
+                let green   = CGFloat((value & 0x00FF00) >>  8) / divisor
+                let blue    = CGFloat( value & 0x0000FF       ) / divisor
+                return .init(red: red, green: green, blue: blue, alpha: 1)
+            } else if count <= 8 {
+                let red     = CGFloat((Int64(value) & 0xFF000000) >> 24) / divisor
+                let green   = CGFloat((Int64(value) & 0x00FF0000) >> 16) / divisor
+                let blue    = CGFloat((Int64(value) & 0x0000FF00) >>  8) / divisor
+                let alpha   = CGFloat( Int64(value) & 0x000000FF       ) / divisor
+                return .init(red: red, green: green, blue: blue, alpha: alpha)
+            } else {
+                assertionFailure("StemColor: 位数错误, 只支持 6 或 8 位, count: \\(count)")
+            }
+
+            return .black
+        }
+
+        init(light hex1: Int64, dark hex2: Int64) {
+            self.hex1 = hex1
+            self.hex2 = hex2
         }
 
     }
@@ -146,9 +195,9 @@ public class AssetSource {
 }
 
 public protocol RImageProtocol {}
-public protocol RGIFProtocol { }
-public protocol RColorProtocol { }
-public protocol RDataProtocol { }
+public protocol RGIFProtocol {}
+public protocol RColorProtocol {}
+public protocol RDataProtocol {}
 
 public enum R {
 
@@ -157,14 +206,15 @@ public enum R {
     public static let colors = Color.self
     public static let datas  = Data.self
 
-    public enum Image: RImageProtocol { }
-    public enum GIF: RGIFProtocol { }
-    public enum Color: RColorProtocol { }
-    public enum Data: RDataProtocol { }
+    public enum Image: RImageProtocol {}
+    public enum GIF: RGIFProtocol {}
+    public enum Color: RColorProtocol {}
+    public enum Data: RDataProtocol {}
 
 }
 
-public typealias Asset = R.Image
+public typealias Asset  = R.Image
+public typealias Colors = R.Color
 
 public extension RImageProtocol {
 [images_code]

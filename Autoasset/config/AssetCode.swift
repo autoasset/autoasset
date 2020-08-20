@@ -9,6 +9,27 @@
 import Foundation
 
 struct AssetCode {
-   let variableName: String
-   let xcassetName: String
+    
+    struct Color {
+        let light: String
+        let dark: String
+        let mark: String
+    }
+    
+    let color: Color
+    let variableName: String
+    let xcassetName: String
+
+    init(variableName: String, xcassetName: String) {
+        self.variableName = variableName
+        self.xcassetName = xcassetName
+        self.color = Color(light: "", dark: "", mark: "")
+    }
+
+    init(variableName: String, xcassetName: String, color: Color) {
+        self.variableName = variableName
+        self.xcassetName = xcassetName
+        self.color = color
+    }
+
 }

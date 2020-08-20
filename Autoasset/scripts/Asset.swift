@@ -60,7 +60,9 @@ class Asset {
         static let datas  = "[datas_code]"
         static let colors = "[colors_code]"
         static let fonts  = "[fonts_code]"
-        static let name   = "[name]"
+        static let mark   = "[mark]"
+        static let name1   = "[name1]"
+        static let name2   = "[name2]"
         static let variableName = "[variable_name]"
     }
     
@@ -165,9 +167,12 @@ extension Asset {
         guard let text = config.template?.colorCode else {
             return
         }
-        colorCode.append(text
-            .replacingOccurrences(of: Placeholder.variableName, with: format(name: code.variableName, use: config.colors))
-            .replacingOccurrences(of: Placeholder.name, with: code.xcassetName))
+
+        let str = text.replacingOccurrences(of: Placeholder.variableName, with: format(name: code.variableName, use: config.colors))
+            .replacingOccurrences(of: Placeholder.mark, with: code.color.mark)
+            .replacingOccurrences(of: Placeholder.name1, with: code.color.light)
+            .replacingOccurrences(of: Placeholder.name2, with: code.color.dark)
+        colorCode.append(str)
     }
 
     func add(toImage code: AssetCode) {
@@ -176,7 +181,7 @@ extension Asset {
         }
         imageCode.append(text
             .replacingOccurrences(of: Placeholder.variableName, with: format(name: code.variableName, use: config.images))
-            .replacingOccurrences(of: Placeholder.name, with: code.xcassetName))
+            .replacingOccurrences(of: Placeholder.name1, with: code.xcassetName))
     }
     
     func add(toGIF code: AssetCode) {
@@ -185,7 +190,7 @@ extension Asset {
         }
         gifCode.append(text
             .replacingOccurrences(of: Placeholder.variableName, with: format(name: code.variableName, use: config.gifs))
-            .replacingOccurrences(of: Placeholder.name, with: code.xcassetName))
+            .replacingOccurrences(of: Placeholder.name1, with: code.xcassetName))
     }
     
 }

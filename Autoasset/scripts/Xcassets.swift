@@ -85,13 +85,32 @@ extension Xcassets {
         let dark: String
 
         init?(json: JSON, space: String) {
-            self.space = space
-            self.any   = json["any"].stringValue.uppercased().replacingOccurrences(of: "#", with: "")
-            self.light = json["light"].stringValue.uppercased()
-            self.dark  = json["dark"].stringValue.uppercased()
-            if self.any.isEmpty {
+            func formatterInput(string: String) -> String {
+                string.uppercased()
+                    .replacingOccurrences(of: "#", with: "")
+                    .replacingOccurrences(of: "0X", with: "")
+            }
+
+            var any   = formatterInput(string: json["any"].stringValue)
+            var light = formatterInput(string: json["light"].stringValue)
+            let dark  = formatterInput(string: json["dark"].stringValue)
+
+            if any.isEmpty, light.isEmpty == false {
+                any = light
+            }
+
+            if light.isEmpty, any.isEmpty == false {
+                light = any
+            }
+
+            if any.isEmpty {
                 return nil
             }
+
+            self.space = space
+            self.any   = any
+            self.light = light
+            self.dark  = dark
         }
 
         func components(_ value: String) -> Any {
@@ -106,6 +125,23 @@ extension Xcassets {
                     "blue" : formatter.string(from: .init(value: color.rgbSpace.blue)),
                     "green": formatter.string(from: .init(value: color.rgbSpace.green)),
                     "red"  : formatter.string(from: .init(value: color.rgbSpace.red))]
+        }
+
+        func mark() -> String {
+            var mark = ""
+            do {
+                let color = StemColor(hex: light)
+                let (red, green, blue) = color.rgbSpace.intUnpack
+                mark += "light: red: \(red) green: \(green) blue: \(blue)"
+            }
+
+            if dark.isEmpty == false {
+                let color = StemColor(hex: dark)
+                let (red, green, blue) = color.rgbSpace.intUnpack
+                mark += " | dark: red: \(red) green: \(green) blue: \(blue)"
+            }
+
+            return mark
         }
 
         var output: [Any] {
@@ -150,7 +186,7 @@ extension Xcassets {
             try json.arrayValue.forEach { item in
                 if let config = config as? AssetModel.ColorXcasset,
                     let color = Color(json: item, space: config.space),
-                let code = try createColorXcasset(name: color.any, color: color) {
+                    let code = try createColorXcasset(name: color.any, color: color) {
                     codes.append(code)
                 }
             }
@@ -164,7 +200,15 @@ extension Xcassets {
         let imageset = try folder.create(folder: "\(xcassetName).colorset")
         let contents = try createColorContents(name: name, color: color)
         try imageset.create(file: "Contents.json", data: contents)
-        return AssetCode(variableName: name, xcassetName: xcassetName)
+
+        let light = "0x" + color.light
+        let dark  = "0x" + (color.dark.isEmpty ? color.light : color.dark)
+
+        return AssetCode(variableName: name,
+                         xcassetName: xcassetName,
+                         color: .init(light: light,
+                                      dark: dark,
+                                      mark: color.mark()))
     }
 
     func createColorContents(name: String, color: Color) throws -> Data {
