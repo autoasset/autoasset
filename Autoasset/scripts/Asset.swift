@@ -168,7 +168,7 @@ extension Asset {
             return
         }
 
-        let str = text.replacingOccurrences(of: Placeholder.variableName, with: format(name: code.variableName, use: config.colors))
+        let str = text.replacingOccurrences(of: Placeholder.variableName, with: format(name: code.variableName, use: config.colors).uppercased())
             .replacingOccurrences(of: Placeholder.mark, with: code.color.mark)
             .replacingOccurrences(of: Placeholder.name1, with: code.color.light)
             .replacingOccurrences(of: Placeholder.name2, with: code.color.dark)

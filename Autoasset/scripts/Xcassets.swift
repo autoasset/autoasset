@@ -154,7 +154,7 @@ extension Xcassets {
                 colors.append(item)
             }
 
-            if light.isEmpty == false {
+            if light.isEmpty == false, any != light {
                 var item = [String: Any]()
                 item["idiom"] = "universal"
                 item["appearances"] = [Appearances(value: .light).dict]
