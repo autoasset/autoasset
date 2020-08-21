@@ -1,4 +1,4 @@
-### version: 8
+### version: 15
 
 ---
 
@@ -8,8 +8,8 @@
 ---
 # 执行模式,  默认值: normal
 mode:
-		# normal
-		# local
+    # normal
+    # local
     # pod_with_branch
     # test_message
     # test_podspec
@@ -69,6 +69,8 @@ asset:
         output: Sources/AutoAssets.swift
 
     colors:
+        output: Sources/Resources/colors.xcassets
+        space: display-p3
         inputs:
             - UI/colors
 
