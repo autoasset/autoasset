@@ -198,6 +198,8 @@ extension Xcassets {
         let folder = try FilePath(url: config.output, type: .folder)
         let xcassetName = createXcassetName(name: name)
         let imageset = try folder.create(folder: "\(xcassetName).colorset")
+        RunPrint.create(row: "created: \(xcassetName).colorset")
+
         let contents = try createColorContents(name: name, color: color)
         try imageset.create(file: "Contents.json", data: contents)
 
@@ -418,6 +420,7 @@ extension Xcassets {
         let folder = try FilePath(url: config.output, type: .folder)
         let xcassetName = createXcassetName(name: name)
         let imageset = try folder.create(folder: "\(xcassetName).imageset")
+        RunPrint.create(row: "created: \(xcassetName).colorset")
 
         for file in files {
             do {
@@ -488,6 +491,8 @@ extension Xcassets {
         let folder = try FilePath(url: config.output, type: .folder)
         let xcassetName = createXcassetName(name: name)
         let imageset = try folder.create(folder: "\(xcassetName).dataset")
+        RunPrint.create(row: "created: \(xcassetName).colorset")
+        
         try file.copy(to: imageset)
         let contents = try createDataContents(name: name, file: file)
         try imageset.create(file: "Contents.json", data: contents)

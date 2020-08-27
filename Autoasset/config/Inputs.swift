@@ -26,9 +26,9 @@ class Inputs {
                 .compactMap({ $0.string })
                 .map({ item -> URL in
                     if ["file://", "~/"].contains(where: { item.hasPrefix($0) }) {
-                        return URL(string: item)!
+                        return URL(string: item)!.standardized
                     } else {
-                       return base.appendingPathComponent(item)
+                        return base.appendingPathComponent(item).standardized
                     }
                 })
         } else {

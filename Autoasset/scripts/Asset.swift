@@ -10,6 +10,7 @@ import Foundation
 import Stem
 
 fileprivate extension String {
+
     func camelCased() -> String {
         let splitChars = [" ", "-", "_"]
         var words = [String]()
@@ -38,6 +39,7 @@ fileprivate extension String {
         words.append(buffer)
         return words.enumerated().map { $0.offset > 0 ? $0.element.capitalized : $0.element.lowercased() }.joined()
     }
+
 }
 
 class Asset {
@@ -80,25 +82,53 @@ class Asset {
         /// 文件清理
         let xcassets = [config.images, config.gifs, config.datas, config.colors].compactMap({ $0 })
         Xcassets.deleteOutput(folders: xcassets)
-        config.clear?.inputs.forEach({ try? FilePath(url: $0, type: .folder).delete() })
+        if let resource = config.clear {
+            RunPrint.create(titleDesc: "command", title: "clear", level: .info)
+            try resource.inputs.forEach {
+                RunPrint.create(row: "clearing")
+                RunPrint.create(row: $0.path)
+                try FilePath(url: $0, type: .folder).delete()
+            }
+            RunPrint.createEnd()
+        }
+
+        if let resource = config.xcassets {
+            RunPrint.create(titleDesc: "command", title: "xcassets", level: .info)
+            let output = try FilePath(url: resource.output, type: .folder)
+            try resource.inputs
+                .compactMap({ try FilePath(url: $0, type: .folder) })
+                .forEach {
+                    RunPrint.create(row: "copying")
+                    RunPrint.create(row: "from: \($0.path)")
+                    RunPrint.create(row: "to  : \(output.path)")
+                    try $0.copy(to: output)
+                }
+            RunPrint.createEnd()
+        }
 
         /// 文件创建
-        if let xcasset = config.images {
-            try Xcassets(config: xcasset, use: .image).run().forEach { code in
+        if let resource = config.images {
+            RunPrint.create(titleDesc: "command", title: "images", level: .info)
+            try Xcassets(config: resource, use: .image).run().forEach { code in
                 self.add(toImage: code)
             }
+            RunPrint.createEnd()
         }
 
-        if let xcasset = config.gifs {
-            try Xcassets(config: xcasset, use: .data).run().forEach { code in
+        if let resource = config.gifs {
+            RunPrint.create(titleDesc: "command", title: "gifs", level: .info)
+            try Xcassets(config: resource, use: .data).run().forEach { code in
                 self.add(toGIF: code)
             }
+            RunPrint.createEnd()
         }
 
-        if let xcasset = config.colors {
-            try Xcassets(config: xcasset, use: .color).run().forEach { code in
+        if let resource = config.colors {
+            RunPrint.create(titleDesc: "command", title: "colors", level: .info)
+            try Xcassets(config: resource, use: .color).run().forEach { code in
                 self.add(toColor: code)
             }
+            RunPrint.createEnd()
         }
 
         try output()
@@ -118,19 +148,19 @@ class Asset {
             .replacingOccurrences(of: Placeholder.fonts, with: fontCode.sorted().joined(separator: "\n"))
 
         if let config = config.images, let bundleName = config.bundleName {
-           message = message.replacingOccurrences(of: Placeholder.imageBundleName, with: bundleName)
+            message = message.replacingOccurrences(of: Placeholder.imageBundleName, with: bundleName)
         }
 
         if let config = config.gifs, let bundleName = config.bundleName {
-           message = message.replacingOccurrences(of: Placeholder.gifBundleName, with: bundleName)
+            message = message.replacingOccurrences(of: Placeholder.gifBundleName, with: bundleName)
         }
 
         if let config = config.datas, let bundleName = config.bundleName {
-           message = message.replacingOccurrences(of: Placeholder.dataBundleName, with: bundleName)
+            message = message.replacingOccurrences(of: Placeholder.dataBundleName, with: bundleName)
         }
 
         if let config = config.colors, let bundleName = config.bundleName {
-           message = message.replacingOccurrences(of: Placeholder.colorBundleName, with: bundleName)
+            message = message.replacingOccurrences(of: Placeholder.colorBundleName, with: bundleName)
         }
 
         let data = message.data(using: .utf8)

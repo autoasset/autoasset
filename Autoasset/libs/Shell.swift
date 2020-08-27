@@ -9,17 +9,9 @@
 import Foundation
 import SwiftShell
 
-func command(_ message: String) {
-    RunPrint([String](repeating: "↓", count: 80).joined())
-    RunPrint("command: \(message)")
-    RunPrint([String](repeating: "↑", count: 80).joined())
-}
-
 @discardableResult
 func shell(_ command: String, useAssert: Bool = true, function: StaticString = #function, line: UInt = #line, file: StaticString = #file) throws -> RunOutput {
-    RunPrint([String](repeating: "↓", count: 80).joined())
-    RunPrint("command: \(command)")
-    RunPrint([String](repeating: "-", count: 80).joined())
+    RunPrint.create(titleDesc: "command", title: command, level: .info)
 
     let out = run(bash: command)
 
@@ -28,10 +20,9 @@ func shell(_ command: String, useAssert: Bool = true, function: StaticString = #
     }
 
     if out.succeeded {
-        RunPrint([String](repeating: "🎉", count: 40).joined())
+        RunPrint.iconSuccess()
     } else {
-        RunPrint([String](repeating: "❌", count: 40).joined())
-        RunPrint("stderror: \(out.stderror)")
+        RunPrint.iconFail()
         if useAssert {
             throw RunError(message: out.stderror.isEmpty ? out.stdout : out.stderror)
         } else {
@@ -39,7 +30,6 @@ func shell(_ command: String, useAssert: Bool = true, function: StaticString = #
         }
     }
 
-    RunPrint([String](repeating: "↑", count: 80).joined())
-    RunPrint("\n")
+    RunPrint.createEnd()
     return out
 }

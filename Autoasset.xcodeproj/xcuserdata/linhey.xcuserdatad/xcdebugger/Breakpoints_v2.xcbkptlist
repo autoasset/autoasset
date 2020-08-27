@@ -126,38 +126,6 @@
             endingLineNumber = "336"
             landmarkName = "subFilePaths(predicates:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "49CF9103-7710-49B4-AFBE-52EF9BE0129A - 689f2bebe7484fa2"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (Stem.FilePath) throws -&gt; Swift.Bool in Stem.FilePath.subFilePaths(predicates: Swift.Array&lt;Stem.FilePath.SearchPredicate&gt;) throws -&gt; Swift.Array&lt;Stem.FilePath&gt;"
-                  moduleName = "Autoasset"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/linhey/Library/Developer/Xcode/DerivedData/Autoasset-ggumypotynxtcvefmafugkaumhpq/SourcePackages/checkouts/Stem/Sources/Foundation/new/FilePath/FilePath.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "336"
-                  endingLineNumber = "336"
-                  offsetFromSymbolStart = "37">
-               </Location>
-               <Location
-                  uuid = "49CF9103-7710-49B4-AFBE-52EF9BE0129A - d5a240e28684edd2"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 ((Stem.FilePath) throws -&gt; Swift.Bool) throws -&gt; Swift.Bool in closure #2 (Stem.FilePath) throws -&gt; Swift.Bool in Stem.FilePath.subFilePaths(predicates: Swift.Array&lt;Stem.FilePath.SearchPredicate&gt;) throws -&gt; Swift.Array&lt;Stem.FilePath&gt;"
-                  moduleName = "Autoasset"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/linhey/Library/Developer/Xcode/DerivedData/Autoasset-ggumypotynxtcvefmafugkaumhpq/SourcePackages/checkouts/Stem/Sources/Foundation/new/FilePath/FilePath.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "336"
-                  endingLineNumber = "336"
-                  offsetFromSymbolStart = "44">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

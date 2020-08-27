@@ -16,7 +16,7 @@ extension JSON {
         }
 
         if ["file://", "~/"].contains(where: { value.hasPrefix($0) }) {
-            return URL(string: value)
+            return URL(string: value)?.standardized
         }
 
         return try? FilePath(path: value, type: .file).url
@@ -115,6 +115,7 @@ struct AssetModel {
     let template: Template?
 
     var images: Xcasset?
+    var xcassets: Resource?
     var gifs: Xcasset?
     var datas: Xcasset?
     var colors: Xcasset?
@@ -130,6 +131,7 @@ struct AssetModel {
         colors = ColorXcasset(json: json["colors"], base: base)
         fonts  = Resource(json: json["fonts"], base: base)
         clear  = Inputs(json: json["clear"])
+        xcassets = Resource(json: json["xcassets"])
         template = Template(json: json["template"], default: ASTemplate.asset)
     }
 
