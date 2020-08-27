@@ -197,11 +197,15 @@ extension Xcassets {
     func createColorXcasset(name: String, color: Color) throws -> AssetCode? {
         let folder = try FilePath(url: config.output, type: .folder)
         let xcassetName = createXcassetName(name: name)
-        let imageset = try folder.create(folder: "\(xcassetName).colorset")
-        RunPrint.create(row: "created: \(xcassetName).colorset")
 
-        let contents = try createColorContents(name: name, color: color)
-        try imageset.create(file: "Contents.json", data: contents)
+        do {
+            let imageset = try folder.create(folder: "\(xcassetName).colorset")
+            let contents = try createColorContents(name: name, color: color)
+            try imageset.create(file: "Contents.json", data: contents)
+            RunPrint.create(row: "created: \(xcassetName).colorset")
+        } catch {
+            return nil
+        }
 
         let light = "0x" + color.light
         let dark  = "0x" + (color.dark.isEmpty ? color.light : color.dark)
@@ -492,7 +496,7 @@ extension Xcassets {
         let xcassetName = createXcassetName(name: name)
         let imageset = try folder.create(folder: "\(xcassetName).dataset")
         RunPrint.create(row: "created: \(xcassetName).colorset")
-        
+
         try file.copy(to: imageset)
         let contents = try createDataContents(name: name, file: file)
         try imageset.create(file: "Contents.json", data: contents)
