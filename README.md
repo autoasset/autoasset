@@ -77,7 +77,7 @@ asset:
   # [可选] 图片模块
     images:
         output: Sources/Resources/icon.xcassets
-				bundle_name: Images
+	bundle_name: Images
         contents:
             - Contents/images
         inputs:
@@ -87,7 +87,7 @@ asset:
     gifs:
         output: Sources/Resources/gifs.xcassets
         bundle_name: GIFs
-				contents:
+	contents:
             - Contents/gifs
         inputs:
             - UI/gifs
