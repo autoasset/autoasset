@@ -131,7 +131,7 @@ struct AssetModel {
         colors = ColorXcasset(json: json["colors"], base: base)
         fonts  = Resource(json: json["fonts"], base: base)
         clear  = Inputs(json: json["clear"])
-        xcassets = Resource(json: json["xcassets"])
+        xcassets = Resource(json: json["xcassets"], base: base)
         template = Template(json: json["template"], default: ASTemplate.asset)
     }
 
