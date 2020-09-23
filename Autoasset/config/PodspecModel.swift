@@ -23,11 +23,17 @@ struct PodspecModel: TemplateModelProtocol {
         }
     }
 
+    enum Attribute: String {
+        case verbose        = "--verbose"
+        case no_clean       = "--no-clean"
+        case allow_warnings = "--allow-warnings"
+    }
+
+    /// 附加属性
+    private(set) var attributes = [Attribute]()
+
     var templateModel: TemplateModel
     let repo: Repo?
-    let noClean: Bool
-    let allowWarnings: Bool
-    let verbose: Bool
 
     init?(json: JSON) {
         guard let templateModel = TemplateModel(json: json["template"]) else {
@@ -35,8 +41,18 @@ struct PodspecModel: TemplateModelProtocol {
         }
         self.templateModel = templateModel
         repo = Repo(json: json["repo"])
-        noClean = json["no_clean"].bool ?? true
-        allowWarnings = json["allow_warnings"].bool ?? true
-        verbose = json["verbose"].bool ?? true
+
+        let attributesJSON = json["attributes"]
+        if attributesJSON["allow_warnings"].boolValue {
+            attributes.append(.allow_warnings)
+        }
+
+        if attributesJSON["no_clean"].boolValue {
+            attributes.append(.no_clean)
+        }
+
+        if attributesJSON["verbose"].boolValue {
+            attributes.append(.verbose)
+        }
     }
 }

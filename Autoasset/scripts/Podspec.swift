@@ -37,6 +37,7 @@ class Podspec {
         guard let config = config else {
             return nil
         }
+
         self.config = config
     }
 
@@ -72,28 +73,24 @@ extension Podspec {
 
     }
 
-    func noClean(_ flag: Bool) -> String {
-        return flag ? "--no-clean" : ""
-    }
-
-    func allowWarnings(_ flag: Bool) -> String {
-        return flag ?  "--allow-warnings" : ""
-    }
-
-    func verbose(_ flag: Bool) -> String {
-        return flag ?  "--verbose" : ""
-    }
-
     func lint() throws {
-        try shell("pod lib lint \(config.output.path) \(noClean(config.noClean)) \(allowWarnings(config.allowWarnings)) \(verbose(config.verbose))")
+        var command = "pod lib lint \(config.output.path)"
+        command += " "
+        command += config.attributes.map(\.rawValue).joined(separator: " ")
+        try shell(command)
     }
 
     func push() throws {
+        var command = ""
+
         if let repo = try repoName() {
-            try shell("pod repo push \(repo) \(config.output.path) \(allowWarnings(config.allowWarnings))")
+            command += "pod repo push \(repo) \(config.output.path)"
         } else {
-            try shell("pod trunk push \(config.output) \(allowWarnings(config.allowWarnings))")
+            command += "pod trunk push \(config.output)"
         }
+
+        command += config.attributes.map(\.rawValue).joined(separator: " ")
+        try shell(command)
     }
 
 }
