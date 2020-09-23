@@ -6,7 +6,7 @@
         "repositoryURL": "https://github.com/linhay/Stem.git",
         "state": {
           "branch": "master",
-          "revision": "19f7a3c9d6c51833cc606096c600a5c199f6646f",
+          "revision": "96bb5f5ef9e59073c51093de5eeb7b4bfa9ab244",
           "version": null
         }
       },
@@ -15,17 +15,17 @@
         "repositoryURL": "https://github.com/apple/swift-argument-parser",
         "state": {
           "branch": null,
-          "revision": "15351c1cd009eba0b6e438bfef55ea9847a8dc4a",
-          "version": "0.3.0"
+          "revision": "92646c0cdbaca076c8d3d0207891785b3379cbff",
+          "version": "0.3.1"
         }
       },
       {
         "package": "SwiftShell",
         "repositoryURL": "https://github.com/kareman/SwiftShell.git",
         "state": {
-          "branch": null,
-          "revision": "fb7fc2c9ad8811caf324431a508fb79e3fb74f99",
-          "version": "5.0.1"
+          "branch": "Swift5.3",
+          "revision": "647b7375bf7ae5df8e49927f32f138ab44b26326",
+          "version": null
         }
       },
       {

@@ -19,7 +19,17 @@ extension ASTemplate {
         let gif_code   = "    static var [variable_name]: AssetSource.GIF { .init(asset: \"[name1]\") }"
         let image_code = "    static var [variable_name]: AssetSource.Image { .init(asset: \"[name1]\") }"
         let color_code = "    /// [mark]\n    static var [variable_name]: AssetSource.Color { .init(light: [name1], dark: [name2]) }"
-        let text = """
+
+        return .init(template: JSON(["text": templateText,
+                                     "gif_code": gif_code,
+                                     "image_code": image_code,
+                                     "color_code": color_code]))
+    }()
+
+
+    private static let templateText =
+        """
+
 import UIKit
 
 fileprivate class RBundle {
@@ -75,7 +85,11 @@ public class AssetSource {
         }
     }
 
-    public class Color {
+}
+
+public extension AssetSource {
+
+    class Color {
 
         public enum State {
             case light
@@ -91,20 +105,10 @@ public class AssetSource {
         let hex1: Int64
         let hex2: Int64
 
-        public var color: UIColor {
-            switch Self.state {
-            case .dark: return dark
-            case .light: return light
-            }
-        }
-        public var light: UIColor { color(hex: hex1) }
-        public var dark: UIColor  { color(hex: hex2) }
-
         /// 十六进制色: 0x666666
         ///
         /// - Parameter RGBValue: 十六进制颜色
-        func color(hex value: Int64) -> UIColor {
-
+        func values(hex value: Int64) -> [CGFloat] {
             var hex = value
             var count = 0
 
@@ -120,18 +124,18 @@ public class AssetSource {
                 let red     = CGFloat((value & 0xFF0000) >> 16) / divisor
                 let green   = CGFloat((value & 0x00FF00) >>  8) / divisor
                 let blue    = CGFloat( value & 0x0000FF       ) / divisor
-                return .init(red: red, green: green, blue: blue, alpha: 1)
+                return [red, green, blue, 1]
             } else if count <= 8 {
                 let red     = CGFloat((Int64(value) & 0xFF000000) >> 24) / divisor
                 let green   = CGFloat((Int64(value) & 0x00FF0000) >> 16) / divisor
                 let blue    = CGFloat((Int64(value) & 0x0000FF00) >>  8) / divisor
                 let alpha   = CGFloat( Int64(value) & 0x000000FF       ) / divisor
-                return .init(red: red, green: green, blue: blue, alpha: alpha)
+                return [red, green, blue, alpha]
             } else {
                 assertionFailure("StemColor: 位数错误, 只支持 6 或 8 位, count: \\(count)")
             }
 
-            return .black
+            return [0,0,0,1]
         }
 
         init(light hex1: Int64, dark hex2: Int64) {
@@ -141,58 +145,73 @@ public class AssetSource {
 
     }
 
-    public class Data: Base {
+}
 
-        public var data: Foundation.Data {
-            if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .data)) {
-                return asset.data
-            } else if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .none)) {
-                return asset.data
-            } else if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .main)) {
-                return asset.data
-            } else {
-                assert(false, "未查询到相应资源")
-                return Foundation.Data()
-            }
-        }
+#if canImport(UIKit)
+import UIKit
 
+public extension AssetSource.Color {
+
+    private func color(values: [CGFloat]) -> UIColor {
+        return UIColor(red: values[0], green: values[1], blue: values[2], alpha: values[3])
     }
 
-    public class GIF: AssetSource.Data {
-
-        public override var data: Foundation.Data {
-            if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .gif)) {
-                return asset.data
-            } else if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .none)) {
-                return asset.data
-            } else if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .main)) {
-                return asset.data
-            } else {
-                assert(false, "未查询到相应资源")
-                return Foundation.Data()
-            }
+    func light() -> UIColor { color(values: values(hex: hex1)) }
+    func dark()  -> UIColor { color(values: values(hex: hex2)) }
+    func color() -> UIColor {
+        switch Self.state {
+        case .dark: return dark()
+        case .light: return light()
         }
-
     }
 
-    public class Image: Base {
+    func light() -> CGColor { light().cgColor }
+    func dark()  -> CGColor { dark().cgColor }
+    func color() -> CGColor { color().cgColor }
 
-        public var image: UIImage {
-            if let image = UIImage(named: name, in: RBundle.bundle(for: .image), compatibleWith: nil) {
-                return image
-            } else if let image = UIImage(named: name, in: RBundle.bundle(for: .none), compatibleWith: nil) {
-                return image
-            } else if let image = UIImage(named: name, in: RBundle.bundle(for: .main), compatibleWith: nil) {
-                return image
-            } else {
-                assert(false, "未查询到相应资源")
-                return UIImage()
-            }
+    func light() -> CIColor { light().ciColor }
+    func dark()  -> CIColor { dark().ciColor }
+    func color() -> CIColor { color().ciColor }
+
+}
+#endif
+
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
+import AppKit
+
+public extension AssetSource.Color {
+
+    private func color(values: [CGFloat]) -> NSColor {
+        return NSColor(red: values[0], green: values[1], blue: values[2], alpha: values[3])
+    }
+
+    func light() -> NSColor { color(values: values(hex: hex1)) }
+    func dark()  -> NSColor { color(values: values(hex: hex2)) }
+    func color() -> NSColor {
+        switch Self.state {
+        case .dark: return dark()
+        case .light: return light()
         }
-
     }
 
 }
+#endif
+
+#if canImport(SwiftUI)
+import SwiftUI
+
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+public extension AssetSource.Color {
+
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    func light() -> SwiftUI.Color { SwiftUI.Color(light()) }
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    func dark()  -> SwiftUI.Color { SwiftUI.Color(dark()) }
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    func color() -> SwiftUI.Color { SwiftUI.Color(color()) }
+
+}
+#endif
 
 public protocol RImageProtocol {}
 public protocol RGIFProtocol {}
@@ -217,26 +236,21 @@ public typealias Asset  = R.Image
 public typealias Colors = R.Color
 
 public extension RImageProtocol {
-[images_code]
+    [images_code]
 }
 
 public extension RGIFProtocol {
-[gifs_code]
+    [gifs_code]
 }
 
 public extension RColorProtocol {
-[colors_code]
+    [colors_code]
 }
 
 public extension RDataProtocol {
-[datas_code]
+    [datas_code]
 }
 
 """
-        return .init(template: JSON(["text": text,
-                                     "gif_code": gif_code,
-                                     "image_code": image_code,
-                                     "color_code": color_code]))
-    }()
     
 }

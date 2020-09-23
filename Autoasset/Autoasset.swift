@@ -11,7 +11,7 @@ import Stem
 
 class Autoasset {
 
-    static let version = "17"
+    static let version = "18"
     static var mode: ModeModel = .init(type: .normal, variables: .init(version: Autoasset.version))
 
     let config: Config
