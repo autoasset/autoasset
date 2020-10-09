@@ -73,6 +73,11 @@ extension Podspec {
 
     }
 
+    func version() throws {
+        let command = "pod --version"
+        try shell(command)
+    }
+
     func lint() throws {
         var command = "pod lib lint \(config.output.path)"
         command += " "

@@ -45,6 +45,15 @@ struct RunPrint {
         RunPrint([String](repeating: "-", count: 80).joined(), level: level)
     }
 
+    static func create(titles: [String], level: Level = .default) {
+        RunPrint([String](repeating: "↓", count: 80).joined(), level: level)
+        titles.forEach { (title) in
+            RunPrint(title, level: level)
+        }
+        RunPrint([String](repeating: "-", count: 80).joined(), level: level)
+    }
+
+
     static func create(row text: String, level: Level = .default) {
         RunPrint(" - \(text)", level: level)
     }

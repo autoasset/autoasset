@@ -11,13 +11,9 @@ import Stem
 
 class Autoasset {
 
-    static let version = "18"
-    static var mode: ModeModel = .init(type: .normal, variables: .init(version: Autoasset.version))
-
-    let config: Config
+    var config: Config
 
     init(config: Config) throws {
-        Autoasset.mode = config.mode
         self.config = config
     }
 
@@ -51,12 +47,19 @@ private extension Autoasset {
         case .test_message:
             try Message(config: config.message)?.output(version: config.mode.variables.version, branch: "test")
         case .test_podspec:
-            let podspec = Podspec(config: config.podspec)
-            try podspec?.output(version: config.mode.variables.version)
-            try podspec?.lint()
+            guard let podspec = Podspec(config: config.podspec) else {
+                return
+            }
+            try podspec.version()
+            try podspec.output(version: config.mode.variables.version)
+            try podspec.lint()
         case .local:
             try Asset(config: config.asset).run()
             try Warn.output(config: config.warn)
+        case .normal_without_git_push:
+            try normal_without_git_push()
+        case .test_config:
+            RunPrint(config.podspec?.output)
         case .normal:
             try normalMode()
         }
@@ -64,7 +67,7 @@ private extension Autoasset {
 
     func start(with types: [ModeModel.Style]) throws {
         for type in types {
-            RunPrint("+------------------ mode type: \(type) ------------------+")
+            RunPrint.create(title: "mode type: \(type) ")
             try start(with: type)
         }
     }
@@ -72,18 +75,49 @@ private extension Autoasset {
     func commitMessage() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY年MM月DD HH:MM"
-        return "[ci skip] author: autoasset(\(Autoasset.version)), date: \(dateFormatter.string(from: Date()))"
+        return "[ci skip] author: autoasset(\(Env.version)), date: \(dateFormatter.string(from: Date()))"
     }
 
     func pushToGit(_ git: Git) throws {
-        try git.addAllFile(path: config.dirPath.path)
+        try git.addAllFile(path: try git.rootPath())
         try git.commit(message: commitMessage())
         try git.push()
+    }
+
+    func normal_without_git_push() throws {
+        let podspec = Podspec(config: config.podspec)
+        let git = Git()
+
+        guard try git.isInsideWorkTree() else {
+            Warn.init("模式 'normal' 需要在 git 仓库中才能执行")
+            return
+        }
+
+        /// 下载目标文件
+        try FilePath(path: GitModel.Clone.output, type: .folder).delete()
+        try config.git.inputs.forEach { item in
+            try item.branchs.forEach { branch in
+                try git.clone.get(url: item.url, branch: branch, to: item.folder(for: branch))
+            }
+        }
+
+        try Asset(config: config.asset).run()
+        try FilePath(path: GitModel.Clone.output, type: .folder).delete()
+
+        let lastVersion = try? git.tag.lastVersion() ?? config.mode.variables.version
+        let version = try git.tag.nextVersion(with: lastVersion ?? config.mode.variables.version)
+        try podspec?.output(version: version)
+        try podspec?.lint()
     }
 
     func normalMode() throws {
         let podspec = Podspec(config: config.podspec)
         let git = Git()
+
+        guard try git.isInsideWorkTree() else {
+            Warn.init("模式 'normal' 需要在 git 仓库中才能执行")
+            return
+        }
 
         /// 下载目标文件
         try FilePath(path: GitModel.Clone.output, type: .folder).delete()

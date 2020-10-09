@@ -14,26 +14,22 @@ class Inputs {
     let inputs: [URL]
     let base: URL?
 
-    init?(json: JSON, base: URL? = nil) {
+    init?(json: JSON, base: URL) {
         self.base = base
         guard json["inputs"].arrayValue.isEmpty == false else {
             return nil
         }
 
-        if let base = base {
-            inputs = json["inputs"]
-                .arrayValue
-                .compactMap({ $0.string })
-                .map({ item -> URL in
-                    if ["file://", "~/"].contains(where: { item.hasPrefix($0) }) {
-                        return URL(string: item)!.standardized
-                    } else {
-                        return base.appendingPathComponent(item).standardized
-                    }
-                })
-        } else {
-            inputs = json["inputs"].arrayValue.compactMap({ $0.fileURL })
-        }
+        inputs = json["inputs"]
+            .arrayValue
+            .compactMap({ $0.string })
+            .map({ item -> URL in
+                if ["file://", "~/"].contains(where: { item.hasPrefix($0) }) {
+                    return URL(string: item)!.standardized
+                } else {
+                    return base.appendingPathComponent(item).standardized
+                }
+            })
     }
 
     init(inputs json: JSON, base: URL? = nil) {

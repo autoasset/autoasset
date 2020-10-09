@@ -11,9 +11,7 @@ import Stem
 import Yams
 
 struct Config {
-    
-    let dirPath: FilePath
-    
+        
     class Warn {
         let output: URL
         init?(json: JSON) {
@@ -23,47 +21,27 @@ struct Config {
             output = url
         }
     }
-    
-    let warn: Warn?
+
+    private(set) lazy var warn    = Warn(json: rawJSON["warn"])
+    private(set) lazy var message = MessageModel(json: rawJSON["message"])
+    private(set) lazy var podspec = PodspecModel(json: rawJSON["podspec"])
+
     let git: GitModel
     let mode: ModeModel
     let asset: AssetModel
-    let podspec: PodspecModel?
-    let message: MessageModel?
-    
+
+    private let rawJSON: JSON
+
     init(json: JSON) throws {
+        self.rawJSON = json
+        git = try GitModel(json: json["git"])
+
         let mode  = ModeModel(json: json["mode"])
         self.mode = mode
-        podspec = PodspecModel(json: json["podspec"])
-        message = MessageModel(json: json["message"])
-        warn    = Warn(json: json["warn"])
-
-        var filePath = try FilePath(path: "./")
-        if mode.types.contains(.normal) || mode.types.contains(.pod_with_branch) {
-            while true {
-                if try filePath
-                    .subFilePaths(predicates: [.custom({ $0.type == .folder })])
-                    .contains(where: { $0.type == .folder && $0.attributes.name == ".git" }) {
-                    break
-                }
-
-                guard let parentFolder = filePath.parentFolder() else {
-                    break
-                }
-
-                filePath = parentFolder
-            }
-            git = try GitModel(json: json["git"])
-            dirPath = filePath
-        } else {
-            git = try GitModel(json: JSON())
-            dirPath = filePath
-        }
-
         if mode.types.contains(.normal) {
-            asset = AssetModel(json: json["asset"], base: filePath.url.appendingPathComponent(GitModel.Clone.output))
+            asset = AssetModel(json: json["asset"], base: Env.rootURL.appendingPathComponent(GitModel.Clone.output))
         } else {
-            asset = AssetModel(json: json["asset"], base: dirPath.url)
+            asset = AssetModel(json: json["asset"], base: Env.rootURL)
         }
 
     }

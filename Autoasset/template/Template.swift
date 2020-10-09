@@ -89,6 +89,65 @@ public class AssetSource {
 
 public extension AssetSource {
 
+    class Image: Base {
+
+        public var image: UIImage {
+            if let image = UIImage(named: name, in: RBundle.bundle(for: .image), compatibleWith: nil) {
+                return image
+            } else if let image = UIImage(named: name, in: RBundle.bundle(for: .none), compatibleWith: nil) {
+                return image
+            } else if let image = UIImage(named: name, in: RBundle.bundle(for: .main), compatibleWith: nil) {
+                return image
+            } else {
+                assert(false, "未查询到相应资源")
+                return UIImage()
+            }
+        }
+
+    }
+
+}
+
+public extension AssetSource {
+
+    class Data: Base {
+
+        public var data: Foundation.Data {
+            if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .data)) {
+                return asset.data
+            } else if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .none)) {
+                return asset.data
+            } else if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .main)) {
+                return asset.data
+            } else {
+                assert(false, "未查询到相应资源")
+                return Foundation.Data()
+            }
+        }
+
+    }
+
+    class GIF: AssetSource.Data {
+
+        public override var data: Foundation.Data {
+            if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .gif)) {
+                return asset.data
+            } else if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .none)) {
+                return asset.data
+            } else if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .main)) {
+                return asset.data
+            } else {
+                assert(false, "未查询到相应资源")
+                return Foundation.Data()
+            }
+        }
+
+    }
+
+}
+
+public extension AssetSource {
+
     class Color {
 
         public enum State {
@@ -197,18 +256,28 @@ public extension AssetSource.Color {
 }
 #endif
 
-#if canImport(SwiftUI)
+#if (!arch(i386) && canImport(SwiftUI))
 import SwiftUI
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public extension AssetSource.Color {
 
-    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-    func light() -> SwiftUI.Color { SwiftUI.Color(light()) }
-    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-    func dark()  -> SwiftUI.Color { SwiftUI.Color(dark()) }
-    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-    func color() -> SwiftUI.Color { SwiftUI.Color(color()) }
+    private func color(values: [CGFloat]) -> SwiftUI.Color {
+        return .init(.displayP3,
+                     red: Double(values[0]),
+                     green: Double(values[0]),
+                     blue: Double(values[0]),
+                     opacity: Double(values[0]))
+    }
+
+    func light() -> SwiftUI.Color { color(values: values(hex: hex1)) }
+    func dark()  -> SwiftUI.Color { color(values: values(hex: hex2)) }
+    func color() -> SwiftUI.Color {
+        switch Self.state {
+            case .dark: return dark()
+            case .light: return light()
+        }
+    }
 
 }
 #endif
@@ -236,19 +305,19 @@ public typealias Asset  = R.Image
 public typealias Colors = R.Color
 
 public extension RImageProtocol {
-    [images_code]
+[images_code]
 }
 
 public extension RGIFProtocol {
-    [gifs_code]
+[gifs_code]
 }
 
 public extension RColorProtocol {
-    [colors_code]
+[colors_code]
 }
 
 public extension RDataProtocol {
-    [datas_code]
+[datas_code]
 }
 
 """

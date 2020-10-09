@@ -20,7 +20,7 @@ class Git {
     class Info {
 
         func url() throws -> String {
-            return  try shell("git ls-remote --get-url").stdout
+            return try shell("git ls-remote --get-url").stdout
         }
 
     }
@@ -116,6 +116,16 @@ class Git {
             try shell("git tag -a \(version) -m 'version: \(message)'")
         }
 
+    }
+
+    /// 获取 git 仓库的根路径
+    func rootPath() throws -> String {
+        return try shell("git rev-parse --show-toplevel").stdout
+    }
+
+    /// 判断路径是否是 git 仓库
+    func isInsideWorkTree() throws -> Bool {
+        try shell("git rev-parse --is-inside-work-tree").stdout == "true"
     }
 
     func diff() throws -> String {

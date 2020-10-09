@@ -21,8 +21,8 @@ extension TemplateInputProtocol {
             return text
         }
 
-        guard let path = json["input"].url?.path ?? json["path"].url?.path
-            , let text = try? String(contentsOfFile: path, encoding: .utf8) else {
+        guard let path = json["input"].url?.path ?? json["path"].url?.path,
+              let text = try? String(contentsOfFile: path, encoding: .utf8) else {
             return nil
         }
 
@@ -38,10 +38,10 @@ protocol TemplateOutputProtocol {
 extension TemplateOutputProtocol {
 
    static func load(output json: JSON) -> URL? {
-        guard let output = json["output"].fileURL else {
+        guard let output = json["output"].string else {
             return nil
         }
-        return output
+        return Env.rootURL.appendingPathComponent(output)
     }
 
 }

@@ -18,6 +18,8 @@ class ModeModel {
         case test_message
         case test_podspec
         case test_warn
+        case test_config
+        case normal_without_git_push
     }
 
     struct Variables {

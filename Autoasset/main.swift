@@ -11,14 +11,16 @@ import Stem
 
 struct Main: ParsableCommand {
 
-    static let configuration = CommandConfiguration(version: Autoasset.version)
-    @Option(name: [.short, .customLong("config")], help: "配置")
+    static let configuration = CommandConfiguration(version: Env.version)
+    @Option(name: [.short, .customLong("config")], help: "配置文件")
     var config: String
     @Flag() var verbose = false
 
     func run() throws {
         do {
-            let config = try Config(url: FilePath(path: self.config, type: .file).url)
+            let configURL = try FilePath(path: self.config, type: .file).url
+            Env.rootURL = configURL.deletingLastPathComponent()
+            let config = try Config(url: configURL)
             try Autoasset(config: config).start()
         } catch {
             if let error = error as? RunError {

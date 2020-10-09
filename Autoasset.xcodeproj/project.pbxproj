@@ -10,7 +10,6 @@
 		CD053A402435FA7B008A2E56 /* Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD053A3F2435FA7B008A2E56 /* Git.swift */; };
 		CD20A0F724644FF500B9CF17 /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD20A0F624644FF500B9CF17 /* Placeholder.swift */; };
 		CD210B63245AB199008015B3 /* Yams in Frameworks */ = {isa = PBXBuildFile; productRef = CD210B62245AB199008015B3 /* Yams */; };
-		CD3459412473D82C00B88F2F /* IconFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3459402473D82C00B88F2F /* IconFont.swift */; };
 		CD394C0D242B60CF00277F88 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD394C0C242B60CF00277F88 /* main.swift */; };
 		CD4C23A82475256C00BA4D35 /* Stem in Frameworks */ = {isa = PBXBuildFile; productRef = CD4C23A72475256C00BA4D35 /* Stem */; };
 		CD4E1DB725152AD5001C8FAC /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = CD4E1DB625152AD5001C8FAC /* ArgumentParser */; };
@@ -36,6 +35,7 @@
 		CDC3AEB4247BA01A0012F630 /* AssetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC3AEB3247BA01A0012F630 /* AssetModel.swift */; };
 		CDC3AEB6247BA1D70012F630 /* MessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC3AEB5247BA1D70012F630 /* MessageModel.swift */; };
 		CDC3AEB7247BB0A90012F630 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA3836924334DB500D3EDD9 /* Config.swift */; };
+		CDE9D1B425305A5F009C4BAA /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE9D1B325305A5F009C4BAA /* Env.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -53,7 +53,6 @@
 /* Begin PBXFileReference section */
 		CD053A3F2435FA7B008A2E56 /* Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Git.swift; sourceTree = "<group>"; };
 		CD20A0F624644FF500B9CF17 /* Placeholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Placeholder.swift; sourceTree = "<group>"; };
-		CD3459402473D82C00B88F2F /* IconFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconFont.swift; sourceTree = "<group>"; };
 		CD394C09242B60CF00277F88 /* Autoasset */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Autoasset; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD394C0C242B60CF00277F88 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		CD4E1E9625161091001C8FAC /* Pipes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pipes.swift; sourceTree = "<group>"; };
@@ -78,6 +77,7 @@
 		CDC3AEB1247B9E830012F630 /* PodspecModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodspecModel.swift; sourceTree = "<group>"; };
 		CDC3AEB3247BA01A0012F630 /* AssetModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetModel.swift; sourceTree = "<group>"; };
 		CDC3AEB5247BA1D70012F630 /* MessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModel.swift; sourceTree = "<group>"; };
+		CDE9D1B325305A5F009C4BAA /* Env.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Env.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,6 +174,7 @@
 				CDC3AEB5247BA1D70012F630 /* MessageModel.swift */,
 				CD52EEB42480FDA70038666B /* Inputs.swift */,
 				CD87C17324B868610055968D /* AssetCode.swift */,
+				CDE9D1B325305A5F009C4BAA /* Env.swift */,
 			);
 			path = config;
 			sourceTree = "<group>";
@@ -187,7 +188,6 @@
 				CDA3836D243351EC00D3EDD9 /* Asset.swift */,
 				CD053A3F2435FA7B008A2E56 /* Git.swift */,
 				CD6ED907244411DA002ED925 /* Message.swift */,
-				CD3459402473D82C00B88F2F /* IconFont.swift */,
 			);
 			path = scripts;
 			sourceTree = "<group>";
@@ -265,7 +265,6 @@
 				CDC3AEAA247B98280012F630 /* TemplateProtocol.swift in Sources */,
 				CDA9F109242DE44700255373 /* Warn.swift in Sources */,
 				CD76952B251B507B00F3E041 /* RunPrint.swift in Sources */,
-				CD3459412473D82C00B88F2F /* IconFont.swift in Sources */,
 				CDC3AEB0247B9E410012F630 /* GitModel.swift in Sources */,
 				CDA383632433398D00D3EDD9 /* Podspec.swift in Sources */,
 				CDC3AEB4247BA01A0012F630 /* AssetModel.swift in Sources */,
@@ -273,6 +272,7 @@
 				CD394C0D242B60CF00277F88 /* main.swift in Sources */,
 				CDA3836E243351EC00D3EDD9 /* Asset.swift in Sources */,
 				CDA9F0AC242C9A8700255373 /* Xcassets.swift in Sources */,
+				CDE9D1B425305A5F009C4BAA /* Env.swift in Sources */,
 				CDC3AEAC247B98AF0012F630 /* TemplateModel.swift in Sources */,
 				CD4E1E9725161091001C8FAC /* Pipes.swift in Sources */,
 				CD87C17424B868610055968D /* AssetCode.swift in Sources */,

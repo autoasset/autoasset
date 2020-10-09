@@ -73,11 +73,12 @@ struct AssetModel {
 
         let output: URL
 
-        override init?(json: JSON, base: URL? = nil) {
-            guard let output = json["output"].fileURL else {
+        override init?(json: JSON, base: URL) {
+            guard let output = json["output"].string else {
                 return nil
             }
-            self.output = output
+
+            self.output = Env.rootURL.appendingPathComponent(output)
             super.init(json: json, base: base)
         }
 
@@ -90,7 +91,7 @@ struct AssetModel {
         fileprivate(set) var variablePrefix: String
         let bundleName: String?
 
-        override init?(json: JSON, base: URL? = nil) {
+        override init?(json: JSON, base: URL) {
             self.bundleName = json["bundle_name"].string
             self.prefix     = json["prefix"].stringValue
             self.contents   = Inputs(inputs: json["contents"], base: base)
@@ -104,7 +105,7 @@ struct AssetModel {
 
         let space: String
 
-        override init?(json: JSON, base: URL? = nil) {
+        override init?(json: JSON, base: URL) {
             space = json["space"].string ?? "display-p3"
             super.init(json: json, base: base)
             self.variablePrefix = self.variablePrefix.isEmpty ? "_" : self.variablePrefix
@@ -123,14 +124,14 @@ struct AssetModel {
     var clear: Inputs?
     var base: URL?
 
-    init(json: JSON, base: URL?) {
+    init(json: JSON, base: URL) {
         self.base = base
         images = Xcasset(json: json["images"], base: base)
         datas  = Xcasset(json: json["datas"], base: base)
         gifs   = Xcasset(json: json["gifs"], base: base)
         colors = ColorXcasset(json: json["colors"], base: base)
         fonts  = Resource(json: json["fonts"], base: base)
-        clear  = Inputs(json: json["clear"])
+        clear  = Inputs(json: json["clear"], base: base)
         xcassets = Resource(json: json["xcassets"], base: base)
         template = Template(json: json["template"], default: ASTemplate.asset)
     }

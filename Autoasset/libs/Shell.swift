@@ -10,10 +10,16 @@ import Foundation
 import SwiftShell
 
 @discardableResult
-func shell(_ command: String, useAssert: Bool = true, function: StaticString = #function, line: UInt = #line, file: StaticString = #file) throws -> RunOutput {
+func shell(_ command: String, useAssert: Bool = true, in rootURL: URL? = Env.rootURL) throws -> RunOutput {
     RunPrint.create(titleDesc: "command", title: command, level: .info)
 
-    let out = run(bash: command)
+    var newCommand = command
+
+    if let path = rootURL?.path {
+        newCommand = "cd \(path) && \(newCommand)"
+    }
+
+    let out = run(bash: newCommand)
 
     if out.stdout.isEmpty == false {
         RunPrint("stdout: \(out.stdout)")
