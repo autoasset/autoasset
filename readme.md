@@ -9,7 +9,7 @@ mode:
     # 3. pod_with_branch: 分支模式
     type: normal
     variables: 
-    		# [local / pod_with_branch] 模式运行时, 用于填充 [podspec / message] 中 [version] 的字段
+        # [local / pod_with_branch] 模式运行时, 用于填充 [podspec / message] 中 [version] 的字段
         version: 1000
 
 # 模块: 警告
@@ -101,7 +101,8 @@ asset:
 
     # GIF
     gifs:
-    	# 输出路径
+    
+        # 输出路径
         output: Sources/Resources/gifs.xcassets
         prefix: dxyer_
         bundle_name: DxyerGIFs
