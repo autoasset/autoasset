@@ -45,7 +45,7 @@ podspec:
     # 模板
     template:
         # 输出路径
-        output: DxyerAssets.podspec
+        output: autoassetAssets.podspec
         # 输出文本
         # 可用占位符:
         # [version] : 当前 tag 或 [mode].variables.version 数值
@@ -93,7 +93,7 @@ asset:
     images:
         # 输出路径
         output: Sources/Resources/icon.xcassets
-        prefix: dxyer_
+        prefix: autoasset_
         contents:
             - Contents/images
         inputs:
@@ -104,8 +104,8 @@ asset:
     
         # 输出路径
         output: Sources/Resources/gifs.xcassets
-        prefix: dxyer_
-        bundle_name: DxyerGIFs
+        prefix: autoasset_
+        bundle_name: autoassetGIFs
         inputs:
             - UI/gifs
 
