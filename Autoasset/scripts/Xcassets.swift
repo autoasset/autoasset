@@ -33,10 +33,6 @@ class Xcassets {
             })
     }
 
-    static func deleteOutput(folders: [AssetModel.Xcasset]) {
-        folders.forEach({ try? FilePath(url: $0.output, type: .folder).delete() })
-    }
-
     func run() throws -> [AssetCode] {
         switch type {
         case .image:

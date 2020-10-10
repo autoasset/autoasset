@@ -29,12 +29,11 @@ extension ASTemplate {
 
     private static let templateText =
         """
+import Foundation
 
-import UIKit
+class RBundle {
 
-fileprivate class RBundle {
-
-    enum `Type`: String {
+    enum BundleType: String {
         case none
         case main
         case image = "image_bundle_name"
@@ -46,7 +45,7 @@ fileprivate class RBundle {
             switch self {
             case .none, .main:  return rawValue
             case .image: return "[image_bundle_name]"
-            case .gif:   return "[gif_bundle_name]"
+            case .gif:   return "DxyerGIFs"
             case .data:  return "[data_bundle_name]"
             case .color: return "[color_bundle_name]"
             }
@@ -54,7 +53,7 @@ fileprivate class RBundle {
 
     }
 
-    static func bundle(for type: `Type`) -> Bundle {
+    static func bundle(for type: BundleType) -> Bundle {
         switch type {
         case .main:
             return .main
@@ -89,22 +88,7 @@ public class AssetSource {
 
 public extension AssetSource {
 
-    class Image: Base {
-
-        public var image: UIImage {
-            if let image = UIImage(named: name, in: RBundle.bundle(for: .image), compatibleWith: nil) {
-                return image
-            } else if let image = UIImage(named: name, in: RBundle.bundle(for: .none), compatibleWith: nil) {
-                return image
-            } else if let image = UIImage(named: name, in: RBundle.bundle(for: .main), compatibleWith: nil) {
-                return image
-            } else {
-                assert(false, "未查询到相应资源")
-                return UIImage()
-            }
-        }
-
-    }
+    class Image: Base { }
 
 }
 
@@ -112,34 +96,28 @@ public extension AssetSource {
 
     class Data: Base {
 
-        public var data: Foundation.Data {
-            if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .data)) {
-                return asset.data
-            } else if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .none)) {
-                return asset.data
-            } else if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .main)) {
-                return asset.data
-            } else {
-                assert(false, "未查询到相应资源")
-                return Foundation.Data()
+        func value() -> Foundation.Data {
+            for type in [.data, .none, .main] as [RBundle.BundleType] {
+                if let value = NSDataAsset(name: name, bundle: RBundle.bundle(for: type)) {
+                    return value.data
+                }
             }
+            assert(false, "未查询到相应资源")
+            return Foundation.Data()
         }
 
     }
 
     class GIF: AssetSource.Data {
 
-        public override var data: Foundation.Data {
-            if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .gif)) {
-                return asset.data
-            } else if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .none)) {
-                return asset.data
-            } else if let asset = NSDataAsset(name: name, bundle: RBundle.bundle(for: .main)) {
-                return asset.data
-            } else {
-                assert(false, "未查询到相应资源")
-                return Foundation.Data()
+        override func value() -> Foundation.Data {
+            for type in [.gif, .none, .main] as [RBundle.BundleType] {
+                if let value = NSDataAsset(name: name, bundle: RBundle.bundle(for: type)) {
+                    return value.data
+                }
             }
+            assert(false, "未查询到相应资源")
+            return Foundation.Data()
         }
 
     }
@@ -207,7 +185,22 @@ public extension AssetSource {
 }
 
 #if canImport(UIKit)
+
 import UIKit
+
+public extension AssetSource.Image {
+
+    func value() -> UIImage {
+        for type in [.image, .none, .main] as [RBundle.BundleType] {
+            if let value = UIImage(named: name, in: RBundle.bundle(for: type), compatibleWith: nil) {
+                return value
+            }
+        }
+        assert(false, "未查询到相应资源")
+        return UIImage()
+    }
+
+}
 
 public extension AssetSource.Color {
 
@@ -217,7 +210,7 @@ public extension AssetSource.Color {
 
     func light() -> UIColor { color(values: values(hex: hex1)) }
     func dark()  -> UIColor { color(values: values(hex: hex2)) }
-    func color() -> UIColor {
+    func value() -> UIColor {
         switch Self.state {
         case .dark: return dark()
         case .light: return light()
@@ -226,17 +219,27 @@ public extension AssetSource.Color {
 
     func light() -> CGColor { light().cgColor }
     func dark()  -> CGColor { dark().cgColor }
-    func color() -> CGColor { color().cgColor }
+    func value() -> CGColor { value().cgColor }
 
     func light() -> CIColor { light().ciColor }
     func dark()  -> CIColor { dark().ciColor }
-    func color() -> CIColor { color().ciColor }
+    func value() -> CIColor { value().ciColor }
 
 }
+
 #endif
 
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
+
 import AppKit
+
+public extension AssetSource.Image {
+
+    func value() -> NSImage {
+        return .init(named: name)
+    }
+
+}
 
 public extension AssetSource.Color {
 
@@ -246,7 +249,7 @@ public extension AssetSource.Color {
 
     func light() -> NSColor { color(values: values(hex: hex1)) }
     func dark()  -> NSColor { color(values: values(hex: hex2)) }
-    func color() -> NSColor {
+    func value() -> NSColor {
         switch Self.state {
         case .dark: return dark()
         case .light: return light()
@@ -254,10 +257,31 @@ public extension AssetSource.Color {
     }
 
 }
+
 #endif
 
 #if (!arch(i386) && canImport(SwiftUI))
+
 import SwiftUI
+
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+public extension AssetSource.Image {
+
+    #if canImport(UIKit)
+    @available(iOS 13.0, *)
+    func value() -> SwiftUI.Image {
+        return .init(uiImage: value())
+    }
+    #endif
+
+    #if canImport(AppKit)
+    @available(macOS 10.15, *)
+    func value() -> SwiftUI.Image {
+        return .init(nsImage: value())
+    }
+    #endif
+
+}
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public extension AssetSource.Color {
@@ -265,14 +289,14 @@ public extension AssetSource.Color {
     private func color(values: [CGFloat]) -> SwiftUI.Color {
         return .init(.displayP3,
                      red: Double(values[0]),
-                     green: Double(values[0]),
-                     blue: Double(values[0]),
-                     opacity: Double(values[0]))
+                     green: Double(values[1]),
+                     blue: Double(values[2]),
+                     opacity: Double(values[3]))
     }
 
     func light() -> SwiftUI.Color { color(values: values(hex: hex1)) }
     func dark()  -> SwiftUI.Color { color(values: values(hex: hex2)) }
-    func color() -> SwiftUI.Color {
+    func value() -> SwiftUI.Color {
         switch Self.state {
             case .dark: return dark()
             case .light: return light()
@@ -280,6 +304,7 @@ public extension AssetSource.Color {
     }
 
 }
+
 #endif
 
 public protocol RImageProtocol {}
@@ -288,21 +313,16 @@ public protocol RColorProtocol {}
 public protocol RDataProtocol {}
 
 public enum R {
-
-    public static let images = Image.self
-    public static let gifs   = GIF.self
-    public static let colors = Color.self
-    public static let datas  = Data.self
-
     public enum Image: RImageProtocol {}
     public enum GIF: RGIFProtocol {}
     public enum Color: RColorProtocol {}
     public enum Data: RDataProtocol {}
 
+    public static let images = Image.self
+    public static let gifs   = GIF.self
+    public static let colors = Color.self
+    public static let datas  = Data.self
 }
-
-public typealias Asset  = R.Image
-public typealias Colors = R.Color
 
 public extension RImageProtocol {
 [images_code]

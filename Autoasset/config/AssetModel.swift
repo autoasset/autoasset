@@ -115,13 +115,15 @@ struct AssetModel {
 
     let template: Template?
 
-    var images: Xcasset?
+    var clear: Inputs?
     var xcassets: Resource?
+    var codes: Resource?
+
+    var images: Xcasset?
     var gifs: Xcasset?
     var datas: Xcasset?
     var colors: Xcasset?
     var fonts: Resource?
-    var clear: Inputs?
     var base: URL?
 
     init(json: JSON, base: URL) {
@@ -132,6 +134,7 @@ struct AssetModel {
         colors = ColorXcasset(json: json["colors"], base: base)
         fonts  = Resource(json: json["fonts"], base: base)
         clear  = Inputs(json: json["clear"], base: base)
+        codes  = Resource(json: json["codes"], base: base)
         xcassets = Resource(json: json["xcassets"], base: base)
         template = Template(json: json["template"], default: ASTemplate.asset)
     }

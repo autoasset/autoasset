@@ -80,8 +80,15 @@ class Asset {
 
     func run() throws {
         /// 文件清理
-        let xcassets = [config.images, config.gifs, config.datas, config.colors].compactMap({ $0 })
-        Xcassets.deleteOutput(folders: xcassets)
+        [config.codes,
+         config.xcassets,
+         config.images,
+         config.gifs,
+         config.datas,
+         config.colors]
+            .compactMap({ $0 })
+            .forEach { try? FilePath(url: $0.output, type: .folder).delete() }
+
         if let resource = config.clear {
             RunPrint.create(titleDesc: "command", title: "clear", level: .info)
             try resource.inputs.forEach {
@@ -94,6 +101,20 @@ class Asset {
 
         if let resource = config.xcassets {
             RunPrint.create(titleDesc: "command", title: "xcassets", level: .info)
+            let output = try FilePath(url: resource.output, type: .folder)
+            try resource.inputs
+                .compactMap({ try FilePath(url: $0, type: .folder) })
+                .forEach {
+                    RunPrint.create(row: "copying")
+                    RunPrint.create(row: "from: \($0.path)")
+                    RunPrint.create(row: "to  : \(output.path)")
+                    try $0.copy(to: output)
+                }
+            RunPrint.createEnd()
+        }
+
+        if let resource = config.codes {
+            RunPrint.create(titleDesc: "command", title: "codes", level: .info)
             let output = try FilePath(url: resource.output, type: .folder)
             try resource.inputs
                 .compactMap({ try FilePath(url: $0, type: .folder) })

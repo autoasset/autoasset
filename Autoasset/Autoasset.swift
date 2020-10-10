@@ -59,7 +59,7 @@ private extension Autoasset {
         case .normal_without_git_push:
             try normal_without_git_push()
         case .test_config:
-            RunPrint(config.podspec?.output)
+            break
         case .normal:
             try normalMode()
         }
