@@ -1,4 +1,4 @@
-# Version 18
+# Version 19
 
 ```yaml
 ---
@@ -80,6 +80,18 @@ asset:
     clear:
         inputs:
             - Sources/Resources
+    
+    # 额外的代码文件
+    xcassets:
+        output: Sources/Resources/custom/
+        inputs:
+            - custom-xcassets
+
+    # [19] 额外的代码文件
+    codes:
+        output: Sources/
+        inputs:
+            - custom-codes
 
     # 颜色
     colors:
