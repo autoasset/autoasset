@@ -96,7 +96,7 @@ public extension AssetSource {
 
     class Data: Base {
 
-        func value() -> Foundation.Data {
+        public func value() -> Foundation.Data {
             for type in [.data, .none, .main] as [RBundle.BundleType] {
                 if let value = NSDataAsset(name: name, bundle: RBundle.bundle(for: type)) {
                     return value.data
@@ -110,7 +110,7 @@ public extension AssetSource {
 
     class GIF: AssetSource.Data {
 
-        override func value() -> Foundation.Data {
+        public override func value() -> Foundation.Data {
             for type in [.gif, .none, .main] as [RBundle.BundleType] {
                 if let value = NSDataAsset(name: name, bundle: RBundle.bundle(for: type)) {
                     return value.data
