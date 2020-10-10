@@ -1,30 +1,30 @@
-# Version
+# Version 18
 
 ```yaml
 ---
 # 模块: 运行模式
 mode:
-		# 1. normal: tag 模式
-		# 2. local: 本地模式
-		# 3. pod_with_branch: 分支模式
+    # 1. normal: tag 模式
+    # 2. local: 本地模式
+    # 3. pod_with_branch: 分支模式
     type: normal
     variables: 
-    		# [local / pod_with_branch] 模式运行时, 用于填充 [podspec / message] 中 [version] 的字段
+        # [local / pod_with_branch] 模式运行时, 用于填充 [podspec / message] 中 [version] 的字段
         version: 1000
 
 # 模块: 警告
 warn: 
-		# 输出路径
+    # 输出路径
     output: output/warn
 
 # 模块: 消息
 message: 
-		# 输出路径
+    # 输出路径
     output: output/message
-		# 输出文本
-		# 可用占位符:
-		# [branch] : 当前分支名
-		# [version] : 当前 tag 或 [mode].variables.version 数值
+    # 输出文本
+    # 可用占位符:
+    # [branch] : 当前分支名
+    # [version] : 当前 tag 或 [mode].variables.version 数值
     text: |
         autoasset  🎉🎉🎉
         ----------------------------------------------------------------------------
@@ -37,7 +37,7 @@ message:
 
 # 模块: podspec 文件
 podspec:
-		# [pod lint / pod repo push] 的额外参数
+    # [pod lint / pod repo push] 的额外参数
     attributes: 
         no_clean: false
         verbose: false
@@ -45,9 +45,9 @@ podspec:
     # 模板
     template:
         # 输出路径
-        output: DxyerAssets.podspec
-				# 输出文本
-				# 可用占位符:
+        output: autoassetAssets.podspec
+        # 输出文本
+        # 可用占位符:
         # [version] : 当前 tag 或 [mode].variables.version 数值
         text: |
             Pod::Spec.new do |s|
@@ -76,12 +76,12 @@ podspec:
         
 # asset资源文件
 asset:
-		# 生成资源前需要清空的文件夹/ 文件
+    # 生成资源前需要清空的文件夹/ 文件
     clear:
         inputs:
             - Sources/Resources
 
-		# 颜色
+    # 颜色
     colors:
         # 输出路径
         output: Sources/Resources/colors.xcassets
@@ -89,22 +89,23 @@ asset:
         inputs:
             - UI/colors
 
-		# 图片
+    # 图片
     images:
-		    # 输出路径
+        # 输出路径
         output: Sources/Resources/icon.xcassets
-        prefix: dxyer_
+        prefix: autoasset_
         contents:
             - Contents/images
         inputs:
             - UI
 
-		# GIF
+    # GIF
     gifs:
-			  # 输出路径
+    
+        # 输出路径
         output: Sources/Resources/gifs.xcassets
-        prefix: dxyer_
-        bundle_name: DxyerGIFs
+        prefix: autoasset_
+        bundle_name: autoassetGIFs
         inputs:
             - UI/gifs
 
