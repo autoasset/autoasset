@@ -91,7 +91,7 @@ asset:
     codes:
         output: Sources/
         inputs:
-            - custom-xcassets
+            - custom-codes
 
     # 颜色
     colors:
