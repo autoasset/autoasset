@@ -134,12 +134,20 @@ private extension Autoasset {
         let version = try git.tag.nextVersion(with: lastVersion ?? config.mode.variables.version)
         try podspec?.output(version: version)
         try podspec?.lint()
-        
-        try pushToGit(git)
+
+        do {
+            try pushToGit(git)
+        } catch { }
 
         do {
             try git.tag.remove(version: version)
+        } catch { }
+
+        do {
             try git.tag.add(version: version, message: commitMessage())
+        } catch { }
+
+        do {
             try git.tag.push(version: version)
         } catch { }
 
