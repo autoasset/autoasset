@@ -80,8 +80,7 @@ extension Podspec {
 
     func lint() throws {
         var command = "pod lib lint \(config.output.path)"
-        command += " "
-        command += config.attributes.map(\.rawValue).joined(separator: " ")
+        command += " " + config.attributes.map(\.rawValue).joined(separator: " ")
         try shell(command)
     }
 
@@ -94,7 +93,7 @@ extension Podspec {
             command += "pod trunk push \(config.output)"
         }
 
-        command += config.attributes.map(\.rawValue).joined(separator: " ")
+        command += " " + config.attributes.map(\.rawValue).joined(separator: " ")
         try shell(command)
     }
 
