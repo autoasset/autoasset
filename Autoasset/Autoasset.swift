@@ -74,7 +74,7 @@ private extension Autoasset {
 
     func commitMessage() -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY年MM月DD HH:MM"
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         return "[ci skip] author: autoasset(\(Env.version)), date: \(dateFormatter.string(from: Date()))"
     }
 
@@ -137,9 +137,11 @@ private extension Autoasset {
         
         try pushToGit(git)
 
-        try? git.tag.remove(version: version)
-        try? git.tag.add(version: version, message: commitMessage())
-        try? git.tag.push(version: version)
+        do {
+            try git.tag.remove(version: version)
+            try git.tag.add(version: version, message: commitMessage())
+            try git.tag.push(version: version)
+        } catch { }
 
         try podspec?.push()
 
