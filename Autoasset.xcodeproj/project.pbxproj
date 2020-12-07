@@ -11,17 +11,20 @@
 		CD20A0F724644FF500B9CF17 /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD20A0F624644FF500B9CF17 /* Placeholder.swift */; };
 		CD210B63245AB199008015B3 /* Yams in Frameworks */ = {isa = PBXBuildFile; productRef = CD210B62245AB199008015B3 /* Yams */; };
 		CD394C0D242B60CF00277F88 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD394C0C242B60CF00277F88 /* main.swift */; };
-		CD4C23A82475256C00BA4D35 /* Stem in Frameworks */ = {isa = PBXBuildFile; productRef = CD4C23A72475256C00BA4D35 /* Stem */; };
 		CD4E1DB725152AD5001C8FAC /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = CD4E1DB625152AD5001C8FAC /* ArgumentParser */; };
 		CD4E1DBC25152AEA001C8FAC /* SwiftShell in Frameworks */ = {isa = PBXBuildFile; productRef = CD4E1DBB25152AEA001C8FAC /* SwiftShell */; };
 		CD4E1E9725161091001C8FAC /* Pipes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4E1E9625161091001C8FAC /* Pipes.swift */; };
 		CD52EEB52480FDA70038666B /* Inputs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD52EEB42480FDA70038666B /* Inputs.swift */; };
 		CD544366243C769A0099C9F0 /* Autoasset.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD544365243C769A0099C9F0 /* Autoasset.swift */; };
 		CD6ED908244411DA002ED925 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6ED907244411DA002ED925 /* Message.swift */; };
+		CD73834F257BAA2E0039E3AE /* Stem in Frameworks */ = {isa = PBXBuildFile; productRef = CD73834E257BAA2E0039E3AE /* Stem */; };
+		CD738354257BAAA30039E3AE /* NameFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9E2508257A5A5F00B2ABCC /* NameFormatter.swift */; };
+		CD73839F257DC8A70039E3AE /* NameFormatterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD73839E257DC8A70039E3AE /* NameFormatterTest.swift */; };
 		CD769526251B505500F3E041 /* RunError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD769523251B502C00F3E041 /* RunError.swift */; };
 		CD769528251B505800F3E041 /* Shell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD769524251B502C00F3E041 /* Shell.swift */; };
 		CD76952B251B507B00F3E041 /* RunPrint.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD76952A251B507B00F3E041 /* RunPrint.swift */; };
 		CD87C17424B868610055968D /* AssetCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD87C17324B868610055968D /* AssetCode.swift */; };
+		CD9E2509257A5A5F00B2ABCC /* NameFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9E2508257A5A5F00B2ABCC /* NameFormatter.swift */; };
 		CDA383632433398D00D3EDD9 /* Podspec.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA383622433398D00D3EDD9 /* Podspec.swift */; };
 		CDA3836E243351EC00D3EDD9 /* Asset.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA3836D243351EC00D3EDD9 /* Asset.swift */; };
 		CDA9F0AC242C9A8700255373 /* Xcassets.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA9F0AB242C9A8700255373 /* Xcassets.swift */; };
@@ -60,10 +63,12 @@
 		CD544365243C769A0099C9F0 /* Autoasset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Autoasset.swift; sourceTree = "<group>"; };
 		CD544367243DD8B70099C9F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CD6ED907244411DA002ED925 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		CD73839E257DC8A70039E3AE /* NameFormatterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameFormatterTest.swift; sourceTree = "<group>"; };
 		CD769523251B502C00F3E041 /* RunError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunError.swift; sourceTree = "<group>"; };
 		CD769524251B502C00F3E041 /* Shell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shell.swift; sourceTree = "<group>"; };
 		CD76952A251B507B00F3E041 /* RunPrint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunPrint.swift; sourceTree = "<group>"; };
 		CD87C17324B868610055968D /* AssetCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetCode.swift; sourceTree = "<group>"; };
+		CD9E2508257A5A5F00B2ABCC /* NameFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameFormatter.swift; sourceTree = "<group>"; };
 		CDA383622433398D00D3EDD9 /* Podspec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Podspec.swift; sourceTree = "<group>"; };
 		CDA3836924334DB500D3EDD9 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		CDA3836D243351EC00D3EDD9 /* Asset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Asset.swift; sourceTree = "<group>"; };
@@ -77,6 +82,8 @@
 		CDC3AEB1247B9E830012F630 /* PodspecModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodspecModel.swift; sourceTree = "<group>"; };
 		CDC3AEB3247BA01A0012F630 /* AssetModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetModel.swift; sourceTree = "<group>"; };
 		CDC3AEB5247BA1D70012F630 /* MessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModel.swift; sourceTree = "<group>"; };
+		CDC5316B257A2A5800E33AF7 /* UnitTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CDC5316F257A2A5800E33AF7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CDE9D1B325305A5F009C4BAA /* Env.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Env.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -85,10 +92,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD4C23A82475256C00BA4D35 /* Stem in Frameworks */,
 				CD210B63245AB199008015B3 /* Yams in Frameworks */,
+				CD73834F257BAA2E0039E3AE /* Stem in Frameworks */,
 				CD4E1DB725152AD5001C8FAC /* ArgumentParser in Frameworks */,
 				CD4E1DBC25152AEA001C8FAC /* SwiftShell in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CDC53168257A2A5800E33AF7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,6 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				CD394C0B242B60CF00277F88 /* Autoasset */,
+				CDC5316C257A2A5800E33AF7 /* UnitTest */,
 				CD394C0A242B60CF00277F88 /* Products */,
 				4747788A6CDF472CA243142D /* Frameworks */,
 			);
@@ -115,6 +130,7 @@
 			isa = PBXGroup;
 			children = (
 				CD394C09242B60CF00277F88 /* Autoasset */,
+				CDC5316B257A2A5800E33AF7 /* UnitTest.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -179,6 +195,15 @@
 			path = config;
 			sourceTree = "<group>";
 		};
+		CDC5316C257A2A5800E33AF7 /* UnitTest */ = {
+			isa = PBXGroup;
+			children = (
+				CDC5316F257A2A5800E33AF7 /* Info.plist */,
+				CD73839E257DC8A70039E3AE /* NameFormatterTest.swift */,
+			);
+			path = UnitTest;
+			sourceTree = "<group>";
+		};
 		CDF2DBC22485171D00A91AF9 /* scripts */ = {
 			isa = PBXGroup;
 			children = (
@@ -188,6 +213,7 @@
 				CDA3836D243351EC00D3EDD9 /* Asset.swift */,
 				CD053A3F2435FA7B008A2E56 /* Git.swift */,
 				CD6ED907244411DA002ED925 /* Message.swift */,
+				CD9E2508257A5A5F00B2ABCC /* NameFormatter.swift */,
 			);
 			path = scripts;
 			sourceTree = "<group>";
@@ -210,13 +236,30 @@
 			name = Autoasset;
 			packageProductDependencies = (
 				CD210B62245AB199008015B3 /* Yams */,
-				CD4C23A72475256C00BA4D35 /* Stem */,
 				CD4E1DB625152AD5001C8FAC /* ArgumentParser */,
 				CD4E1DBB25152AEA001C8FAC /* SwiftShell */,
+				CD73834E257BAA2E0039E3AE /* Stem */,
 			);
 			productName = Autoasset;
 			productReference = CD394C09242B60CF00277F88 /* Autoasset */;
 			productType = "com.apple.product-type.tool";
+		};
+		CDC5316A257A2A5800E33AF7 /* UnitTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CDC53170257A2A5800E33AF7 /* Build configuration list for PBXNativeTarget "UnitTest" */;
+			buildPhases = (
+				CDC53167257A2A5800E33AF7 /* Sources */,
+				CDC53168257A2A5800E33AF7 /* Frameworks */,
+				CDC53169257A2A5800E33AF7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = UnitTest;
+			productName = UnitTest;
+			productReference = CDC5316B257A2A5800E33AF7 /* UnitTest.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -224,12 +267,15 @@
 		CD394C01242B60CF00277F88 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1200;
+				LastSwiftUpdateCheck = 1220;
 				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = linhey.autoasset;
 				TargetAttributes = {
 					CD394C08242B60CF00277F88 = {
 						CreatedOnToolsVersion = 11.4;
+					};
+					CDC5316A257A2A5800E33AF7 = {
+						CreatedOnToolsVersion = 12.2;
 					};
 				};
 			};
@@ -244,18 +290,29 @@
 			mainGroup = CD394C00242B60CF00277F88;
 			packageReferences = (
 				CD210B61245AB199008015B3 /* XCRemoteSwiftPackageReference "Yams" */,
-				CD4C23A62475256C00BA4D35 /* XCRemoteSwiftPackageReference "Stem" */,
 				CD4E1DB525152AD5001C8FAC /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
 				CD4E1DBA25152AEA001C8FAC /* XCRemoteSwiftPackageReference "SwiftShell" */,
+				CDC53159257A1D6000E33AF7 /* XCRemoteSwiftPackageReference "Stem" */,
 			);
 			productRefGroup = CD394C0A242B60CF00277F88 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				CD394C08242B60CF00277F88 /* Autoasset */,
+				CDC5316A257A2A5800E33AF7 /* UnitTest */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CDC53169257A2A5800E33AF7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		CD394C05242B60CF00277F88 /* Sources */ = {
@@ -269,6 +326,7 @@
 				CDA383632433398D00D3EDD9 /* Podspec.swift in Sources */,
 				CDC3AEB4247BA01A0012F630 /* AssetModel.swift in Sources */,
 				CD769528251B505800F3E041 /* Shell.swift in Sources */,
+				CD9E2509257A5A5F00B2ABCC /* NameFormatter.swift in Sources */,
 				CD394C0D242B60CF00277F88 /* main.swift in Sources */,
 				CDA3836E243351EC00D3EDD9 /* Asset.swift in Sources */,
 				CDA9F0AC242C9A8700255373 /* Xcassets.swift in Sources */,
@@ -287,6 +345,15 @@
 				CD544366243C769A0099C9F0 /* Autoasset.swift in Sources */,
 				CD52EEB52480FDA70038666B /* Inputs.swift in Sources */,
 				CD20A0F724644FF500B9CF17 /* Placeholder.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CDC53167257A2A5800E33AF7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD738354257BAAA30039E3AE /* NameFormatter.swift in Sources */,
+				CD73839F257DC8A70039E3AE /* NameFormatterTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -442,6 +509,44 @@
 			};
 			name = Release;
 		};
+		CDC53171257A2A5800E33AF7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 26FAR3UCC2;
+				INFOPLIST_FILE = UnitTest/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_BUNDLE_IDENTIFIER = linhey.autoasset.com.UnitTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		CDC53172257A2A5800E33AF7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 26FAR3UCC2;
+				INFOPLIST_FILE = UnitTest/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_BUNDLE_IDENTIFIER = linhey.autoasset.com.UnitTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -463,6 +568,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		CDC53170257A2A5800E33AF7 /* Build configuration list for PBXNativeTarget "UnitTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CDC53171257A2A5800E33AF7 /* Debug */,
+				CDC53172257A2A5800E33AF7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -471,15 +585,7 @@
 			repositoryURL = "https://github.com/jpsim/Yams.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 3.0.0;
-			};
-		};
-		CD4C23A62475256C00BA4D35 /* XCRemoteSwiftPackageReference "Stem" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/linhay/Stem.git";
-			requirement = {
-				branch = master;
-				kind = branch;
+				minimumVersion = 4.0.1;
 			};
 		};
 		CD4E1DB525152AD5001C8FAC /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
@@ -494,8 +600,16 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kareman/SwiftShell.git";
 			requirement = {
-				branch = Swift5.3;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
+		CDC53159257A1D6000E33AF7 /* XCRemoteSwiftPackageReference "Stem" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/linhay/Stem";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.34;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -506,11 +620,6 @@
 			package = CD210B61245AB199008015B3 /* XCRemoteSwiftPackageReference "Yams" */;
 			productName = Yams;
 		};
-		CD4C23A72475256C00BA4D35 /* Stem */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CD4C23A62475256C00BA4D35 /* XCRemoteSwiftPackageReference "Stem" */;
-			productName = Stem;
-		};
 		CD4E1DB625152AD5001C8FAC /* ArgumentParser */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CD4E1DB525152AD5001C8FAC /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
@@ -520,6 +629,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CD4E1DBA25152AEA001C8FAC /* XCRemoteSwiftPackageReference "SwiftShell" */;
 			productName = SwiftShell;
+		};
+		CD73834E257BAA2E0039E3AE /* Stem */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CDC53159257A1D6000E33AF7 /* XCRemoteSwiftPackageReference "Stem" */;
+			productName = Stem;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

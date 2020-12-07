@@ -9,9 +9,12 @@
 import Foundation
 
 protocol Pipes {
+    
     associatedtype Input
     associatedtype Output
+    
     init(_ input: Input)
+    
     func flow() -> Output?
 }
 

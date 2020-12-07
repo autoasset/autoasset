@@ -9,42 +9,10 @@
 import Foundation
 import Stem
 
-fileprivate extension String {
-
-    func camelCased() -> String {
-        let splitChars = [" ", "-", "_"]
-        var words = [String]()
-        var buffer = ""
-        
-        for index in 0..<count {
-            let char = self[String.Index(utf16Offset: index, in: self)]
-            
-            if splitChars.contains(char.description) {
-                if buffer.isEmpty == false {
-                    words.append(buffer)
-                    buffer = ""
-                }
-                continue
-            }
-            
-            if char.uppercased() == char.description, buffer.isEmpty == false {
-                words.append(buffer)
-                buffer = char.description
-                continue
-            }
-            
-            buffer.append(char)
-        }
-        
-        words.append(buffer)
-        return words.enumerated().map { $0.offset > 0 ? $0.element.capitalized : $0.element.lowercased() }.joined()
-    }
-
-}
-
 class Asset {
     
     let config: AssetModel
+    let nameFormatter = NameFormatter(split: [" ", "_", "-"])
 
     class SplitImageResult {
         var imageFilePaths: [String: [FilePath]] = [:]
@@ -195,31 +163,13 @@ class Asset {
 // MARK: - add
 extension Asset {
 
-    func format(name: String, use config: AssetModel.Xcasset?) -> String {
-        var name = name
-        if let prefix = config?.variablePrefix, prefix.isEmpty == false {
-            name = "\(prefix)_\(name)"
-        }
-
-        var caseName = name.camelCased()
-
-        if let prefix = config?.variablePrefix, prefix.isEmpty == false, prefix == "_" {
-            caseName = "\(prefix)\(caseName)"
-        }
-
-        if name.first?.isNumber ?? false {
-            caseName = "_\(caseName)"
-            Warn.caseFirstCharIsNumber(caseName: name)
-        }
-        return caseName
-    }
-
     func add(toColor code: AssetCode) {
         guard let text = config.template?.colorCode else {
             return
         }
 
-        let str = text.replacingOccurrences(of: Placeholder.variableName, with: format(name: code.variableName, use: config.colors).uppercased())
+        let variableName = nameFormatter.variableName(code.variableName, prefix: config.colors?.variablePrefix)
+        let str = text.replacingOccurrences(of: Placeholder.variableName, with: variableName.uppercased())
             .replacingOccurrences(of: Placeholder.mark, with: code.color.mark)
             .replacingOccurrences(of: Placeholder.name1, with: code.color.light)
             .replacingOccurrences(of: Placeholder.name2, with: code.color.dark)
@@ -230,8 +180,9 @@ extension Asset {
         guard let text = config.template?.imageCode else {
             return
         }
+        let variableName = nameFormatter.variableName(code.variableName, prefix: nil)
         imageCode.append(text
-            .replacingOccurrences(of: Placeholder.variableName, with: format(name: code.variableName, use: config.images))
+            .replacingOccurrences(of: Placeholder.variableName, with: variableName)
             .replacingOccurrences(of: Placeholder.name1, with: code.xcassetName))
     }
     
@@ -239,8 +190,9 @@ extension Asset {
         guard let text = config.template?.gifCode else {
             return
         }
+        let variableName = nameFormatter.variableName(code.variableName, prefix: nil)
         gifCode.append(text
-            .replacingOccurrences(of: Placeholder.variableName, with: format(name: code.variableName, use: config.gifs))
+            .replacingOccurrences(of: Placeholder.variableName, with: variableName)
             .replacingOccurrences(of: Placeholder.name1, with: code.xcassetName))
     }
     

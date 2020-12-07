@@ -3,11 +3,11 @@
     "pins": [
       {
         "package": "Stem",
-        "repositoryURL": "https://github.com/linhay/Stem.git",
+        "repositoryURL": "https://github.com/linhay/Stem",
         "state": {
-          "branch": "master",
-          "revision": "96bb5f5ef9e59073c51093de5eeb7b4bfa9ab244",
-          "version": null
+          "branch": null,
+          "revision": "6c4223b889b84035c610b4253b55aec0adb60032",
+          "version": "0.0.34"
         }
       },
       {
@@ -23,9 +23,9 @@
         "package": "SwiftShell",
         "repositoryURL": "https://github.com/kareman/SwiftShell.git",
         "state": {
-          "branch": "Swift5.3",
-          "revision": "647b7375bf7ae5df8e49927f32f138ab44b26326",
-          "version": null
+          "branch": null,
+          "revision": "99680b2efc7c7dbcace1da0b3979d266f02e213c",
+          "version": "5.1.0"
         }
       },
       {
@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/jpsim/Yams.git",
         "state": {
           "branch": null,
-          "revision": "81a65c4069c28011ee432f2858ba0de49b086677",
-          "version": "3.0.1"
+          "revision": "138cf1b701cf825233b92ceac919152d5aba8a3f",
+          "version": "4.0.1"
         }
       }
     ]
