@@ -9,9 +9,11 @@ mode:
     # 3. pod_with_branch: 分支模式
     type: normal
     variables: 
-        # [local / pod_with_branch] 模式运行时, 用于填充 [podspec / message] 中 [version] 的字段
+        # [local / pod_with_branch]  
+        # [local] 模式运行时, 组成版本号的数字将尝试从 Git Tag 中提取, 无法获取时将采用 `version` 字段数值.
+        # [pod_with_branch] 模式运行时, 组成版本号的数字将尝试从 Git 分支名中提取, 无法获取时将采用 `version` 字段数值.
         version: 1000
-        # [pod_with_branch] 模式运行时, 组成版本号的数字将尝试从Git分支名中提取, default: true
+        # [pod_with_branch] 模式运行时, 启用组成版本号的数字将尝试从Git分支名中提取, default: true
         enable_automatic_version_number_generation: true
 # 模块: 警告
 warn: 
