@@ -1,4 +1,4 @@
-# Version 19
+# Version 22
 
 ```yaml
 ---
@@ -11,7 +11,8 @@ mode:
     variables: 
         # [local / pod_with_branch] 模式运行时, 用于填充 [podspec / message] 中 [version] 的字段
         version: 1000
-
+        # 当处于分支模式[pod_with_branch]时, 组成版本号的数字将尝试从Git分支名中提取, default: true
+				enable_automatic_version_number_generation: true
 # 模块: 警告
 warn: 
     # 输出路径

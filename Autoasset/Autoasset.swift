@@ -50,8 +50,17 @@ private extension Autoasset {
             guard let podspec = Podspec(config: config.podspec) else {
                 return
             }
+            var version = config.mode.variables.version
+            if config.mode.variables.enableAutomaticVersionNumberGeneration {
+                let formatter = NameFormatter(split: [])
+                let name = try Git().branch.currentName()
+                let newVersion = formatter.scanNumbers(name)
+                if newVersion.isEmpty == false {
+                    version = newVersion
+                }
+            }
             try podspec.version()
-            try podspec.output(version: config.mode.variables.version)
+            try podspec.output(version: version)
             try podspec.lint()
         case .local:
             try Asset(config: config.asset).run()

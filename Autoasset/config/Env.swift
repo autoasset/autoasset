@@ -10,5 +10,5 @@ import Foundation
 
 struct Env {
     static var rootURL = URL(fileURLWithPath: "./")
-    static let version = "22"
+    static let version = "23"
 }

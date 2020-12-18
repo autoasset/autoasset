@@ -108,4 +108,11 @@ class NameFormatter {
         
     }
     
+    func scanNumbers(_ str: String) -> String {
+       return str
+        .filter({ $0.isNumber })
+        .map({ String($0) })
+        .joined()
+    }
+    
 }

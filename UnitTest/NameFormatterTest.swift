@@ -63,5 +63,10 @@ class NameFormatterTest: XCTestCase {
         assert(formatter.variableName("class", prefix: "") == "`class`")
         assert(formatter.variableName("__COLUMN__", prefix: "") == "cOLUMN")
     }
+    
+    func testScanNumber() throws {
+        let formatter = NameFormatter(split: [])
+        XCTAssertEqual(formatter.scanNumbers("origin/UI/8.35.0"), "8350")
+    }
 
 }

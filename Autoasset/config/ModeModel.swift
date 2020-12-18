@@ -24,13 +24,19 @@ class ModeModel {
 
     struct Variables {
         let version: String
-
+        
+        /// 组成版本号的数字从git分支名中提取
+        /// The numbers that make up the version number are extracted from the git branch name
+        let enableAutomaticVersionNumberGeneration: Bool
+        
         init(version: String) {
             self.version = version
+            enableAutomaticVersionNumberGeneration = true
         }
 
         init(json: JSON) {
             version = json["version"].stringValue
+            enableAutomaticVersionNumberGeneration = json["enable_automatic_version_number_generation"].bool ?? true
         }
     }
     
