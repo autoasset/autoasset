@@ -96,12 +96,10 @@ private extension Autoasset {
         let version = automaticVersionFromNextGitTag(git: git, config: config.mode.variables)
         try normal_without_git_push(config: config, git: git, podspec: podspec, version: version)
 
-        do {
-            try pushToGit(git)
-            try git.tag.remove(version: version)
-            try git.tag.add(version: version, message: commitMessage())
-            try git.tag.push(version: version)
-        } catch { }
+        do { try pushToGit(git) } catch {}
+        do { try git.tag.remove(version: version) } catch {}
+        do { try git.tag.add(version: version, message: commitMessage()) } catch {}
+        do { try git.tag.push(version: version) } catch {}
 
         try podspec?.push()
 
