@@ -17,7 +17,7 @@ class NameFormatter {
     /// 分割字符
     private let splitChars: [String]
     
-    init(split: [String]) {
+    init(split: [String] = []) {
         self.splitChars = split
     }
     

@@ -97,13 +97,6 @@ class Git {
             return tagVersion
         }
 
-        func nextVersion(with lastVersion: String) throws -> String {
-            guard let version = Int(argument: lastVersion) else {
-                throw RunError(message: "无法解析版本号, version: \(lastVersion), 请使用 1/2/3/4/5 Int类型")
-            }
-            return (version + 1).description
-        }
-
         func push(version: String) throws {
             try shell("git push -u origin \(version)")
         }

@@ -50,23 +50,18 @@ private extension Autoasset {
             guard let podspec = Podspec(config: config.podspec) else {
                 return
             }
-            var version = config.mode.variables.version
-            if config.mode.variables.enableAutomaticVersionNumberGeneration {
-                let formatter = NameFormatter(split: [])
-                let name = try Git().branch.currentName()
-                let newVersion = formatter.scanNumbers(name)
-                if newVersion.isEmpty == false {
-                    version = newVersion
-                }
-            }
             try podspec.version()
+            let version = automaticVersionFromGitBranch(config: config.mode.variables)
             try podspec.output(version: version)
             try podspec.lint()
         case .local:
             try Asset(config: config.asset).run()
             try Warn.output(config: config.warn)
         case .normal_without_git_push:
-            try normal_without_git_push()
+            let podspec = Podspec(config: config.podspec)
+            let git = Git()
+            let version = automaticVersionFromNextGitTag(git: git, config: config.mode.variables)
+            try normal_without_git_push(config: config, git: git, podspec: podspec, version: version)
         case .test_config:
             break
         case .normal:
@@ -81,82 +76,30 @@ private extension Autoasset {
         }
     }
 
-    func commitMessage() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        return "[ci skip] author: autoasset(\(Env.version)), date: \(dateFormatter.string(from: Date()))"
-    }
-
-    func pushToGit(_ git: Git) throws {
-        try git.addAllFile(path: try git.rootPath())
-        try git.commit(message: commitMessage())
-        try git.push()
-    }
-
-    func normal_without_git_push() throws {
-        let podspec = Podspec(config: config.podspec)
-        let git = Git()
-
+    func normal_without_git_push(config: Config, git: Git, podspec: Podspec?, version: String) throws {
         guard try git.isInsideWorkTree() else {
             Warn.init("模式 'normal' 需要在 git 仓库中才能执行")
             return
         }
 
-        /// 下载目标文件
-        try FilePath(path: GitModel.Clone.output, type: .folder).delete()
-        try config.git.inputs.forEach { item in
-            try item.branchs.forEach { branch in
-                try git.clone.get(url: item.url, branch: branch, to: item.folder(for: branch))
-            }
-        }
-
+        try downloadGitInput(git: git, config: config.git)
         try Asset(config: config.asset).run()
         try FilePath(path: GitModel.Clone.output, type: .folder).delete()
 
-        let lastVersion = try? git.tag.lastVersion() ?? config.mode.variables.version
-        let version = try git.tag.nextVersion(with: lastVersion ?? config.mode.variables.version)
         try podspec?.output(version: version)
         try podspec?.lint()
     }
-
+    
     func normalMode() throws {
         let podspec = Podspec(config: config.podspec)
         let git = Git()
-
-        guard try git.isInsideWorkTree() else {
-            Warn.init("模式 'normal' 需要在 git 仓库中才能执行")
-            return
-        }
-
-        /// 下载目标文件
-        try FilePath(path: GitModel.Clone.output, type: .folder).delete()
-        try config.git.inputs.forEach { item in
-            try item.branchs.forEach { branch in
-                try git.clone.get(url: item.url, branch: branch, to: item.folder(for: branch))
-            }
-        }
-
-        try Asset(config: config.asset).run()
-        try FilePath(path: GitModel.Clone.output, type: .folder).delete()
-
-        let lastVersion = try? git.tag.lastVersion() ?? config.mode.variables.version
-        let version = try git.tag.nextVersion(with: lastVersion ?? config.mode.variables.version)
-        try podspec?.output(version: version)
-        try podspec?.lint()
+        let version = automaticVersionFromNextGitTag(git: git, config: config.mode.variables)
+        try normal_without_git_push(config: config, git: git, podspec: podspec, version: version)
 
         do {
             try pushToGit(git)
-        } catch { }
-
-        do {
             try git.tag.remove(version: version)
-        } catch { }
-
-        do {
             try git.tag.add(version: version, message: commitMessage())
-        } catch { }
-
-        do {
             try git.tag.push(version: version)
         } catch { }
 
@@ -166,4 +109,72 @@ private extension Autoasset {
         try Message(config: config.message)?.output(version: version, branch: version)
     }
 
+}
+
+private extension Autoasset {
+    
+    func commitMessage() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return "[ci skip] author: autoasset(\(Env.version)), date: \(dateFormatter.string(from: Date()))"
+    }
+    
+    func pushToGit(_ git: Git) throws {
+        try git.addAllFile(path: try git.rootPath())
+        try git.commit(message: commitMessage())
+        try git.push()
+    }
+
+    /// 下载目标文件
+    func downloadGitInput(git: Git, config: GitModel) throws {
+        try FilePath(path: GitModel.Clone.output, type: .folder).delete()
+        try config.inputs.forEach { item in
+            try item.branchs.forEach { branch in
+                try git.clone.get(url: item.url, branch: branch, to: item.folder(for: branch))
+            }
+        }
+    }
+    
+}
+
+/// Version
+private extension Autoasset {
+
+    func automaticVersionFromNextGitTag(git: Git, config: ModeModel.Variables) -> String {
+        do {
+            guard let lastVersion = try git.tag.lastVersion() else {
+                return "0"
+            }
+            
+            let nameFormatter = NameFormatter()
+            let numbers = nameFormatter.scanNumbers(lastVersion)
+            
+            guard let value = Int(numbers) else {
+                return "0"
+            }
+            
+            return String(describing: value + 1)
+        } catch {
+            return "0"
+        }
+    }
+    
+    func automaticVersionFromGitBranch(config: ModeModel.Variables) -> String {
+        do {
+            guard config.enableAutomaticVersionNumberGeneration else {
+                return config.version
+            }
+            let formatter = NameFormatter(split: [])
+            let name = try Git().branch.currentName()
+            let newVersion = formatter.scanNumbers(name)
+            if newVersion.isEmpty {
+                return config.version
+            } else {
+                return newVersion
+            }
+        } catch {
+            return config.version
+        }
+    }
+    
 }
