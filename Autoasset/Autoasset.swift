@@ -141,21 +141,22 @@ private extension Autoasset {
 private extension Autoasset {
 
     func automaticVersionFromNextGitTag(git: Git, config: ModeModel.Variables) -> String {
+        let placeholderVersion = config.version.isEmpty ? "0" : config.version
         do {
             guard let lastVersion = try git.tag.lastVersion() else {
-                return "0"
+                return placeholderVersion
             }
             
             let nameFormatter = NameFormatter()
             let numbers = nameFormatter.scanNumbers(lastVersion)
             
             guard let value = Int(numbers) else {
-                return "0"
+                return placeholderVersion
             }
             
             return String(describing: value + 1)
         } catch {
-            return "0"
+            return placeholderVersion
         }
     }
     
