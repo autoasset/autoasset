@@ -15,6 +15,7 @@ mode:
         version: 1000
         # [pod_with_branch] 模式运行时, 启用组成版本号的数字将尝试从Git分支名中提取, default: true
         enable_automatic_version_number_generation: true
+
 # 模块: 警告
 warn: 
     # 输出路径
