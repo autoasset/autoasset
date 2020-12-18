@@ -38,9 +38,13 @@ private extension Autoasset {
             try Asset(config: config.asset).run()
             let name = try git.branch.currentName()
             try start(with: .test_podspec)
-            try pushToGit(git)
-            try Warn.output(config: config.warn)
-            try Message(config: config.message)?.output(version: config.mode.variables.version, branch: name)
+            if try git.diff().isEmpty {
+                try Message(config: config.message)?.output(version: config.mode.variables.version, branch: name)
+            } else {
+                try pushToGit(git)
+                try Warn.output(config: config.warn)
+                try Message(config: config.message)?.output(version: config.mode.variables.version, branch: name)
+            }
         case .test_warn:
             Warn.test()
             try Warn.output(config: config.warn)
