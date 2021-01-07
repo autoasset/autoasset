@@ -201,10 +201,10 @@ private extension Asset {
             row.variableName     = .init(value: variableName)
             row.inputFilePaths   = .init(value: code.input.filePaths.map({ $0.path.st.deleting(prefix: Env.rootURL.path) }))
             row.outputFolderName = .init(value: folderName)
-            row.outputFolderSize = .init(value: code.input.filePaths
+            row.inputFilesSize   = .init(value: code.input.filePaths
                                             .compactMap({ $0.attributes.size })
                                             .reduce(0, { $0 + $1 }))
-            row.outputFolderSizeDescription = .init(value: byteCountFormatter.string(fromByteCount: Int64(row.outputFolderSize.value)))
+            row.inputFilesSizeDescription = .init(value: byteCountFormatter.string(fromByteCount: Int64(row.inputFilesSize.value)))
             row.outputFolderPath = .init(value: code.output.folder.path.st.deleting(prefix: Env.rootURL.path))
             report.rows.append(row)
         }
