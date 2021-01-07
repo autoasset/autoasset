@@ -22,21 +22,17 @@ class Warn {
     }
 
     static func output(config: Config.Warn?) throws {
-        guard let config = config else {
+        guard let config = config, list.isEmpty == false else {
             return
         }
 
         let filePath = try FilePath(url: config.output, type: .file)
-        var message = ""
-
-        if list.isEmpty == false {
-            message = list.map({ $0.message }).sorted().joined(separator: "\n")
-            RunPrint("\n")
-            RunPrint("WARN: " + [String](repeating: "👮", count: 37).joined())
-            RunPrint([String](repeating: "-", count: 80).joined())
-            RunPrint(message)
-            RunPrint([String](repeating: "-", count: 80).joined())
-        }
+        let message = list.map({ $0.message }).sorted().joined(separator: "\n")
+        RunPrint("\n")
+        RunPrint("WARN: " + [String](repeating: "👮", count: 37).joined())
+        RunPrint([String](repeating: "-", count: 80).joined())
+        RunPrint(message)
+        RunPrint([String](repeating: "-", count: 80).joined())
 
         let data = message.data(using: .utf8)
         try filePath.delete()
