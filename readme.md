@@ -1,4 +1,4 @@
-# Version 23
+# Version 24
 
 ```yaml
 ---
@@ -109,19 +109,31 @@ asset:
     images:
         # 输出路径
         output: Sources/Resources/icon.xcassets
+        # [可选] 统计报告输出路径
+        report: report/images.csv
+        # [可选] xcasset文件夹前缀
         prefix: autoasset_
+        # [可选] 自定义描述文件所在文件夹
         contents:
             - Contents/images
+        # 资源所在文件夹目录
         inputs:
             - UI
 
     # GIF
     gifs:
-    
         # 输出路径
         output: Sources/Resources/gifs.xcassets
+        # [可选] 统计报告输出路径
+        report: report/gifs.csv
+        # [可选] xcasset文件夹前缀
         prefix: autoasset_
+        # [可选] 自定义描述文件所在文件夹
+        contents:
+            - Contents/gifs
+        # [可选] 与 podspec 中 resource_bundles 一致
         bundle_name: autoassetGIFs
+        # 资源所在文件夹目录
         inputs:
             - UI/gifs
 
