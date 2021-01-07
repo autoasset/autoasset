@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol ColumnProtocol {
+protocol CSVColumnProtocol {
     associatedtype Value
     static var name: String { get }
     var value: Value { get set }

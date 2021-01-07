@@ -70,37 +70,37 @@ class Report {
     }
     
     /// 变量名
-    struct VariableName: ColumnProtocol {
+    struct VariableName: CSVColumnProtocol {
         static var name: String = "variable_name"
         var value: String
     }
     
     /// 文件名
-    struct InputFilePaths: ColumnProtocol {
+    struct InputFilePaths: CSVColumnProtocol {
         static var name: String = "input_file_paths"
         var value: [String]
     }
     
     /// 文件名
-    struct OutputFolderName: ColumnProtocol {
+    struct OutputFolderName: CSVColumnProtocol {
         static var name: String = "output_folder_name"
         var value: String
     }
     
     /// 大小
-    struct OutputFolderSize: ColumnProtocol {
+    struct OutputFolderSize: CSVColumnProtocol {
         static var name: String = "output_folder_size"
         var value: Int
     }
     
     /// 格式化大小
-    struct OutputFolderSizeDescription: ColumnProtocol {
+    struct OutputFolderSizeDescription: CSVColumnProtocol {
         static var name: String = "output_folder_size_description"
         var value: String
     }
     
     /// 路径
-    struct OutputFolderPath: ColumnProtocol {
+    struct OutputFolderPath: CSVColumnProtocol {
         static var name: String = "output_folder_path"
         var value: String
     }
