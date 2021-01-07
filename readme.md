@@ -131,7 +131,7 @@ asset:
         # [可选] 自定义描述文件所在文件夹
         contents:
             - Contents/gifs
-        # [可选] 与 podspec 中 resource_bundles 一致
+        # [可选] 与 podspec 中 resource_bundles 一致
         bundle_name: autoassetGIFs
         # 资源所在文件夹目录
         inputs:
@@ -141,8 +141,9 @@ asset:
 
 # Report - Example
 
-| variable_name                | output_folder_name                    | output_folder_size   | output_folder_size_description   | output_folder_path                                           | input_file_paths                                             |
+| variable_name                | output_folder_name                    | input_files_size | input_files_size_description | output_folder_path                                           | input_file_paths                                             |
 | ---- | ------------- | -------------------- | -------- | ------------ | ------------ |
+| 变量名 | 输出文件夹名      | 输入的文件总大小       | 输入的文件总大小格式化       | 输出文件夹路径     | 输入的文件,以 \| 号分割             |
 | loreDefaultBanner            | dxyer_lore_default_banner             | 507177               | 507 KB                           | /Sources/Resources/icon.xcassets/dxyer_lore_default_banner.imageset | /UI/icon/lore_default_banner@3x.png                          |
 | receiveSuccessIcon           | dxyer_receive_success_icon            | 1599                 | 2 KB                             | /Sources/Resources/icon.xcassets/dxyer_receive_success_icon.imageset | /UI/icon/receive_success_icon@2x.png                         |
 | badgeNot11                   | dxyer_badge_not_11                    | 65669                | 66 KB                            | /Sources/Resources/icon.xcassets/dxyer_badge_not_11.imageset | /UI/icon/badge_not_11@2x.png                                 |
