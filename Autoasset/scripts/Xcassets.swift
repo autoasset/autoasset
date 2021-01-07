@@ -171,26 +171,21 @@ extension Xcassets {
     }
     
     func runColor() throws -> [AssetCode] {
-        let sources = try read(from: config)
-        let jsons = try sources.compactMap { file -> JSON? in
-            let data = try file.data()
-            return try JSON(data: data)
-        }
-        
-        var codes = [AssetCode]()
-        try jsons.forEach { json in
-            try json.arrayValue.forEach { item in
-                if let config = config as? AssetModel.ColorXcasset,
-                   let color = Color(json: item, space: config.space),
-                   let code = try createColorXcasset(name: color.any, color: color) {
-                    codes.append(code)
-                }
-            }
-        }
-        return codes
+       return try read(from: config)
+            .map { try (path: $0, json: JSON(data: $0.data())) }
+            .map({ (path, json) -> [AssetCode] in
+                return try json.arrayValue.compactMap { item -> AssetCode.Output? in
+                    if let config = config as? AssetModel.ColorXcasset,
+                       let color = Color(json: item, space: config.space),
+                       let code = try createColorXcasset(name: color.any, color: color) {
+                        return code
+                    }
+                return nil
+                }.map({ AssetCode(input: .init(filePaths: [path]), output: $0) })
+            }).flatMap({ $0 })
     }
     
-    func createColorXcasset(name: String, color: Color) throws -> AssetCode? {
+    func createColorXcasset(name: String, color: Color) throws -> AssetCode.Output? {
         let folder = try FilePath(url: config.output, type: .folder)
         let xcassetName = createXcassetName(name: name)
         
@@ -206,11 +201,11 @@ extension Xcassets {
         let light = "0x" + color.light
         let dark  = "0x" + (color.dark.isEmpty ? color.light : color.dark)
         
-        return AssetCode(variableName: name,
-                         xcassetName: xcassetName,
-                         color: .init(light: light,
-                                      dark: dark,
-                                      mark: color.mark()))
+        return .init(variableName: name,
+                     folder: folder,
+                     color: .init(light: light,
+                                  dark: dark,
+                                  mark: color.mark()))
     }
     
     func createColorContents(name: String, color: Color) throws -> Data {
@@ -398,10 +393,10 @@ extension Xcassets {
     
     func runImage() throws -> [AssetCode] {
         let types: [Data.MimeType] = [.png, .jpeg, .pdf]
-        let sources = try read(from: config, predicate: { try types.contains($0.data().st.mimeType) })
-        
         let formatter = NameFormatter(split: ["_dark@", "_dark.", "@3x.", "@2x.", "@1x.", "."])
-        let groups = try group(from: sources) { formatter.fileName($0.attributes.name) }
+        
+        let sources = try read(from: config, predicate: { try types.contains($0.data().st.mimeType) })
+        let groups  = try group(from: sources) { formatter.fileName($0.attributes.name) }
         
         return try groups.compactMap { (name, files) -> AssetCode? in
             return try createImageXcasset(name: name, files: files)
@@ -430,7 +425,8 @@ extension Xcassets {
         let contents = try createImageContents(name: name, files: files)
         try imageset.create(file: "Contents.json", data: contents)
         
-        return AssetCode(variableName: name, xcassetName: xcassetName)
+        return AssetCode(input: .init(filePaths: files),
+                         output: .init(variableName: name, folder: imageset, color: nil))
     }
     
     func createImageContents(name: String, files: [FilePath]) throws -> Data {
@@ -492,7 +488,9 @@ extension Xcassets {
         try file.copy(to: imageset)
         let contents = try createDataContents(name: name, file: file)
         try imageset.create(file: "Contents.json", data: contents)
-        return AssetCode(variableName: name, xcassetName: xcassetName)
+        
+        return AssetCode(input: .init(filePaths: [file]),
+                         output: .init(variableName: name, folder: imageset, color: nil))
     }
     
     func createDataContents(name: String, file: FilePath) throws -> Data {

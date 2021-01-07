@@ -90,9 +90,11 @@ struct AssetModel {
         fileprivate(set) var prefix: String
         fileprivate(set) var variablePrefix: String
         let bundleName: String?
+        let report: String?
 
         override init?(json: JSON, base: URL) {
             self.bundleName = json["bundle_name"].string
+            self.report     = json["report"].string
             self.prefix     = json["prefix"].stringValue
             self.contents   = Inputs(inputs: json["contents"], base: base)
             self.variablePrefix = json["variable_prefix"].stringValue

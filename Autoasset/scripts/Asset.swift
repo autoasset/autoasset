@@ -13,6 +13,7 @@ class Asset {
     
     let config: AssetModel
     let nameFormatter = NameFormatter(split: [" ", "_", "-"])
+    let byteCountFormatter = ByteCountFormatter()
     
     class SplitImageResult {
         var imageFilePaths: [String: [FilePath]] = [:]
@@ -35,6 +36,10 @@ class Asset {
         static let name2   = "[name2]"
         static let variableName = "[variable_name]"
     }
+    
+    
+    var imageReport = Report()
+    var gifsReport  = Report()
     
     var imageCode: [String] = []
     var gifCode:   [String] = []
@@ -68,9 +73,28 @@ class Asset {
         
         try runCopyFiles(title: "xcassets", resource: config.xcassets)
         try runCopyFiles(title: "codes", resource: config.codes)
-        try runXcasset(title: "images", xcasset: config.images, type: .image, callback: { self.add(toImage: $0) })
-        try runXcasset(title: "colors", xcasset: config.colors, type: .color, callback: { self.add(toColor: $0) })
-        try runXcasset(title: "gifs", xcasset: config.gifs, type: .data, callback: { self.add(toGIF: $0) })
+        
+        if let model = config.images {
+            try runXcasset(title: "images", xcasset: model, type: .image) {
+                self.add(report: &imageReport, config: model, template: config.template?.imageCode, code: $0, to: &imageCode)
+            }
+            if let report = model.report, let filePath = try? FilePath(path: report, type: .file) {
+                try? imageReport.write(to: filePath)
+            }
+        }
+        
+        if let model = config.gifs {
+            try runXcasset(title: "gifs", xcasset: model, type: .data) {
+                self.add(report: &gifsReport, config: model, template: config.template?.gifCode, code: $0, to: &gifCode)
+            }
+            if let report = model.report, let filePath = try? FilePath(path: report, type: .file) {
+                try? gifsReport.write(to: filePath)
+            }
+        }
+        
+        if let model = config.colors {
+            try runXcasset(title: "colors", xcasset: model, type: .color, callback: { self.add(toColor: $0) })
+        }
         
         try output()
     }
@@ -112,7 +136,7 @@ class Asset {
 }
 
 private extension Asset {
-
+    
     func runCopyFiles(title: String, resource: AssetModel.Resource?) throws {
         guard let resource = resource else {
             return
@@ -131,13 +155,9 @@ private extension Asset {
     }
     
     func runXcasset(title: String,
-                    xcasset: AssetModel.Xcasset?,
+                    xcasset: AssetModel.Xcasset,
                     type: Xcassets.ResourceType,
                     callback: (AssetCode) -> Void) throws {
-        guard let xcasset = xcasset else {
-            return
-        }
-        
         RunPrint.create(titleDesc: "command", title: title, level: .info)
         try Xcassets(config: xcasset, use: type).run().forEach { code in
             callback(code)
@@ -151,36 +171,59 @@ private extension Asset {
 private extension Asset {
     
     func add(toColor code: AssetCode) {
-        guard let text = config.template?.colorCode else {
+        guard let text = config.template?.colorCode, let color = code.output.color else {
             return
         }
         
-        let variableName = nameFormatter.variableName(code.variableName, prefix: config.colors?.variablePrefix)
+        let variableName = nameFormatter.variableName(code.output.variableName, prefix: config.colors?.variablePrefix)
         let str = text.replacingOccurrences(of: Placeholder.variableName, with: variableName.uppercased())
-            .replacingOccurrences(of: Placeholder.mark, with: code.color.mark)
-            .replacingOccurrences(of: Placeholder.name1, with: code.color.light)
-            .replacingOccurrences(of: Placeholder.name2, with: code.color.dark)
+            .replacingOccurrences(of: Placeholder.mark, with: color.mark)
+            .replacingOccurrences(of: Placeholder.name1, with: color.light)
+            .replacingOccurrences(of: Placeholder.name2, with: color.dark)
         colorCode.append(str)
     }
     
-    func add(toImage code: AssetCode) {
-        guard let text = config.template?.imageCode else {
+    
+    func add(report: inout Report,
+             config: AssetModel.Xcasset,
+             template: String?,
+             code: AssetCode,
+             to list: inout [String]) {
+        guard let text = template else {
             return
         }
-        let variableName = nameFormatter.variableName(code.variableName, prefix: nil)
-        imageCode.append(text
-                            .replacingOccurrences(of: Placeholder.variableName, with: variableName)
-                            .replacingOccurrences(of: Placeholder.name1, with: code.xcassetName))
+        
+        let variableName = nameFormatter.variableName(code.output.variableName, prefix: nil)
+        let folderName   = code.output.folder.attributes.name.split(separator: ".")[0].description
+        
+        if config.report != nil {
+            let row = Report.Row()
+            row.variableName     = .init(value: variableName)
+            row.inputFilePaths   = .init(value: code.input.filePaths.map({ $0.path.st.deleting(prefix: Env.rootURL.path) }))
+            row.outputFolderName = .init(value: folderName)
+            row.outputFolderSize = .init(value: code.input.filePaths
+                                            .compactMap({ $0.attributes.size })
+                                            .reduce(0, { $0 + $1 }))
+            row.outputFolderSizeDescription = .init(value: byteCountFormatter.string(fromByteCount: Int64(row.outputFolderSize.value)))
+            row.outputFolderPath = .init(value: code.output.folder.path.st.deleting(prefix: Env.rootURL.path))
+            report.rows.append(row)
+        }
+        
+        list.append(text.replacingOccurrences(of: Placeholder.variableName, with: variableName)
+                        .replacingOccurrences(of: Placeholder.name1, with: folderName))
     }
     
     func add(toGIF code: AssetCode) {
         guard let text = config.template?.gifCode else {
             return
         }
-        let variableName = nameFormatter.variableName(code.variableName, prefix: nil)
+        
+        let variableName = nameFormatter.variableName(code.output.variableName, prefix: nil)
+        let folderName   = code.output.folder.attributes.name.split(separator: ".")[0].description
+        
         gifCode.append(text
                         .replacingOccurrences(of: Placeholder.variableName, with: variableName)
-                        .replacingOccurrences(of: Placeholder.name1, with: code.xcassetName))
+                        .replacingOccurrences(of: Placeholder.name1, with: folderName))
     }
     
 }

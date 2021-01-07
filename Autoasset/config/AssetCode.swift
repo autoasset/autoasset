@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Stem
 
 struct AssetCode {
     
@@ -16,20 +17,25 @@ struct AssetCode {
         let mark: String
     }
     
-    let color: Color
-    let variableName: String
-    let xcassetName: String
-
-    init(variableName: String, xcassetName: String) {
-        self.variableName = variableName
-        self.xcassetName = xcassetName
-        self.color = Color(light: "", dark: "", mark: "")
+    struct Input {
+        let filePaths: [FilePath]
     }
+    
+    struct Output {
+        /// 变量名
+        let variableName: String
+        /// asset 文件夹
+        let folder: FilePath
+        /// 颜色
+        let color: Color?
+    }
+    
+    let input: Input
+    let output: Output
 
-    init(variableName: String, xcassetName: String, color: Color) {
-        self.variableName = variableName
-        self.xcassetName = xcassetName
-        self.color = color
+    init(input: Input, output: Output) {
+        self.input = input
+        self.output = output
     }
 
 }
