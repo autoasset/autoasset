@@ -78,17 +78,11 @@ class Asset {
             try runXcasset(title: "images", xcasset: model, type: .image) {
                 self.add(report: &imageReport, config: model, template: config.template?.imageCode, code: $0, to: &imageCode)
             }
-            if let report = model.report, let filePath = try? FilePath(path: report, type: .file) {
-                try? imageReport.write(to: filePath)
-            }
         }
         
         if let model = config.gifs {
             try runXcasset(title: "gifs", xcasset: model, type: .data) {
                 self.add(report: &gifsReport, config: model, template: config.template?.gifCode, code: $0, to: &gifCode)
-            }
-            if let report = model.report, let filePath = try? FilePath(path: report, type: .file) {
-                try? gifsReport.write(to: filePath)
             }
         }
         
@@ -97,6 +91,20 @@ class Asset {
         }
         
         try output()
+
+        if let report = config.images?.report, let filePath = try? FilePath(path: report, type: .file) {
+            RunPrint.create(titleDesc: "command", title: "report: ", level: .info)
+            RunPrint.create(row: "images path:" + relative(path: filePath.path))
+            try? imageReport.write(to: filePath)
+            RunPrint.createEnd()
+        }
+        
+        if let report = config.gifs?.report, let filePath = try? FilePath(path: report, type: .file) {
+            RunPrint.create(titleDesc: "command", title: "report: gifs", level: .info)
+            RunPrint.create(row: "path:" + relative(path: filePath.path))
+            try? gifsReport.write(to: filePath)
+            RunPrint.createEnd()
+        }
     }
     
     func output() throws {
@@ -184,6 +192,10 @@ private extension Asset {
     }
     
     
+    func relative(path: String, basePath: String = Env.rootURL.path) -> String {
+       return "." + path.st.deleting(prefix: basePath)
+    }
+    
     func add(report: inout Report,
              config: AssetModel.Xcasset,
              template: String?,
@@ -199,13 +211,13 @@ private extension Asset {
         if config.report != nil {
             let row = Report.Row()
             row.variableName     = .init(value: variableName)
-            row.inputFilePaths   = .init(value: code.input.filePaths.map({ $0.path.st.deleting(prefix: Env.rootURL.path) }))
+            row.inputFilePaths   = .init(value: code.input.filePaths.map({ self.relative(path: $0.path) }))
             row.outputFolderName = .init(value: folderName)
             row.inputFilesSize   = .init(value: code.input.filePaths
                                             .compactMap({ $0.attributes.size })
                                             .reduce(0, { $0 + $1 }))
             row.inputFilesSizeDescription = .init(value: byteCountFormatter.string(fromByteCount: Int64(row.inputFilesSize.value)))
-            row.outputFolderPath = .init(value: code.output.folder.path.st.deleting(prefix: Env.rootURL.path))
+            row.outputFolderPath = .init(value: relative(path: code.output.folder.path))
             report.rows.append(row)
         }
         
