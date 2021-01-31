@@ -26,6 +26,7 @@ extension JSON {
 struct AssetModel {
 
     class Template: TemplateProtocol {
+        var core: String
         var text: String
         var output: URL
         let gifCode: String
@@ -33,6 +34,7 @@ struct AssetModel {
         let colorCode: String
 
         init(template json: JSON) {
+            self.core      = json["core"].stringValue
             self.text      = json["text"].stringValue
             self.output    = URL(stringLiteral: "./")
             self.gifCode   = json["gif_code"].stringValue
@@ -47,6 +49,7 @@ struct AssetModel {
 
             self.output = output
             self.text = Self.load(input: json) ?? model.text
+            self.core = json["core"].string ?? model.core
 
             if let code = json["gif_code"].string, code.isEmpty == false {
                 self.gifCode = code

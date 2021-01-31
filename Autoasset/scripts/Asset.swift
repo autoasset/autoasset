@@ -136,10 +136,20 @@ class Asset {
             message = message.replacingOccurrences(of: Placeholder.colorBundleName, with: bundleName)
         }
         
-        let data = message.data(using: .utf8)
-        let file = try FilePath(url: template.output, type: .file)
-        try file.delete()
-        try file.create(with: data)
+        let folder = try FilePath(url: template.output, type: .folder)
+        if true {
+            let data = message.data(using: .utf8)
+            let file = try folder.create(file: "AutoAsset_List.swift")
+            try file.delete()
+            try file.create(with: data)
+        }
+        
+        if true {
+            let data = template.core.data(using: .utf8)
+            let file = try folder.create(file: "AutoAsset_Core.swift")
+            try file.delete()
+            try file.create(with: data)
+        }
     }
     
 }
