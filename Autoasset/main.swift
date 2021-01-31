@@ -21,6 +21,7 @@ struct Main: ParsableCommand {
             let configURL = try FilePath(path: self.config, type: .file).url
             Env.rootURL = configURL.deletingLastPathComponent()
             let config = try Config(url: configURL)
+            Env.mode = config.mode
             try Autoasset(config: config).start()
         } catch {
             if let error = error as? RunError {

@@ -70,5 +70,21 @@ class NameFormatterTest: XCTestCase {
         XCTAssertEqual(formatter.scanNumbers("origin/master"), "")
         XCTAssertEqual(formatter.scanNumbers("origin/HEAD"), "")
     }
+    
+    func testChinese() throws {
+        let formatter = NameFormatter(split: [])
+        formatter.enableTranslateVariableNameChineseToPinyin = true
+        XCTAssertEqual(formatter.isChinese(.init("1")), false)
+        XCTAssertEqual(formatter.isChinese(.init("a")), false)
+        XCTAssertEqual(formatter.isChinese(.init(";")), false)
+        XCTAssertEqual(formatter.isChinese(.init(" ")), false)
+        XCTAssertEqual(formatter.isChinese(.init("一")), true)
+        XCTAssertEqual(formatter.isChinese(.init("萨")), true)
+        XCTAssertEqual(formatter.transformToPinYin("一二三四五六七"), "yi er san si wu liu qi")
+        XCTAssertEqual(formatter.variableName("6六six"), "_6LiuSix")
+        XCTAssertEqual(formatter.variableName("六6six"), "liu6Six")
+        XCTAssertEqual(formatter.variableName("六six6"), "liuSix6")
+        XCTAssertEqual(formatter.variableName("六six六6"), "liuSixLiu6")
+    }
 
 }

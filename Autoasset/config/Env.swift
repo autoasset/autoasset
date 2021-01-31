@@ -11,4 +11,5 @@ import Foundation
 struct Env {
     static var rootURL = URL(fileURLWithPath: "./")
     static let version = "26"
+    static var mode: ModeModel?
 }

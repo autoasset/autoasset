@@ -17,6 +17,10 @@ class NameFormatter {
     /// 分割字符
     private let splitChars: [String]
     
+    /// [27] 翻译中文成拼音 | default: false
+    /// [27] Translate Chinese to Pinyin
+    var enableTranslateVariableNameChineseToPinyin: Bool = false
+    
     init(split: [String] = []) {
         self.splitChars = split
     }
@@ -85,7 +89,7 @@ class NameFormatter {
     }
     
     /// 处理变量名
-    func variableName(_ str: String, prefix: String?) -> String {
+    func variableName(_ str: String, prefix: String? = nil) -> String {
         
         if let prefix = prefix, splitChars.contains(prefix) {
             let name = variableName(str, prefix: nil)
@@ -96,7 +100,19 @@ class NameFormatter {
             }
         }
         
-        let name = camelCased("\(prefix ?? "")\(str)")
+        var name = "\(prefix ?? "")\(str)"
+                    
+        if enableTranslateVariableNameChineseToPinyin {
+            name = name.map({ char -> String in
+                if isChinese(char) {
+                    return " \(transformToPinYin(String(char))) "
+                } else {
+                    return String(char)
+                }
+            }).joined()
+        }
+        
+        name = camelCased(name)
         
         if name.first?.isNumber ?? false {
             return "_\(name)"
@@ -106,6 +122,20 @@ class NameFormatter {
             return name
         }
         
+    }
+    
+    func transformToPinYin(_ str: String) -> String {
+        let mutableString = NSMutableString(string: str)
+        //把汉字转为拼音
+        CFStringTransform(mutableString, nil, kCFStringTransformToLatin, false)
+        //去掉拼音的音标
+        CFStringTransform(mutableString, nil, kCFStringTransformStripDiacritics, false)
+        //去掉空格
+        return String(mutableString)
+    }
+    
+    func isChinese(_ value: Character) -> Bool {
+        return "\u{4E00}" <= value && value <= "\u{9FA5}"
     }
     
     func scanNumbers(_ str: String) -> String {

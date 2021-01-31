@@ -48,6 +48,7 @@ class Asset {
     
     init(config: AssetModel) {
         self.config = config
+        self.nameFormatter.enableTranslateVariableNameChineseToPinyin = Env.mode?.variables.enableTranslateVariableNameChineseToPinyin ?? false
     }
     
     func run() throws {

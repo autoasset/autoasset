@@ -25,17 +25,23 @@ class ModeModel {
     struct Variables {
         let version: String
         
-        /// 组成版本号的数字从git分支名中提取
+        /// 组成版本号的数字从git分支名中提取 | defalut: true
         /// The numbers that make up the version number are extracted from the git branch name
         let enableAutomaticVersionNumberGeneration: Bool
+        
+        /// [27] 翻译变量名中的中文成拼音 | default: false
+        /// [27] Translate Chinese to Pinyin
+        let enableTranslateVariableNameChineseToPinyin: Bool
         
         init(version: String) {
             self.version = version
             enableAutomaticVersionNumberGeneration = true
+            enableTranslateVariableNameChineseToPinyin = false
         }
 
         init(json: JSON) {
             version = json["version"].stringValue
+            enableTranslateVariableNameChineseToPinyin = json["enable_translate_variable_name_chinese_to_pinyin"].boolValue
             enableAutomaticVersionNumberGeneration = json["enable_automatic_version_number_generation"].bool ?? true
         }
     }
