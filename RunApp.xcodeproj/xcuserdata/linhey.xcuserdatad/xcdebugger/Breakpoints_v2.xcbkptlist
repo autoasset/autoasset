@@ -42,8 +42,8 @@
             filePath = "autoasset/Sources/AutoassetModels/Tidy.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "63"
-            endingLineNumber = "63"
+            startingLineNumber = "65"
+            endingLineNumber = "65"
             landmarkName = "init(from:)"
             landmarkType = "7">
          </BreakpointContent>

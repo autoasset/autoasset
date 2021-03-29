@@ -50,10 +50,12 @@ public struct Tidy {
     public class Create {
         public let name: String
         public let type: CreateInput
+        public let output: String
 
         init?(from json: JSON) {
             name = json["name"].stringValue
-            
+            output = json["output"].stringValue
+
             if let item = json["text"].string, item.isEmpty == false {
                 type = .text(item)
             } else if let item = json["input"].string, item.isEmpty == false {
@@ -62,7 +64,8 @@ public struct Tidy {
                 return nil
             }
                         
-            guard name.isEmpty == false else {
+            guard name.isEmpty == false,
+                  output.isEmpty == false else {
                 return nil
             }
         }

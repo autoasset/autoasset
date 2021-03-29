@@ -77,36 +77,39 @@ extension AutoAsset {
     
     func begin() {
         do {
-            let placeholder = try self.placeholder(variables: environment.config.variables)
             try environment.config.modes.forEach(run(with:))
         } catch  {
             print(error.localizedDescription)
         }
     }
     
-    func placeholder(variables: Variables) throws -> PlaceHolder {
-        let version: String
-        switch variables.version {
-        case .fromGitBranch:
-            let output = try Git().revParse(output: [.abbrevRef(names: ["HEAD"])])
-            let branch = output.filter(\.isNumber)
-            guard branch.isEmpty == false else {
-                throw Error(message: "无法从分支中提取版本号 branch: \(output)")
+    func placeholder(variables: Variables) throws -> [PlaceHolder] {
+        var list = [PlaceHolder]()
+        
+        if let type = variables.version {
+            switch type {
+            case .fromGitBranch:
+                let output = try Git().revParse(output: [.abbrevRef(names: ["HEAD"])])
+                let branch = output.filter(\.isNumber)
+                guard branch.isEmpty == false else {
+                    throw Error(message: "无法从分支中提取版本号 branch: \(output)")
+                }
+                list.append(.version(branch))
+            case .nextGitTag:
+                let output = try Git().lsRemote(mode: [.tags], options: [.refs], repository: "origin")
+                let tag = output
+                    .split(separator: "\n")
+                    .compactMap { $0.split(separator: "\t").last?.filter(\.isNumber) }
+                    .compactMap { Int($0) }
+                    .sorted(by: >)
+                    .first ?? 0
+                list.append(.version("\(tag + 1)"))
+            case .text(let text):
+                list.append(.version(text))
             }
-            version = branch
-        case .nextGitTag:
-            let output = try Git().lsRemote(mode: [.tags], options: [.refs], repository: "origin")
-            let tag = output
-                .split(separator: "\n")
-                .compactMap { $0.split(separator: "\t").last?.filter(\.isNumber) }
-                .compactMap { Int($0) }
-                .sorted(by: >)
-                .first ?? 0
-            version = "\(tag + 1)"
-        case .text(let text):
-            version = text
         }
-        return PlaceHolder(version: version)
+
+        return list
     }
     
     func run(with mode: Mode) throws {
@@ -120,7 +123,10 @@ extension AutoAsset {
                 try CocoapodsController(model: model).run()
             }
         case .tidy(name: let name):
-            try TidyController(model: environment.config.tidy).run(name: name)
+            let tidyController = TidyController(model: environment.config.tidy)
+            try tidyController.run(name: name) { () throws -> [PlaceHolder] in
+                return try self.placeholder(variables: self.environment.config.variables)
+            }
         case .xcassets:
             try XcassetsController(model: environment.config).run()
         }

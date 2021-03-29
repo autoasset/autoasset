@@ -23,12 +23,23 @@
 import Foundation
 import StemCrossPlatform
 
-public struct PlaceHolder {
+public enum PlaceHolder {
+    case version(String)
     
-    public let version: String
+    public var name: String {
+        switch self {
+        case .version: return "${version}"
+        }
+    }
     
-    public init(version: String) {
-        self.version = version
+    public var value: String {
+        switch self {
+        case .version(let result): return result
+        }
+    }
+    
+    public static var allName: [String] {
+        [PlaceHolder.version("").name]
     }
     
 }
@@ -43,7 +54,7 @@ public struct Variables {
         /// 自定义
         case text(String)
         
-        init(from json: JSON) {
+        init?(from json: JSON) {
             if let text = json["text"].string, text.isEmpty == false {
                 self = .text(text)
             } else if json["nextGitTag"].boolValue {
@@ -51,12 +62,12 @@ public struct Variables {
             } else if json["fromGitBranch"].boolValue {
                 self = .fromGitBranch
             } else {
-                self = .text("0")
+               return nil
             }
         }
     }
     
-    public let version: Version
+    public let version: Version?
     
     init(from json: JSON) {
         version = Version(from: json["version"])

@@ -27,16 +27,17 @@ import Logging
 
 public struct TidyController {
     
-    public let model: Tidy
+    private let model: Tidy
     private let logger = Logger(label: "tidy")
     
     public init(model: Tidy) {
         self.model = model
     }
     
-    public func run(name: String) throws {
+    public func run(name: String, placeholders: () throws -> [PlaceHolder]) throws {
         try clearTask(name)
         try copyTask(name)
+        try createTask(name, placeholders: placeholders)
     }
     
 }
@@ -44,8 +45,28 @@ public struct TidyController {
 
 extension TidyController {
     
-    func create() {
+    func createTask(_ name: String, placeholders: () throws -> [PlaceHolder]) throws {
+        guard let item = model.create.first(where: { $0.name == name }) else {
+            return
+        }
+
+        var text: String
+        switch item.type {
+        case .input(let path):
+            let input = try FilePath(path: path, type: .file).data()
+            text = String(data: input, encoding: .utf8) ?? ""
+        case .text(let result):
+            text = result
+        }
+
+
         
+        if PlaceHolder.allName.contains(where: { text.contains($0) }) {
+             text = try placeholders().reduce(into: text, { $0.replacingOccurrences(of: $1.name, with: $1.value) })
+        }
+        let output = try FilePath(path: item.output, type: .file)
+        try? output.delete()
+        try output.create(with: text.data(using: .utf8))
     }
     
     func clearTask(_ name: String) throws {
@@ -68,7 +89,6 @@ extension TidyController {
             logger.info("正在复制: \(output.path)")
             try input.copy(to: output)
         }
-        
     }
     
 }

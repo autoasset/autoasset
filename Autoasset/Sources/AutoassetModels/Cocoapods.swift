@@ -41,27 +41,12 @@ public struct Cocoapods {
         }
     }
     
-    public struct Podspec {
-        public let text: String
-        public let output: String
-        
-        init?(from json: JSON) {
-            text = json["text"].stringValue
-            output = json["output"].stringValue
-            guard output.isEmpty == false else {
-                return nil
-            }
-        }
-    }
-    
     public let trunk: Trunk?
-    public let podspec: Podspec?
     
     init?(from json: JSON) {
         trunk = Trunk(from: json["trunk"])
-        podspec = Podspec(from: json["podspec"])
         
-        if trunk == nil, podspec == nil {
+        if trunk == nil {
             return nil
         }
     }
