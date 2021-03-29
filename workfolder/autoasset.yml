@@ -1,0 +1,78 @@
+---
+modes:
+  - tidy: clear-download
+  - tidy: clear-resources
+  - tidy: copy-codes
+  - tidy: create-podspec
+  # - download
+  # - xcassets
+  - cocoapods
+
+variables:
+  version:
+    fromGitBranch: true
+    nextGitTag: true
+    text: 1.0.0
+
+cocoapods:
+  trunk:
+    isGithub: true
+    repo: git@gitlab.dxy.net:ios-developer/ToDSpecs.git
+
+# 下载模块
+download:
+  gits:
+    - output: git_666
+      input: https://github.com/migueldeicaza/TermKit
+      branch: master
+    - output: git_6667
+      input: https://github.com/migueldeicaza/TermKit
+      branch: master
+
+# 文件整理模块
+tidy:
+  # 移除列表
+  clears:
+    - name: clear-download
+      inputs:
+        - git_666
+        - git_6667
+    - name: clear-resources
+      inputs:
+        - Sources
+  # 移除列表
+  copies:
+    - name: copy-codes
+      output: Sources/codes
+      inputs:
+        - codes
+  create:
+    - name: create-podspec
+      output: autoasset.podspec
+      
+# 资源打包模块
+xcassets: 
+  template:
+    output: ./Sources/codes
+
+  colors:
+    - output: ./Sources/Resources/colors.xcassets
+      inputs:
+        - ./UI/colors
+
+  images:
+    - output: ./Sources/Resources/icons.xcassets
+      report: report/images.csv
+      prefix: img_
+      inputs:
+        - ./UI/icon
+    - output: ./Sources/Resources/icons_bundle.xcassets
+      prefix: img_
+      bundle_name: icons_bundle
+      inputs:
+        - ./UI/icon
+  gifs:
+    - output: ./Sources/Resources/gifs.xcassets
+      prefix: gif_
+      inputs:
+        - ./UI/gifs

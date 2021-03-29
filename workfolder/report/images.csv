@@ -1,0 +1,3 @@
+variable_name,output_folder_name,input_files_size,input_files_size_description,output_folder_path,input_file_paths
+_3dTouchCode,img_3d_touch_code,4450,4 KB,Sources/Resources/icons.xcassets/img_3d_touch_code.imageset,UI/icon/3d_touch_code@3x.png | UI/icon/3d_touch_code@2x.png
+_3dTouchSearch,img_3d_touch_search,2468,2 KB,Sources/Resources/icons.xcassets/img_3d_touch_search.imageset,UI/icon/3d_touch_search@2x.png
