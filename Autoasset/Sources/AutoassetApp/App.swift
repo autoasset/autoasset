@@ -77,7 +77,7 @@ extension AutoAsset {
     
     func begin() {
         do {
-            let placeholder = try placeholder(variables: environment.config.variables)
+            let placeholder = try self.placeholder(variables: environment.config.variables)
             try environment.config.modes.forEach(run(with:))
         } catch  {
             print(error.localizedDescription)
