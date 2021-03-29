@@ -59,11 +59,12 @@ extension TidyController {
             text = result
         }
 
-
-        
         if PlaceHolder.allName.contains(where: { text.contains($0) }) {
-             text = try placeholders().reduce(into: text, { $0.replacingOccurrences(of: $1.name, with: $1.value) })
+            for placeHolder in try placeholders() {
+                text = text.replacingOccurrences(of: placeHolder.name, with: placeHolder.value)
+            }
         }
+        
         let output = try FilePath(path: item.output, type: .file)
         try? output.delete()
         try output.create(with: text.data(using: .utf8))
