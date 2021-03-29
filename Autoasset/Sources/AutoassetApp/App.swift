@@ -32,7 +32,20 @@ import AutoassetTidy
 import Git
 
 public struct AutoAsset: ParsableCommand {
-
+    
+    struct Error: LocalizedError {
+        
+        public let message: String
+        public let code: Int
+        public var errorDescription: String?
+        
+        public init(message: String, code: Int = 0) {
+            self.message = message
+            self.errorDescription = message
+            self.code = code
+        }
+    }
+    
     public struct Environment {
         public let rootURL: URL
         public let config: Config
@@ -41,13 +54,13 @@ public struct AutoAsset: ParsableCommand {
     public static let configuration = CommandConfiguration(version: "26")
     public private(set) static var environment = Environment(rootURL: URL(string: "./")!, config: .init(from: JSON()))
     public var environment: Environment { Self.environment }
-
+    
     @Argument(help: "配置文件路径")
     var config: String
     @Flag() var verbose = false
     
     public init() {}
-
+    
     public func run() throws {
         let path = try FilePath(path: config, type: .file)
         let data = try path.data()
@@ -64,8 +77,8 @@ extension AutoAsset {
     
     func begin() {
         do {
-            try placeholder(variables: environment.config.variables)
-            //try environment.config.modes.forEach(run(with:))
+            let placeholder = try placeholder(variables: environment.config.variables)
+            try environment.config.modes.forEach(run(with:))
         } catch  {
             print(error.localizedDescription)
         }
@@ -73,14 +86,23 @@ extension AutoAsset {
     
     func placeholder(variables: Variables) throws -> PlaceHolder {
         let version: String
-        
-        try Git().status(options: [.branch])
         switch variables.version {
         case .fromGitBranch:
-            version = "text"
-
+            let output = try Git().revParse(output: [.abbrevRef(names: ["HEAD"])])
+            let branch = output.filter(\.isNumber)
+            guard branch.isEmpty == false else {
+                throw Error(message: "无法从分支中提取版本号 branch: \(output)")
+            }
+            version = branch
         case .nextGitTag:
-            version = "text"
+            let output = try Git().lsRemote(mode: [.tags], options: [.refs], repository: "origin")
+            let tag = output
+                .split(separator: "\n")
+                .compactMap { $0.split(separator: "\t").last?.filter(\.isNumber) }
+                .compactMap { Int($0) }
+                .sorted(by: >)
+                .first ?? 0
+            version = "\(tag + 1)"
         case .text(let text):
             version = text
         }

@@ -10,9 +10,9 @@ modes:
 
 variables:
   version:
-    fromGitBranch: true
+    fromGitBranch: false
     nextGitTag: true
-    text: 1.0.0
+    text:
 
 cocoapods:
   trunk:

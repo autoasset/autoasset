@@ -44,7 +44,7 @@ public struct Variables {
         case text(String)
         
         init(from json: JSON) {
-            if let text = json["text"].string {
+            if let text = json["text"].string, text.isEmpty == false {
                 self = .text(text)
             } else if json["nextGitTag"].boolValue {
                 self = .nextGitTag

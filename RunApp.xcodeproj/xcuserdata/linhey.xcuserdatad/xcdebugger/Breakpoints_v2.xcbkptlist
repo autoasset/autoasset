@@ -30,53 +30,6 @@
             endingLineNumber = "23"
             landmarkName = "unknown"
             landmarkType = "0">
-            <Locations>
-               <Location
-                  uuid = "239DC6FC-74C0-431F-98B1-8A7017C8A8FE - 74b8a100619cf41a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "AutoassetTidy.TidyController.run(name: Swift.String) throws -&gt; ()"
-                  moduleName = "RunApp"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/linhey/Desktop/linhey/autoasset/new/autoasset/Sources/AutoassetTidy/TidyController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "23"
-                  endingLineNumber = "23"
-                  offsetFromSymbolStart = "71">
-               </Location>
-               <Location
-                  uuid = "239DC6FC-74C0-431F-98B1-8A7017C8A8FE - a215f9c9cd77bdc4"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (AutoassetModels.Tidy.Clear) -&gt; Swift.Bool in AutoassetTidy.TidyController.run(name: Swift.String) throws -&gt; ()"
-                  moduleName = "RunApp"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/linhey/Desktop/linhey/autoasset/new/autoasset/Sources/AutoassetTidy/TidyController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "23"
-                  endingLineNumber = "23"
-                  offsetFromSymbolStart = "35">
-               </Location>
-               <Location
-                  uuid = "239DC6FC-74C0-431F-98B1-8A7017C8A8FE - 7ef2e6ae58b80e52"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (Swift.String) -&gt; () in AutoassetTidy.TidyController.run(name: Swift.String) throws -&gt; ()"
-                  moduleName = "RunApp"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/linhey/Desktop/linhey/autoasset/new/autoasset/Sources/AutoassetTidy/TidyController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "25"
-                  endingLineNumber = "25"
-                  offsetFromSymbolStart = "55">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -93,54 +46,6 @@
             endingLineNumber = "63"
             landmarkName = "init(from:)"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "F4CA3202-5636-4A0D-B2F4-F8C7D65FDBBB"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "autoasset/Sources/AutoassetModels/Tidy.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "74"
-            endingLineNumber = "74"
-            landmarkName = "init(from:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "F4CA3202-5636-4A0D-B2F4-F8C7D65FDBBB - b38b27c2d4d7ae43"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "AutoassetModels.Tidy.init(from: StemCrossPlatform.JSON) -&gt; AutoassetModels.Tidy"
-                  moduleName = "RunApp"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/linhey/Desktop/linhey/autoasset/new/autoasset/Sources/AutoassetModels/Tidy.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "46"
-                  endingLineNumber = "46"
-                  offsetFromSymbolStart = "47">
-               </Location>
-               <Location
-                  uuid = "F4CA3202-5636-4A0D-B2F4-F8C7D65FDBBB - c610344f117587e2"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "implicit closure #1 (StemCrossPlatform.JSON) -&gt; Swift.Optional&lt;AutoassetModels.Tidy.Clear&gt; in AutoassetModels.Tidy.init(from: StemCrossPlatform.JSON) -&gt; AutoassetModels.Tidy"
-                  moduleName = "RunApp"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/linhey/Desktop/linhey/autoasset/new/autoasset/Sources/AutoassetModels/Tidy.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "46"
-                  endingLineNumber = "46"
-                  offsetFromSymbolStart = "30">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
