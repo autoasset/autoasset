@@ -47,4 +47,4 @@ def fileCallback(path: str, license: bytearray = license(path=os.getcwd() + '/li
             writer.writelines(lines)
 
 
-BFS_Dir(os.getcwd() + '/autoasset/Sources', dirCallback=dirCallback,fileCallback=fileCallback)
+BFS_Dir(os.getcwd() + '/../autoasset/Sources', dirCallback=dirCallback,fileCallback=fileCallback)

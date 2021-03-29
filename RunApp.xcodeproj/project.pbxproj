@@ -84,7 +84,7 @@
 				CDE64479260E37D600DFC031 /* Sources */,
 				CDE6447A260E37D600DFC031 /* Frameworks */,
 				CDE6447B260E37D600DFC031 /* CopyFiles */,
-				CD94BDA626117ADE00AE00AA /* ShellScript */,
+				CD94BDA626117ADE00AE00AA /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -131,7 +131,7 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		CD94BDA626117ADE00AE00AA /* ShellScript */ = {
+		CD94BDA626117ADE00AE00AA /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -140,13 +140,14 @@
 			);
 			inputPaths = (
 			);
+			name = "Run Script";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncd $PROJECT_DIR/../scripts\npython3 license.py\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncd $PROJECT_DIR/scripts\npython3 license.py\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
