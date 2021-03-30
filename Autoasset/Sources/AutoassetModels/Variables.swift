@@ -24,23 +24,25 @@ import Foundation
 import StemCrossPlatform
 
 public enum PlaceHolder {
-    case version(String)
     
+    case version(String)
+    case timeNow(String)
+
     public var name: String {
         switch self {
         case .version: return "${version}"
+        case .timeNow: return "${timeNow}"
         }
     }
     
     public var value: String {
         switch self {
         case .version(let result): return result
+        case .timeNow(let result): return result
         }
     }
     
-    public static var allName: [String] {
-        [PlaceHolder.version("").name]
-    }
+    public static var all: [PlaceHolder] { [.version(""), .timeNow("")] }
     
 }
 
@@ -68,9 +70,11 @@ public struct Variables {
     }
     
     public let version: Version?
+    public let timeNow: String?
     
     init(from json: JSON) {
         version = Version(from: json["version"])
+        timeNow = json["timeNow"].string
     }
     
 }

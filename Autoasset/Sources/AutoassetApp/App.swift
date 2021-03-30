@@ -83,10 +83,16 @@ extension AutoAsset {
         }
     }
     
-    func placeholder(variables: Variables) throws -> [PlaceHolder] {
+    func placeholder(variables: Variables, need: [PlaceHolder] = PlaceHolder.all) throws -> [PlaceHolder] {
         var list = [PlaceHolder]()
         
-        if let type = variables.version {
+        if let timeNow = variables.timeNow, need.map(\.name).contains(PlaceHolder.timeNow("").name) {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = timeNow
+            list.append(.timeNow(dateFormatter.string(from: Date())))
+        }
+        
+        if let type = variables.version, need.map(\.name).contains(PlaceHolder.version("").name) {
             switch type {
             case .fromGitBranch:
                 let output = try Git().revParse(output: [.abbrevRef(names: ["HEAD"])])
@@ -120,7 +126,9 @@ extension AutoAsset {
             }
         case .cocoapods:
             if let model = environment.config.cocoapods {
-                try CocoapodsController(model: model).run()
+                try CocoapodsController(model: model).run() { types throws -> [PlaceHolder] in
+                    return try self.placeholder(variables: self.environment.config.variables, need: types)
+                }
             }
         case .tidy(name: let name):
             let tidyController = TidyController(model: environment.config.tidy)

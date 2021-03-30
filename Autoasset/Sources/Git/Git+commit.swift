@@ -21,28 +21,29 @@
 // SOFTWARE.
 
 import Foundation
-import StemCrossPlatform
 
-public struct Config {
+// MARK: - commit
+public extension Git {
     
-    public let modes: [Mode]
-    public let warn: Warn?
-    public let message: Message?
-    public let cocoapods: Cocoapods?
-    public let xcassets: Xcassets
-    public let download: Download?
-    public let tidy: Tidy
-    public let variables: Variables
+    enum CommitOptions {
+        case allowEmpty
+        case message(String)
+        
+        var command: String {
+            switch self {
+            case .allowEmpty:
+                return "--allow-empty"
+            case .message(let result):
+                return "--message=\(result)"
+            }
+        }
+    }
     
-    public init(from json: JSON) {
-        modes = json["modes"].arrayValue.compactMap(Mode.init(from:))
-        warn = Warn(from: json["warn"])
-        message = Message(from: json["message"])
-        cocoapods = Cocoapods(from: json["cocoapods"])
-        xcassets = Xcassets(from: json["xcassets"])
-        download = Download(from: json["download"])
-        tidy = Tidy(from: json["tidy"])
-        variables = Variables(from: json["variables"])
+    func commit(options: [CommitOptions] = []) throws {
+        let commands = ["git", "commit"]
+            + options.map(\.command)
+        let command = commands.joined(separator: " ")
+        try shell(command)
     }
     
 }

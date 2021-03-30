@@ -21,28 +21,33 @@
 // SOFTWARE.
 
 import Foundation
-import StemCrossPlatform
 
-public struct Config {
+
+/// tag
+public extension Git {
     
-    public let modes: [Mode]
-    public let warn: Warn?
-    public let message: Message?
-    public let cocoapods: Cocoapods?
-    public let xcassets: Xcassets
-    public let download: Download?
-    public let tidy: Tidy
-    public let variables: Variables
+    enum TagOptions {
+        /// Give the output in the short-format.
+        case short
+        /// Show the branch and tracking info even in short-format.
+        case branch
+        /// Show the number of entries currently stashed away.
+        case showStash
+        
+        var command: String {
+            switch self {
+            case .short: return "--short"
+            case .branch: return "--branch"
+            case .showStash: return "--show-stash"
+            }
+        }
+    }
     
-    public init(from json: JSON) {
-        modes = json["modes"].arrayValue.compactMap(Mode.init(from:))
-        warn = Warn(from: json["warn"])
-        message = Message(from: json["message"])
-        cocoapods = Cocoapods(from: json["cocoapods"])
-        xcassets = Xcassets(from: json["xcassets"])
-        download = Download(from: json["download"])
-        tidy = Tidy(from: json["tidy"])
-        variables = Variables(from: json["variables"])
+    func tag(options: [TagOptions] = []) throws -> String {
+        let commands = ["git", "tag"]
+            + options.map(\.command)
+        let command = commands.joined(separator: " ")
+        return try shell(command)
     }
     
 }

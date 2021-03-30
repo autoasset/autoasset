@@ -21,18 +21,30 @@
 // SOFTWARE.
 
 import Foundation
-import StemCrossPlatform
 
-public struct Environment {
+// MARK: - clone
+public extension Git {
     
-    public let version: String?
-    /// 组成版本号的数字从git分支名中提取 | defalut: true
-    /// The numbers that make up the version number are extracted from the git branch name
-    public let enable_automatic_version_number_generation: Bool
+    enum CloneOptions {
+        case singleBranch
+        case depth(Int)
+        case branch(String)
+        
+        var command: String {
+            switch self {
+            case .singleBranch: return "--single-branch"
+            case .depth(let depth): return "--depth \(depth)"
+            case .branch(let branch): return "--branch \(branch)"
+            }
+        }
+    }
     
-    init(from json: JSON) {
-        version = json["version"].string
-        enable_automatic_version_number_generation = json["enable_automatic_version_number_generation"].bool ?? true
+    func clone(url: String, options: [CloneOptions] = [], to dir: String? = nil) throws {
+        let commands = ["git", "clone"]
+            + options.map(\.command)
+            + [url, dir].compactMap { $0 }
+        let command = commands.joined(separator: " ")
+        try shell(command)
     }
     
 }

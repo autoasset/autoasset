@@ -1,20 +1,26 @@
 ---
 modes:
-  - tidy: clear-download
-  - tidy: clear-resources
-  - tidy: copy-codes
-  - tidy: create-podspec
+  # - tidy: clear-download
+  # - tidy: clear-resources
+  # - tidy: copy-codes
+  # - tidy: create-podspec
   # - download
   # - xcassets
   - cocoapods
 
 variables:
+  timeNow: yyyy-MM-dd HH:mm:ss
   version:
     fromGitBranch: false
     nextGitTag: true
     text:
 
-cocoapods:
+cocoapods: 
+  podspec: autoasset.podspec
+  git:
+    pushToBranch: true
+    pushToTag: true
+    commitMessage: "[ci skip] autoasset: ${version}, date: ${timeNow}"
   trunk:
     isGithub: true
     repo: git@gitlab.dxy.net:autoasset/specs.git
@@ -53,7 +59,7 @@ tidy:
             Pod::Spec.new do |s|
                 s.name             = 'autoasset'
                 s.version          = '${version}'
-                s.summary          = 'autoasset'
+                s.summary          = '${timeNow}'
 
                 s.homepage         = 'https://github.com/autoasset/autoasset'
                 s.license          = { :type => 'MIT', :file => 'LICENSE' }
@@ -65,8 +71,6 @@ tidy:
                 s.source_files = ['Sources/core/*.{h,swift}]
             end
         
-
-      
 # 资源打包模块
 xcassets: 
   template:

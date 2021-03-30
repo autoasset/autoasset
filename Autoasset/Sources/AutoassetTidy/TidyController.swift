@@ -59,7 +59,7 @@ extension TidyController {
             text = result
         }
 
-        if PlaceHolder.allName.contains(where: { text.contains($0) }) {
+        if PlaceHolder.all.map(\.name).contains(where: { text.contains($0) }) {
             for placeHolder in try placeholders() {
                 text = text.replacingOccurrences(of: placeHolder.name, with: placeHolder.value)
             }

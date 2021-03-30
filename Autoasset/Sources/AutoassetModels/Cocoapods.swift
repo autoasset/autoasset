@@ -26,6 +26,7 @@ import StemCrossPlatform
 public struct Cocoapods {
     
     public enum Trunk {
+        
         case github
         case git(url: String)
         
@@ -41,12 +42,42 @@ public struct Cocoapods {
         }
     }
     
+    public enum GitPush {
+        case branch
+        case tag
+        case none
+    }
+    
+    public struct Git {
+        public let commitMessage: String
+        public let pushMode: GitPush
+        
+        init?(from json: JSON) {
+            commitMessage = json["commitMessage"].stringValue
+            if json["pushToBranch"].boolValue {
+                pushMode = .branch
+            } else if json["pushToTag"].boolValue {
+                pushMode = .tag
+            } else {
+                pushMode = .none
+            }
+            if commitMessage.isEmpty {
+                return nil
+            }
+        }
+    }
+    
     public let trunk: Trunk?
+    public let git: Git?
+    public let podspec: String
     
     init?(from json: JSON) {
-        trunk = Trunk(from: json["trunk"])
         
-        if trunk == nil {
+        trunk   = Trunk(from: json["trunk"])
+        git     = Git(from: json["trunk"])
+        podspec = json["podspec"].stringValue
+        
+        if podspec.isEmpty {
             return nil
         }
     }

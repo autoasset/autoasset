@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
     s.name             = 'autoasset'
     s.version          = '27'
-    s.summary          = 'autoasset'
+    s.summary          = '2021-03-29 19:10:38'
 
     s.homepage         = 'https://github.com/autoasset/autoasset'
     s.license          = { :type => 'MIT', :file => 'LICENSE' }
@@ -11,5 +11,4 @@ Pod::Spec.new do |s|
     s.ios.deployment_target = '9.0'
     s.requires_arc = true
     s.source_files = ['Sources/core/*.{h,swift}]
-
 end
