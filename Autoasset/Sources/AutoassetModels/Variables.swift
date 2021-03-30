@@ -31,12 +31,12 @@ public enum PlaceHolder {
     case gitCurrentBranchNumber
     case gitNextTagNumber
     case custom(key: String, value: String)
-
-   static var systems: [PlaceHolder] { [.dateNow,
-                                        .dateFormat,
-                                        .gitCurrentBranch,
-                                        .gitCurrentBranchNumber,
-                                        .gitNextTagNumber] }
+    
+    public static var systems: [PlaceHolder] { [.dateNow,
+                                                .dateFormat,
+                                                .gitCurrentBranch,
+                                                .gitCurrentBranchNumber,
+                                                .gitNextTagNumber] }
     
     var variable: String {
         switch self {
@@ -49,8 +49,19 @@ public enum PlaceHolder {
         }
     }
     
+    public var desc: String {
+        switch self {
+        case .dateNow:                 return "获取当前时间"
+        case .dateFormat:              return "设置时间格式, 默认为 yyyy-MM-dd HH:mm:ss"
+        case .gitCurrentBranch:        return "获取当前 Git Branch 名称"
+        case .gitCurrentBranchNumber:  return "获取当前 Git Branch 名称中的数字部分"
+        case .gitNextTagNumber:        return "获取远端 Git Tags 中最大的数字, 未创建分支为 1"
+        case .custom(key: _, let value): return "\(value)"
+        }
+    }
+    
     public var name: String { "${\(variable)}" }
-        
+    
 }
 
 public struct Variables {

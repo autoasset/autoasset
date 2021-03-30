@@ -35,12 +35,11 @@ public struct AutoAsset: ParsableCommand {
     
     public static let configuration = CommandConfiguration(version: "27")
     
-    @Flag()
-    var verbose = false
-    
-    @Option(name: [.short, .customLong("config")], help: "配置文件")
+    @Option(name: [.short, .customLong("config")], help: "配置文件路径")
     var configPath: String
 
+    @Flag(help: .init("内置变量列表:\n" + PlaceHolder.systems.map{ "- \($0.name)\n  \($0.desc)"}.joined(separator: "\n") + "\n"))
+    var variables = false
     
     public init() {}
     
