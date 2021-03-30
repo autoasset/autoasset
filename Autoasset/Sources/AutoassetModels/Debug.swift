@@ -23,22 +23,16 @@
 import Foundation
 import StemCrossPlatform
 
-public struct Message {
+public struct Debug {
     
-    public let text: String
-    public let output: String
+    public let error: String
     
     init?(from json: JSON) {
-        if let value = json["output"].string {
-            output = value
+        if let error = json["error"].string {
+            self.error = error
         } else {
             return nil
         }
         
-        if let value = json["text"].string {
-            text = value
-        } else {
-            return nil
-        }
     }
 }

@@ -1,0 +1,2 @@
+/Users/linhey/Desktop/linhey/autoasset/autoasset/Sources/AutoassetCocoapods/CocoapodsController.swift - 49 - shell(_:)
+Command '/bin/bash -c "pod --version"' returned with error code 127.

@@ -36,19 +36,6 @@ public struct CocoapodsController {
         self.model = model
     }
     
-    struct Error: LocalizedError {
-        
-        public let message: String
-        public let code: Int
-        public var errorDescription: String?
-        
-        public init(message: String, code: Int = 0) {
-            self.message = message
-            self.errorDescription = message
-            self.code = code
-        }
-    }
-    
     @discardableResult
     private func shell(_ command: String) throws -> String {
         logger.info(.init(stringLiteral: command))
@@ -59,7 +46,7 @@ public struct CocoapodsController {
         } else {
             logger.error(.init(stringLiteral: command))
             logger.error(.init(stringLiteral: output.stderror))
-            throw Error(message: output.error?.description ?? output.stderror)
+            throw ASError(message: output.error?.description ?? output.stderror)
         }
     }
     
@@ -153,7 +140,7 @@ public struct CocoapodsController {
                 }
                 
                 guard let name = repoName else {
-                    throw Error(message: "无法获取对应 repo")
+                    throw ASError(message: "无法获取对应 repo")
                 }
                 
                 try shell("pod repo push \(name) \(file.path) --allow-warnings")

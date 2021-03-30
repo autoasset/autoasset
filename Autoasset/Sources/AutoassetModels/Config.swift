@@ -26,8 +26,7 @@ import StemCrossPlatform
 public struct Config {
     
     public let modes: [Mode]
-    public let warn: Warn?
-    public let message: Message?
+    public let debug: Debug?
     public let cocoapods: Cocoapods?
     public let xcassets: Xcassets
     public let download: Download?
@@ -36,8 +35,7 @@ public struct Config {
     
     public init(from json: JSON) {
         modes = json["modes"].arrayValue.compactMap(Mode.init(from:))
-        warn = Warn(from: json["warn"])
-        message = Message(from: json["message"])
+        debug = Debug(from: json["debug"])
         cocoapods = Cocoapods(from: json["cocoapods"])
         xcassets = Xcassets(from: json["xcassets"])
         download = Download(from: json["download"])

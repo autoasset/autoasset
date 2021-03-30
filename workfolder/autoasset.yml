@@ -8,6 +8,9 @@ modes:
   # - xcassets
   - cocoapods
 
+debug:
+  error: message/error.txt
+
 variables:
   timeNow: yyyy-MM-dd HH:mm:ss
   version:

@@ -21,19 +21,22 @@
 // SOFTWARE.
 
 import Foundation
-import StemCrossPlatform
 
-public struct Warn {
+public struct ASError: LocalizedError {
     
-    public let output: String
+    public let message: String
+    public let code: Int
+    public var errorDescription: String?
     
-    init?(from json: JSON) {
-        
-        if let value = json["output"].string {
-            output = value
-        } else {
-            return nil
-        }
-        
+    public init(message: String,
+                code: Int = 0,
+                file: StaticString = #file,
+                line: UInt = #line,
+                function: StaticString = #function) {
+        let message = "\(file) - \(line) - \(function)\n\(message)"
+        self.message = message
+        self.errorDescription = message
+        self.code = code
     }
+    
 }

@@ -42,6 +42,26 @@ public struct TidyController {
     
 }
 
+extension TidyController {
+    
+    func textMaker(_ text: String, placeholders: [PlaceHolder]) -> String {
+        var text = text
+        if PlaceHolder.all.map(\.name).contains(where: { text.contains($0) }) {
+            for placeHolder in placeholders {
+                text = text.replacingOccurrences(of: placeHolder.name, with: placeHolder.value)
+            }
+        }
+        return text
+    }
+    
+    func fileMaker(_ input: String, placeholders: [PlaceHolder]) throws -> String {
+        guard let text = String(data: try FilePath(path: input, type: .file).data(), encoding: .utf8) else {
+            throw ASError(message: #function)
+        }
+        return textMaker(text, placeholders: placeholders)
+    }
+
+}
 
 extension TidyController {
     
@@ -60,9 +80,7 @@ extension TidyController {
         }
 
         if PlaceHolder.all.map(\.name).contains(where: { text.contains($0) }) {
-            for placeHolder in try placeholders() {
-                text = text.replacingOccurrences(of: placeHolder.name, with: placeHolder.value)
-            }
+            text = self.textMaker(text, placeholders: try placeholders())
         }
         
         let output = try FilePath(path: item.output, type: .file)
