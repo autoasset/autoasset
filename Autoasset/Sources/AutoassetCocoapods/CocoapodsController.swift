@@ -22,6 +22,7 @@
 
 import Foundation
 import StemCrossPlatform
+import AutoassetTidy
 import AutoassetModels
 import Git
 import SwiftShell
@@ -30,10 +31,12 @@ import Logging
 public struct CocoapodsController {
     
     private let model: Cocoapods
+    private let variables: Variables
     private let logger = Logger(label: "cocoapods")
     
-    public init(model: Cocoapods) {
+    public init(model: Cocoapods, variables: Variables) {
         self.model = model
+        self.variables = variables
     }
     
     @discardableResult
@@ -79,7 +82,7 @@ public struct CocoapodsController {
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    public func run(placeholders: ([PlaceHolder]) throws -> [PlaceHolder]) throws {
+    public func run() throws {
         try shell("pod --version")
         let file = try FilePath(path: model.podspec)
         try shell("pod lib lint \(file.path) --allow-warnings")
@@ -89,13 +92,11 @@ public struct CocoapodsController {
         }
         
         let git = Git()
-        
+        let tidy = TidyController()
+
         switch gitConfig.pushMode {
         case .branch:
-            var message = gitConfig.commitMessage
-            for item in try placeholders(PlaceHolder.all) {
-                message = message.replacingOccurrences(of: item.name, with: item.value)
-            }
+            _ = try tidy.textMaker(gitConfig.commitMessage, variables: variables)
             try? git.add(path: file.path)
             try? git.commit(options: [.message(gitConfig.commitMessage)])
             try? git.push()
@@ -108,24 +109,11 @@ public struct CocoapodsController {
                 return
             }
             
-            var message = gitConfig.commitMessage
-            let types = PlaceHolder.all.filter { type -> Bool in
-                switch type {
-                case .version:
-                    return false
-                default:
-                    return true
-                }
-            }
-            
-            let placeholder = (try placeholders(types)) + [.version(version)]
-            
-            for item in placeholder {
-                message = message.replacingOccurrences(of: item.name, with: item.value)
-            }
-            
+            var variables = self.variables
+            variables.add(placeholder: PlaceHolder.version.name, value: version)
+            let message = try tidy.textMaker(gitConfig.commitMessage, variables: variables)
             try? git.add(path: file.path)
-            try? git.commit(options: [.message(gitConfig.commitMessage)])
+            try? git.commit(options: [.message(message)])
             try? git.push()
             
             switch trunk {

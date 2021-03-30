@@ -3,13 +3,20 @@ modes:
   # - tidy: clear-download
   # - tidy: clear-resources
   # - tidy: copy-codes
-  # - tidy: create-podspec
+  - tidy: create-podspec
   # - download
   # - xcassets
-  - cocoapods
+  # - cocoapods
+  # - config: xcassets
 
 debug:
   error: message/error.txt
+
+# 子任务模块
+configs:
+  - name: xcassets
+    inputs:
+      - config-xcassets.yml
 
 variables:
   timeNow: yyyy-MM-dd HH:mm:ss
@@ -17,6 +24,8 @@ variables:
     fromGitBranch: false
     nextGitTag: true
     text:
+  # custom-variables
+  appName: AutoAsset
 
 cocoapods: 
   podspec: autoasset.podspec
@@ -62,7 +71,7 @@ tidy:
             Pod::Spec.new do |s|
                 s.name             = 'autoasset'
                 s.version          = '${version}'
-                s.summary          = '${timeNow}'
+                s.summary          = '${appName} - ${timeNow}'
 
                 s.homepage         = 'https://github.com/autoasset/autoasset'
                 s.license          = { :type => 'MIT', :file => 'LICENSE' }

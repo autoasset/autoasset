@@ -29,10 +29,14 @@ public enum Mode {
     case tidy(name: String)
     case xcassets
     case cocoapods
+    case config(name: String)
+
     
     init?(from json: JSON) {
         if let tidy = json["tidy"].string {
             self = .tidy(name: tidy)
+        } else if let config = json["config"].string {
+            self = .config(name: config)
         } else {
             switch json.stringValue {
             case "download": self = .download

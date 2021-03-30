@@ -33,106 +33,68 @@ import Git
 
 public struct AutoAsset: ParsableCommand {
     
-    public struct Environment {
-        public let rootURL: URL
-        public let config: Config
-    }
-    
     public static let configuration = CommandConfiguration(version: "27")
-    public private(set) static var environment = Environment(rootURL: URL(string: "./")!, config: .init(from: JSON()))
-    public var environment: Environment { Self.environment }
     
-    @Argument(help: "配置文件路径")
-    var config: String
-    @Flag() var verbose = false
+    @Flag()
+    var verbose = false
+    
+    @Option(name: [.short, .customLong("config")], help: "配置文件")
+    var configPath: String
+
     
     public init() {}
     
     public func run() throws {
-        let path = try FilePath(path: config, type: .file)
-        let data = try path.data()
-        guard let text = String(data: data, encoding: .utf8), let yml = try Yams.load(yaml: text) else {
-            return
-        }
-        let model = Config(from: JSON(yml))
-        AutoAsset.environment = .init(rootURL: path.url.deletingLastPathComponent(), config: model)
-        begin()
+        begin(path: configPath)
     }
 }
 
 extension AutoAsset {
     
-    func begin() {
+    func begin(path: String) {
         do {
-            try environment.config.modes.forEach(run(with:))
-        } catch {
+            let path = try FilePath(path: path, type: .file)
+            let data = try path.data()
+            guard let text = String(data: data, encoding: .utf8),
+                  let yml = try Yams.load(yaml: text) else {
+                return
+            }
+            let config = Config(from: JSON(yml))
             do {
-                if let output = environment.config.debug?.error {
+                try config.modes.forEach { try run(with: $0, config: config) }
+            } catch {
+                if let output = config.debug?.error {
                     let file = try FilePath(path: output, type: .file)
                     try? file.delete()
                     try file.create(with: error.localizedDescription.data(using: .utf8))
                 }
-                print(error.localizedDescription)
-            } catch  {
-                print(error.localizedDescription)
+                throw error
             }
+        } catch {
+            print(error.localizedDescription)
         }
     }
-    
-    func placeholder(variables: Variables, need: [PlaceHolder] = PlaceHolder.all) throws -> [PlaceHolder] {
-        var list = [PlaceHolder]()
         
-        if let timeNow = variables.timeNow, need.map(\.name).contains(PlaceHolder.timeNow("").name) {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = timeNow
-            list.append(.timeNow(dateFormatter.string(from: Date())))
-        }
-        
-        if let type = variables.version, need.map(\.name).contains(PlaceHolder.version("").name) {
-            switch type {
-            case .fromGitBranch:
-                let output = try Git().revParse(output: [.abbrevRef(names: ["HEAD"])])
-                let branch = output.filter(\.isNumber)
-                guard branch.isEmpty == false else {
-                    throw ASError(message: "无法从分支中提取版本号 branch: \(output)")
-                }
-                list.append(.version(branch))
-            case .nextGitTag:
-                let output = try Git().lsRemote(mode: [.tags], options: [.refs], repository: "origin")
-                let tag = output
-                    .split(separator: "\n")
-                    .compactMap { $0.split(separator: "\t").last?.filter(\.isNumber) }
-                    .compactMap { Int($0) }
-                    .sorted(by: >)
-                    .first ?? 0
-                list.append(.version("\(tag + 1)"))
-            case .text(let text):
-                list.append(.version(text))
-            }
-        }
-        
-        return list
-    }
-    
-    func run(with mode: Mode) throws {
+    func run(with mode: Mode, config: Config) throws {
         switch mode {
         case .download:
-            if let model = environment.config.download {
+            if let model = config.download {
                 try DownloadController(model: model).run()
             }
         case .cocoapods:
-            if let model = environment.config.cocoapods {
-                try CocoapodsController(model: model).run() { types throws -> [PlaceHolder] in
-                    return try self.placeholder(variables: self.environment.config.variables, need: types)
-                }
+            if let model = config.cocoapods {
+                try CocoapodsController(model: model, variables: config.variables).run()
             }
         case .tidy(name: let name):
-            let tidyController = TidyController(model: environment.config.tidy)
-            try tidyController.run(name: name) { () throws -> [PlaceHolder] in
-                return try self.placeholder(variables: self.environment.config.variables)
-            }
+            let tidyController = TidyController()
+            try tidyController.run(name: name, tidy: config.tidy, variables: config.variables)
         case .xcassets:
-            try XcassetsController(model: environment.config).run()
+            try XcassetsController(model: config).run()
+        case .config(name: let name):
+            guard let item = config.configs.first(where: { $0.name == name }) else {
+                return
+            }
+            item.inputs.forEach(begin(path:))
         }
     }
     

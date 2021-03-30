@@ -25,6 +25,20 @@ import StemCrossPlatform
 
 public struct Config {
     
+    public class Children {
+        public let name: String
+        public let inputs: [String]
+        
+        init?(from json: JSON) {
+            name = json["name"].stringValue
+            inputs = json["inputs"].arrayValue.compactMap(\.string)
+            guard name.isEmpty == false else {
+                return nil
+            }
+        }
+    }
+    
+    public let configs: [Children]
     public let modes: [Mode]
     public let debug: Debug?
     public let cocoapods: Cocoapods?
@@ -34,6 +48,7 @@ public struct Config {
     public let variables: Variables
     
     public init(from json: JSON) {
+        configs = json["configs"].arrayValue.compactMap(Children.init(from:))
         modes = json["modes"].arrayValue.compactMap(Mode.init(from:))
         debug = Debug(from: json["debug"])
         cocoapods = Cocoapods(from: json["cocoapods"])

@@ -32,6 +32,7 @@ let package = Package(
         ]),
         
         .target(name: AutoassetTidy, dependencies: [
+            .init(stringLiteral: Git),
             .init(stringLiteral: AutoassetModels),
             .product(name: "StemCrossPlatform", package: "Stem"),
             .product(name: "Logging", package: "swift-log")
@@ -46,6 +47,7 @@ let package = Package(
         
         .target(name: AutoassetCocoapods, dependencies: [
             .init(stringLiteral: Git),
+            .init(stringLiteral: AutoassetTidy),
             .init(stringLiteral: AutoassetModels),
             .product(name: "StemCrossPlatform", package: "Stem"),
             .product(name: "SwiftShell", package: "SwiftShell"),

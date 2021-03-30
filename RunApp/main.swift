@@ -9,8 +9,8 @@ import Foundation
 import AutoassetApp
 import StemCrossPlatform
 
-print(try FilePath(path: "./").url.description)
+// AutoAsset.main(["--version"])
+// AutoAsset.main(["--help"])
+ AutoAsset.main(["--config", "autoasset.yml"])
 
-//AutoAsset.main(["--version"])
-//AutoAsset.main(["--help"])
-AutoAsset.main(["autoasset.yml"])
+//AutoAsset.main()

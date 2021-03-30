@@ -25,25 +25,18 @@ import StemCrossPlatform
 
 public enum PlaceHolder {
     
-    case version(String)
-    case timeNow(String)
+    case version
+    case timeNow
+    case custom(key: String, value: String)
 
     public var name: String {
         switch self {
         case .version: return "${version}"
         case .timeNow: return "${timeNow}"
+        case .custom(key: let key, _): return "${\(key)}"
         }
     }
-    
-    public var value: String {
-        switch self {
-        case .version(let result): return result
-        case .timeNow(let result): return result
-        }
-    }
-    
-    public static var all: [PlaceHolder] { [.version(""), .timeNow("")] }
-    
+        
 }
 
 public struct Variables {
@@ -71,10 +64,62 @@ public struct Variables {
     
     public let version: Version?
     public let timeNow: String?
+    public var placeHolders: [PlaceHolder]
+    public var placeHolderNames: [String]
+    
+    public mutating func add(placeholder key: String, value: String) {
+        placeHolders = placeHolders.filter { $0.name != key }
+        placeHolders.append(.custom(key: key, value: value))
+    }
+    
+    public func placeHolder(with name: String) -> PlaceHolder? {
+        switch name {
+        case PlaceHolder.version.name:
+            return PlaceHolder.version
+        case PlaceHolder.timeNow.name:
+            return PlaceHolder.timeNow
+        default:
+            return placeHolders.first { item -> Bool in
+                switch item {
+                case .custom:
+                    return true
+                default:
+                    return false
+                }
+            }
+
+        }
+    }
     
     init(from json: JSON) {
-        version = Version(from: json["version"])
-        timeNow = json["timeNow"].string
+        
+        var placeHolderNames = [String]()
+        var placeHolders = [PlaceHolder]()
+        var version: Version?
+        var timeNow: String?
+        
+        json.dictionaryValue.forEach { (key, result) in
+            switch key {
+            case "version":
+                if let value = Version(from: result) {
+                    version = value
+                    placeHolderNames.append(PlaceHolder.version.name)
+                } else if let value = result.string, value.isEmpty == false {
+                    placeHolders.append(.custom(key: PlaceHolder.version.name, value: value))
+                }
+            case "timeNow":
+                timeNow = result.string
+                placeHolderNames.append(PlaceHolder.timeNow.name)
+            default:
+                placeHolderNames.append(key)
+                placeHolders.append(.custom(key: key, value: result.stringValue))
+            }
+        }
+        
+        self.version = version
+        self.timeNow = timeNow
+        self.placeHolderNames = placeHolderNames
+        self.placeHolders = placeHolders
     }
     
 }
