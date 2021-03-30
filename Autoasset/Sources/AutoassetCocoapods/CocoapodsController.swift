@@ -101,16 +101,10 @@ public struct CocoapodsController {
             try? git.commit(options: [.message(gitConfig.commitMessage)])
             try? git.push()
         case .tag:
-            guard let trunk = model.trunk,
-                  let version = String(data: try file.data(), encoding: .utf8)?
-                    .split(separator: "\n")
-                    .first(where: { $0.contains(".version") })?
-                    .filter(\.isNumber) else {
+            guard let trunk = model.trunk else {
                 return
             }
             
-            var variables = self.variables
-            variables.add(placeholder: PlaceHolder.version.name, value: version)
             let message = try tidy.textMaker(gitConfig.commitMessage, variables: variables)
             try? git.add(path: file.path)
             try? git.commit(options: [.message(message)])

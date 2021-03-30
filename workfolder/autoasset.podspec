@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
     s.name             = 'autoasset'
     s.version          = '27'
-    s.summary          = 'AutoAsset - 2021-03-30 21:16:03'
+    s.summary          = 'AutoAsset appTime: 2021-03-31 00:58:32 - date.now: 2021-03-31 00:58:31'
 
     s.homepage         = 'https://github.com/autoasset/autoasset'
     s.license          = { :type => 'MIT', :file => 'LICENSE' }

@@ -43,51 +43,49 @@ public struct TidyController {
 public extension TidyController {
     
     func textMaker(_ text: String, variables: Variables) throws -> String {
-        var text = text
+        var outputText = text
         
         for key in variables.placeHolderNames {
-            guard text.contains(key),
-                  let placeHolder = variables.placeHolder(with: key) else {
+            guard outputText.contains(key), let placeHolder = variables.placeHolders.first(where: { $0.name == key }) else {
                 continue
             }
             
+            let replace: String
             switch placeHolder {
             case .custom(_, let value):
-                text = text.replacingOccurrences(of: placeHolder.name, with: value)
-            case .timeNow:
+                replace = value
+            case .dateFormat:
+                replace = variables.dateFormat
+            case .dateNow:
                 let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = variables.timeNow
-                let str = dateFormatter.string(from: Date())
-                text = text.replacingOccurrences(of: placeHolder.name, with: str)
-            case .version:
-                guard let type = variables.version else {
-                    continue
-                }
-                switch type {
-                case .fromGitBranch:
-                    let output = try Git().revParse(output: [.abbrevRef(names: ["HEAD"])])
-                    let branch = output.filter(\.isNumber)
-                    guard branch.isEmpty == false else {
-                        throw ASError(message: "无法从分支中提取版本号 branch: \(output)")
-                    }
-                    text = text.replacingOccurrences(of: placeHolder.name, with: branch)
-                case .nextGitTag:
-                    let output = try Git().lsRemote(mode: [.tags], options: [.refs], repository: "origin")
-                    let tag = output
-                        .split(separator: "\n")
-                        .compactMap { $0.split(separator: "\t").last?.filter(\.isNumber) }
-                        .compactMap { Int($0) }
-                        .sorted(by: >)
-                        .first ?? 0
-                    text = text.replacingOccurrences(of: placeHolder.name, with: "\(tag + 1)")
-                case .text(let result):
-                    text = text.replacingOccurrences(of: placeHolder.name, with: result)
-                }
+                dateFormatter.dateFormat = variables.dateFormat
+                replace = dateFormatter.string(from: Date())
+            case .gitCurrentBranch:
+                replace = try Git().revParse(output: [.abbrevRef(names: ["HEAD"])])
+            case .gitCurrentBranchNumber:
+                replace = try Git().revParse(output: [.abbrevRef(names: ["HEAD"])]).filter(\.isNumber)
+            case .gitNextTagNumber:
+                let number = try Git().lsRemote(mode: [.tags], options: [.refs], repository: "origin")
+                    .split(separator: "\n")
+                    .compactMap { $0.split(separator: "\t").last?.filter(\.isNumber) }
+                    .compactMap { Int($0) }
+                    .sorted(by: >)
+                    .first ?? 0
+                replace = "\(number + 1)"
             }
             
+            guard replace.isEmpty == false else {
+                throw ASError(message: "\(placeHolder.name) 无法获取值")
+            }
+            
+            outputText = outputText.replacingOccurrences(of: key, with: replace)
         }
         
-        return text
+        if text == outputText {
+            return outputText
+        }
+        
+        return try self.textMaker(outputText, variables: variables)
     }
     
     func fileMaker(_ input: String, variables: Variables) throws -> String {

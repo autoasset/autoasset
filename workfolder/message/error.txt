@@ -1,0 +1,2 @@
+/Users/linhey/Desktop/linhey/autoasset/autoasset/Sources/AutoassetTidy/TidyController.swift - 79 - textMaker(_:variables:)
+${version} 无法获取值

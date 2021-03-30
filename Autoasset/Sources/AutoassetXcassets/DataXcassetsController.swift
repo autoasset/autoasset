@@ -24,6 +24,7 @@ import Foundation
 import StemCrossPlatform
 import AutoassetModels
 import Logging
+import CSV
 
 class DataXcassetsController: XcassetsControllerProtocol {
     
@@ -53,10 +54,11 @@ class DataXcassetsController: XcassetsControllerProtocol {
     
     func run() throws {
         setDefaultFiles()
-       try resources.forEach { try task(with: $0) }
+        try resources.forEach { try task(with: $0) }
     }
     
     func task(with resource: Xcassets.Data) throws {
+        var reportRows = [XcassetsReport.Row]()
         let contents = try read(paths: [resource.contents].compactMap{ $0 }, predicates: [.custom{ $0.attributes.name.hasSuffix(".json") }])
             .reduce([String: FilePath](), { (result, filePath) -> [String: FilePath] in
                 guard let name = filePath.attributes.name.split(separator: ".").first?.description else {
@@ -69,27 +71,53 @@ class DataXcassetsController: XcassetsControllerProtocol {
         
         var unique = Set<String>()
         let folder = try FilePath(path: resource.output, type: .folder)
+        let currentPath = try FilePath(path: "./").path + "/"
         let names = try read(paths: resource.inputs, predicates: [.skipsHiddenFiles, .custom({ $0.type == .file })])
             .filter({ unique.insert($0.attributes.name).inserted })
             .map({ file -> String in
-                let name = file.attributes.name.split(separator: ".").first!.description
+                let filename = file.attributes.name
+                let name = filename.split(separator: ".").first!.description
                 let imageset = try folder.create(folder: "\(resource.prefix)\(name).dataset")
-                logger.info(.init(stringLiteral: imageset.attributes.name))
+                logger.info(.init(stringLiteral: filename))
                 try file.copy(to: imageset)
                 if let content = contents[name] {
                     let target = try FilePath(url: imageset.url.appendingPathComponent("Contents.json", isDirectory: false))
                     try content.copy(to: target)
                 } else {
-                    let data = try conversion(name: name)
+                    let data = try conversion(name: filename)
                     try imageset.create(file: "Contents.json", data: data)
                 }
+                
+                if resource.report != nil {
+                    reportRows.append(.init(variableName: .init(item: NameFormatter().variableName(name)),
+                                            inputs: .init(item: [file.path.st.deleting(prefix: currentPath)]),
+                                            outputFolderName: .init(item: filename),
+                                            outputFolderPath: .init(item: imageset.path.st.deleting(prefix: currentPath)),
+                                            inputSize: .init(item: file.attributes.size ?? 0)))
+                }
+                
                 return name
             })
+        
         setTemplateList(names: names, in: resource)
+        report(rows: reportRows, in: resource)
     }
 }
 
 extension DataXcassetsController {
+    
+    func report(rows: [XcassetsReport.Row], in resource: Xcassets.Data) {
+        guard let output = resource.report else {
+            return
+        }
+        do {
+            let file = try FilePath(path: output, type: .file)
+            try? file.delete()
+            try file.create(with: CSV(rows: rows.sorted(by: { $0.inputSize.item > $1.inputSize.item})).file())
+        } catch {
+            logger.error(.init(stringLiteral: error.localizedDescription))
+        }
+    }
     
     func setDefaultFiles() {
         guard let output = xcassets.template?.output else {
@@ -182,10 +210,10 @@ extension DataXcassetsController {
         var contents: [String: Any] = [:]
         let info: [String: Any] = ["version": 1, "author": "xcode"]
         contents["info"] = info
-        contents["data"] = ["filename" : name,
-                            "idiom" : "universal"]
+        contents["data"] = [["filename" : name,
+                             "idiom" : "universal"]]
         
         return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
     }
-
+    
 }

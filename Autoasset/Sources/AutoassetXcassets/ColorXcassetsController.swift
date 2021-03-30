@@ -279,7 +279,7 @@ extension ColorXcassetsController {
             
         }
         
-        let contents: [String : Any] = ["color": colors,
+        let contents: [String : Any] = ["colors": colors,
                                         "info": ["version": 1, "author": "xcode"],
                                         "properties": ["localizable": true]]
         

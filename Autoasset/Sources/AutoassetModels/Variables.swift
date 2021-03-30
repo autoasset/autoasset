@@ -25,99 +25,58 @@ import StemCrossPlatform
 
 public enum PlaceHolder {
     
-    case version
-    case timeNow
+    case dateNow
+    case dateFormat
+    case gitCurrentBranch
+    case gitCurrentBranchNumber
+    case gitNextTagNumber
     case custom(key: String, value: String)
 
-    public var name: String {
+   static var systems: [PlaceHolder] { [.dateNow,
+                                        .dateFormat,
+                                        .gitCurrentBranch,
+                                        .gitCurrentBranchNumber,
+                                        .gitNextTagNumber] }
+    
+    var variable: String {
         switch self {
-        case .version: return "${version}"
-        case .timeNow: return "${timeNow}"
-        case .custom(key: let key, _): return "${\(key)}"
+        case .dateNow:                 return "autoasset.date.now"
+        case .dateFormat:              return "autoasset.date.format"
+        case .gitCurrentBranch:        return "autoasset.git.branch.current"
+        case .gitCurrentBranchNumber:  return "autoasset.git.branch.current.number"
+        case .gitNextTagNumber:        return "autoasset.git.tag.next.number"
+        case .custom(key: let key, _): return key
         }
     }
+    
+    public var name: String { "${\(variable)}" }
         
 }
 
 public struct Variables {
     
-    public enum Version {
-        /// 当前分支名中提取版本号
-        case fromGitBranch
-        /// 寻找下个Tag
-        case nextGitTag
-        /// 自定义
-        case text(String)
-        
-        init?(from json: JSON) {
-            if let text = json["text"].string, text.isEmpty == false {
-                self = .text(text)
-            } else if json["nextGitTag"].boolValue {
-                self = .nextGitTag
-            } else if json["fromGitBranch"].boolValue {
-                self = .fromGitBranch
-            } else {
-               return nil
-            }
-        }
-    }
-    
-    public let version: Version?
-    public let timeNow: String?
+    public let dateFormat: String
     public var placeHolders: [PlaceHolder]
     public var placeHolderNames: [String]
     
-    public mutating func add(placeholder key: String, value: String) {
-        placeHolders = placeHolders.filter { $0.name != key }
-        placeHolders.append(.custom(key: key, value: value))
-    }
-    
-    public func placeHolder(with name: String) -> PlaceHolder? {
-        switch name {
-        case PlaceHolder.version.name:
-            return PlaceHolder.version
-        case PlaceHolder.timeNow.name:
-            return PlaceHolder.timeNow
-        default:
-            return placeHolders.first { item -> Bool in
-                switch item {
-                case .custom:
-                    return true
-                default:
-                    return false
-                }
-            }
-
-        }
-    }
-    
     init(from json: JSON) {
         
-        var placeHolderNames = [String]()
-        var placeHolders = [PlaceHolder]()
-        var version: Version?
-        var timeNow: String?
+        var placeHolderNames = PlaceHolder.systems.map(\.name)
+        var placeHolders = PlaceHolder.systems
+        var dateFormat = "yyyy-MM-dd HH:mm:ss"
         
         json.dictionaryValue.forEach { (key, result) in
             switch key {
-            case "version":
-                if let value = Version(from: result) {
-                    version = value
-                    placeHolderNames.append(PlaceHolder.version.name)
-                } else if let value = result.string, value.isEmpty == false {
-                    placeHolders.append(.custom(key: PlaceHolder.version.name, value: value))
-                }
-            case "timeNow":
-                timeNow = result.string
-                placeHolderNames.append(PlaceHolder.timeNow.name)
+            case PlaceHolder.dateFormat.variable:
+                dateFormat = result.string ?? dateFormat
             default:
-                placeHolderNames.append(key)
-                placeHolders.append(.custom(key: key, value: result.stringValue))
+                let placeholder = PlaceHolder.custom(key: key, value: result.stringValue)
+                placeHolders.append(placeholder)
+                placeHolderNames.append(placeholder.name)
             }
         }
         
-        self.version = version
-        self.timeNow = timeNow
+        self.dateFormat = dateFormat
         self.placeHolderNames = placeHolderNames
         self.placeHolders = placeHolders
     }

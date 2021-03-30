@@ -83,7 +83,7 @@ class ImageXcassetsController: XcassetsControllerProtocol {
                 logger.info(.init(stringLiteral:"bundle: \(resource.bundle_name ?? "main"), name: \(filename)"))
                 try filePaths.forEach { try $0.copy(to: imageset) }
                 if let content = contents[name] {
-                    let target = try FilePath(url: imageset.url.appendingPathComponent("Contents.json", isDirectory: false))
+                    let target = try FilePath(url: imageset.url.appendingPathComponent("Contents.json", isDirectory: false), type: .file)
                     try content.copy(to: target)
                 } else {
                     let data = try conversion(files: filePaths)
@@ -116,7 +116,7 @@ extension ImageXcassetsController {
         do {
             let file = try FilePath(path: output, type: .file)
             try? file.delete()
-            try file.create(with: CSV(rows: rows).file())
+            try file.create(with: CSV(rows: rows.sorted(by: { $0.inputSize.item > $1.inputSize.item})).file())
         } catch {
             logger.error(.init(stringLiteral: error.localizedDescription))
         }
@@ -245,27 +245,51 @@ extension ImageXcassetsController {
 
 extension ImageXcassetsController {
     
-    enum ImageContentType: Int, Hashable {
-        case none = 40
-        case scale1x = 10
-        case scale2x = 20
-        case scale3x = 30
+    enum ImageContentType: String, Hashable {
+        case none = "none"
+        case scale1x = "1x"
+        case scale2x = "2x"
+        case scale3x = "3x"
     }
     
     enum AppearanceType: Int {
         case light = 1
         case dark  = 2
+        
+        var conversion: [String: Any]? {
+            switch self {
+            case .dark:  return ["appearance": "luminosity", "value": "dark"]
+            case .light: return nil // ["appearance": "luminosity", "value": "light"]
+            }
+        }
+        
+    }
+    
+    class ImageContent {
+        let appearance: AppearanceType
+        var images: [ImageContentType: String] = [:]
+        
+        init(appearance: AppearanceType) {
+            self.appearance = appearance
+        }
+        
+        var conversion: [[String: Any]] {
+            guard images.isEmpty == false else {
+                return []
+            }
+            return [ImageContentType.scale1x,
+                    ImageContentType.scale2x,
+                    ImageContentType.scale3x].map { item -> [String: Any] in
+                        var result: [String:  Any] = ["idiom": "universal",
+                                                      "scale": item.rawValue]
+                        result["filename"] = images[item]
+                        result["appearances"] = appearance.conversion
+                return result
+            }
+        }
     }
     
     func conversion(files: [FilePath]) throws -> Data {
-        var appearance_light = [String: Any]()
-        appearance_light["appearance"] = "luminosity"
-        appearance_light["value"] = "light"
-        
-        var appearance_dark = [String: Any]()
-        appearance_dark["appearance"] = "luminosity"
-        appearance_dark["value"] = "dark"
-        
         let pdf_properties: [String: Any] = ["compression-type": "automatic", "preserves-vector-representation": true]
         
         var contents: [String: Any] = [:]
@@ -276,9 +300,7 @@ extension ImageXcassetsController {
         if pdfs.isEmpty == false {
             contents["properties"] = pdf_properties
         }
-        
-        var images = [(appearances: [String: Any]?, filename: String?, scale: String)]()
-        
+                
         let store = files
             .reduce([ImageContentType: [FilePath]]()) { result, file -> [ImageContentType: [FilePath]] in
                 var result = result
@@ -313,53 +335,25 @@ extension ImageXcassetsController {
                 return result
             }
         
-        if let file = store[.scale1x]?[.light] {
-            images.append((appearances: nil, filename: file.attributes.name, scale: "1x"))
-        } else {
-            images.append((appearances: nil, filename: nil, scale: "1x"))
+        
+        func imageContentMaker(_ appearance: AppearanceType) -> ImageContent {
+            let content = ImageContent(appearance: appearance)
+            if let file = store[.scale1x]?[appearance] {
+                content.images[.scale1x] = file.attributes.name
+            }
+            
+            if let file = store[.scale2x]?[appearance] ?? store[.none]?[appearance] {
+                content.images[.scale2x] = file.attributes.name
+            }
+            
+            if let file = store[.scale3x]?[appearance] {
+                content.images[.scale3x] = file.attributes.name
+            }
+            return content
         }
+
         
-        if let file = store[.scale2x]?[.light] ?? store[.none]?[.light] {
-            images.append((appearances: nil, filename: file.attributes.name, scale: "2x"))
-        } else {
-            images.append((appearances: nil, filename: nil, scale: "2x"))
-        }
-        
-        if let file = store[.scale3x]?[.light] {
-            images.append((appearances: nil, filename: file.attributes.name, scale: "3x"))
-        } else {
-            images.append((appearances: nil, filename: nil, scale: "3x"))
-        }
-        
-        if let file = store[.scale1x]?[.dark] {
-            images.append((appearances: appearance_dark, filename: file.attributes.name, scale: "1x"))
-        } else {
-            images.append((appearances: appearance_dark, filename: nil, scale: "1x"))
-        }
-        
-        if let file = store[.scale2x]?[.dark] ?? store[.none]?[.dark] {
-            images.append((appearances: appearance_dark, filename: file.attributes.name, scale: "2x"))
-        } else {
-            images.append((appearances: appearance_dark, filename: nil, scale: "2x"))
-        }
-        
-        if let file = store[.scale3x]?[.dark] {
-            images.append((appearances: appearance_dark, filename: file.attributes.name, scale: "3x"))
-        } else {
-            images.append((appearances: appearance_dark, filename: nil, scale: "3x"))
-        }
-        
-        let imagesContents = images.map { item -> [String: Any] in
-            var result = [String:  Any]()
-            result["appearances"] = item.appearances
-            result["filename"] = item.filename
-            result["idiom"] = "universal"
-            result["scale"] = item.scale
-            return result
-        }
-        
-        contents["images"] = imagesContents
-        
+        contents["images"] = imageContentMaker(.light).conversion + imageContentMaker(.dark).conversion
         return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
     }
     

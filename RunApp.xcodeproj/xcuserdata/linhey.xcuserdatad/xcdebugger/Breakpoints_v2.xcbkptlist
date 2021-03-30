@@ -7,15 +7,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "2F6F18AC-61EB-45CE-B7F1-35754BC01D23"
+            uuid = "9E289F21-B60E-485B-8ABD-6AE94D62DBE0"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "autoasset/Sources/AutoassetTidy/TidyController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "61"
-            endingLineNumber = "61"
+            startingLineNumber = "84"
+            endingLineNumber = "84"
             landmarkName = "textMaker(_:variables:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -23,15 +23,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "F8A3CC1A-AC26-4964-85D9-3233C97DAF63"
+            uuid = "0B921B9C-9098-4DAA-90A6-4722F44D0C84"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "autoasset/Sources/AutoassetTidy/TidyController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "56"
-            endingLineNumber = "56"
+            startingLineNumber = "85"
+            endingLineNumber = "85"
             landmarkName = "textMaker(_:variables:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -39,15 +39,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "86DE4EAC-C3FF-42AE-A636-57314AB75398"
+            uuid = "57C15B4C-38FD-4970-BA86-1E3C21F56F88"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "autoasset/Sources/AutoassetTidy/TidyController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "63"
-            endingLineNumber = "63"
+            startingLineNumber = "88"
+            endingLineNumber = "88"
             landmarkName = "textMaker(_:variables:)"
             landmarkType = "7">
          </BreakpointContent>

@@ -147,7 +147,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncd $PROJECT_DIR/scripts\npython3 license.py\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n# cd $PROJECT_DIR/scripts\n# python3 license.py\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
