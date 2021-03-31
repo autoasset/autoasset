@@ -71,7 +71,9 @@ extension AutoAsset {
                 }
                 if let bash = config.debug?.bash,
                    bash.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false {
-                    try Bash.shell(bash, logger: nil)
+                    let tidyController = TidyController()
+                    try Bash.shell(tidyController.textMaker(bash, variables: config.variables),
+                                   logger: Logger(label: "bash"))
                 }
                 throw error
             }
@@ -101,7 +103,9 @@ extension AutoAsset {
             }
             item.inputs.forEach(begin(path:))
         case .bash(command: let command):
-            try Bash.shell(command, logger: Logger(label: "bash"))
+            let tidyController = TidyController()
+            try Bash.shell(tidyController.textMaker(command, variables: config.variables),
+                           logger: Logger(label: "bash"))
         }
     }
     
