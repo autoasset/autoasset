@@ -26,13 +26,14 @@ import StemCrossPlatform
 public struct Debug {
     
     public let error: String
-    
+    public let bash: String
+
     init?(from json: JSON) {
+        bash = json["bash"].stringValue
         if let error = json["error"].string {
             self.error = error
         } else {
             return nil
         }
-        
     }
 }

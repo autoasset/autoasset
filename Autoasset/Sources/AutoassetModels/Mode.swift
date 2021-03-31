@@ -25,7 +25,7 @@ import StemCrossPlatform
 
 public enum Mode {
     
-    case download
+    case download(name: String)
     case tidy(name: String)
     case xcassets
     case cocoapods
@@ -34,15 +34,16 @@ public enum Mode {
 
     
     init?(from json: JSON) {
-        if let tidy = json["tidy"].string {
-            self = .tidy(name: tidy)
-        } else if let config = json["config"].string {
-            self = .config(name: config)
-        } else if let bash = json["bash"].string {
-            self = .bash(command: bash)
+        if let name = json["tidy"].string {
+            self = .tidy(name: name)
+        } else if let name = json["config"].string {
+            self = .config(name: name)
+        } else if let name = json["bash"].string {
+            self = .bash(command: name)
+        } else if let name = json["download"].string {
+            self = .download(name: name)
         } else {
             switch json.stringValue {
-            case "download": self = .download
             case "xcassets": self = .xcassets
             case "cocoapods": self = .cocoapods
             default:

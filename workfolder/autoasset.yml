@@ -3,13 +3,14 @@ modes:
   # - tidy: clear-download
   # - tidy: clear-resources
   # - tidy: copy-codes
-  - tidy: create-podspec
-  # - download
+  # - tidy: create-podspec
+  - download: download-TermKit
   # - xcassets
   # - cocoapods
   # - config: xcassets
 
 debug:
+  bash: tree
   error: message/error.txt
 
 # 子任务模块
@@ -37,10 +38,8 @@ cocoapods:
 # 下载模块
 download:
   gits:
-    - output: git_666
-      input: https://github.com/migueldeicaza/TermKit
-      branch: master
-    - output: git_6667
+    - name: download-TermKit
+      output: git_666
       input: https://github.com/migueldeicaza/TermKit
       branch: master
 

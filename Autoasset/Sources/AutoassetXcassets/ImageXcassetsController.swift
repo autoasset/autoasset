@@ -26,17 +26,12 @@ import AutoassetModels
 import Logging
 import CSV
 
-class ImageXcassetsController: XcassetsControllerProtocol {
+struct ImageXcassetsController: XcassetsControllerProtocol {
     
-    let model: Config
-    var xcassets: Xcassets { model.xcassets }
+    let xcassets: Xcassets
     var resources: [Xcassets.Image] { xcassets.images }
     let logger = Logger(label: "image")
 
-    init(model: Config) {
-        self.model = model
-    }
-    
     func run() throws {
         setDefaultFiles()
         try resources.forEach { try task(with: $0) }

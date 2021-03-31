@@ -33,15 +33,17 @@ public struct DownloadController {
         self.model = model
     }
     
-    public func run() throws {
-        let git = Git()
-        let logger = Logger(label: "git")
-        try model.gits.forEach { item in
-            let desc = [item.input, item.branch, item.output].joined(separator: " ")
-            logger.info(.init(stringLiteral: desc))
-            try git.clone(url: item.input,
-                          options: [.singleBranch, .depth(1), .branch(item.branch)],
-                          to: item.output)
+    public func run(name: String) throws {
+        guard let task = model.gits.first(where: { $0.name == name }) else {
+            return
         }
+        
+        let git = Git()
+        let logger = Logger(label: "download - \(name)")
+        let desc = [task.input, task.branch, task.output].joined(separator: " ")
+        logger.info(.init(stringLiteral: desc))
+        try git.clone(url: task.input,
+                      options: [.singleBranch, .depth(1), .branch(task.branch)],
+                      to: task.output)
     }
 }

@@ -5,7 +5,6 @@
 //  Created by 林翰 on 2021/3/26.
 //
 
-import Foundation
 import AutoassetApp
 import StemCrossPlatform
 

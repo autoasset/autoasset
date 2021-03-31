@@ -27,8 +27,7 @@ import Logging
 
 struct ColorXcassetsController: XcassetsControllerProtocol {
     
-    let model: Config
-    var asset: Xcassets { model.xcassets }
+    let asset: Xcassets
     var resources: [Xcassets.Color] { asset.colors }
     private let logger = Logger(label: "colors")
     

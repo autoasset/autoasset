@@ -11,15 +11,15 @@ import SwiftShell
 import ASError
 
 @discardableResult
-public func shell(_ command: String, logger: Logger) throws -> String {
-    logger.info(.init(stringLiteral: command))
+public func shell(_ command: String, logger: Logger?) throws -> String {
+    logger?.info(.init(stringLiteral: command))
     let output = SwiftShell.run(bash: command)
     if output.succeeded {
-        logger.info(.init(stringLiteral: output.stdout))
+        logger?.info(.init(stringLiteral: output.stdout))
         return output.stdout
     } else {
-        logger.error(.init(stringLiteral: command))
-        logger.error(.init(stringLiteral: output.stderror))
+        logger?.error(.init(stringLiteral: command))
+        logger?.error(.init(stringLiteral: output.stderror))
         throw ASError(message: output.error?.description ?? output.stderror)
     }
 }

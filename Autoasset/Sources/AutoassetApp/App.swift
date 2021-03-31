@@ -37,16 +37,16 @@ public struct AutoAsset: ParsableCommand {
     
     public static let configuration = CommandConfiguration(version: "27")
     
-    @Option(name: [.short, .customLong("config")], help: "配置文件路径")
-    var configPath: String
-
+    @Option(name: [.customLong("config")], help: "配置文件路径")
+    var configPath: String?
+    
     @Flag(help: .init("内置变量列表:\n" + PlaceHolder.systems.map{ "- \($0.name)\n  \($0.desc)"}.joined(separator: "\n") + "\n"))
     var variables = false
     
     public init() {}
     
     public func run() throws {
-        begin(path: configPath)
+        begin(path: configPath ?? "autoasset.yml")
     }
 }
 
@@ -69,6 +69,10 @@ extension AutoAsset {
                     try? file.delete()
                     try file.create(with: error.localizedDescription.data(using: .utf8))
                 }
+                if let bash = config.debug?.bash,
+                   bash.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false {
+                    try Bash.shell(bash, logger: nil)
+                }
                 throw error
             }
         } catch {
@@ -78,9 +82,9 @@ extension AutoAsset {
         
     func run(with mode: Mode, config: Config) throws {
         switch mode {
-        case .download:
+        case .download(name: let name):
             if let model = config.download {
-                try DownloadController(model: model).run()
+                try DownloadController(model: model).run(name: name)
             }
         case .cocoapods:
             if let model = config.cocoapods {
@@ -90,7 +94,7 @@ extension AutoAsset {
             let tidyController = TidyController()
             try tidyController.run(name: name, tidy: config.tidy, variables: config.variables)
         case .xcassets:
-            try XcassetsController(model: config).run()
+            try XcassetsController(model: config.xcassets).run()
         case .config(name: let name):
             guard let item = config.configs.first(where: { $0.name == name }) else {
                 return

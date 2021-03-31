@@ -40,16 +40,15 @@ class DataXcassetsController: XcassetsControllerProtocol {
         }
     }
     
-    let model: Config
     let named: Named
     let resources: [Xcassets.Data]
-    var xcassets: Xcassets { model.xcassets }
+    let xcassets: Xcassets
     lazy var logger = Logger(label: named.rawValue)
     
-    init(model: Config, named: Named, resources: [Xcassets.Data]) {
-        self.model = model
+    init(named: Named, resources: [Xcassets.Data], xcassets: Xcassets) {
         self.named = named
         self.resources = resources
+        self.xcassets = xcassets
     }
     
     func run() throws {

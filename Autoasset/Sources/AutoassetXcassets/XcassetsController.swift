@@ -27,24 +27,23 @@ import Logging
 
 public struct XcassetsController {
     
-    let model: Config
-    var xcassets: Xcassets { model.xcassets }
+    let xcassets: Xcassets
 
-    public init(model: Config) {
-        self.model = model
+    public init(model: Xcassets) {
+        self.xcassets = model
     }
     
     public func run() throws {
-        let colorController = ColorXcassetsController(model: model)
+        let colorController = ColorXcassetsController(asset: xcassets)
         try colorController.run()
         
-        let imageController = ImageXcassetsController(model: model)
+        let imageController = ImageXcassetsController(xcassets: xcassets)
         try imageController.run()
         
-        let gifsController = DataXcassetsController(model: model, named: .gifs, resources: xcassets.gifs)
+        let gifsController = DataXcassetsController(named: .gifs, resources: xcassets.gifs, xcassets: xcassets)
         try gifsController.run()
         
-        let dataController = DataXcassetsController(model: model, named: .data, resources: model.xcassets.datas)
+        let dataController = DataXcassetsController(named: .data, resources: xcassets.datas, xcassets: xcassets)
         try dataController.run()
     }
     

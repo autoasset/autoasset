@@ -22,7 +22,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-log.git", from: "1.4.2"),
-        .package(url: "https://github.com/linhay/Stem.git", from: "0.0.38"),
+        .package(url: "https://github.com/linhay/Stem.git", from: "0.0.39"),
         .package(url: "https://github.com/jpsim/Yams.git", from: "4.0.4"),
         .package(url: "https://github.com/apple/swift-argument-parser", from: "0.4.1"),
         .package(url: "https://github.com/kareman/SwiftShell.git", from: "5.1.0")

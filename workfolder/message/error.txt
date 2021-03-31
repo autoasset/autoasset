@@ -1,2 +1,2 @@
-/Users/linhey/Desktop/linhey/autoasset/autoasset/Sources/AutoassetTidy/TidyController.swift - 79 - textMaker(_:variables:)
-${version} 无法获取值
+/Users/linhey/Desktop/linhey/autoasset/autoasset/Sources/Bash/Bash.swift - 23 - shell(_:logger:)
+Command '/bin/bash -c "git clone --single-branch --depth 1 --branch master https://github.com/migueldeicaza/TermKit git_666"' returned with error code 128.

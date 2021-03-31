@@ -26,16 +26,18 @@ import StemCrossPlatform
 public struct Download {
     
     public struct Git {
-        
+        public let name: String
         public let input: String
         public let output: String
         public let branch: String
         
         init?(from json: JSON) {
+            self.name   = json["name"].stringValue
             self.output = json["output"].stringValue
-            self.input = json["input"].stringValue
+            self.input  = json["input"].stringValue
             self.branch = json["branch"].stringValue
-            guard output.isEmpty == false,
+            guard name.isEmpty == false,
+                  output.isEmpty == false,
                   input.isEmpty == false,
                   branch.isEmpty == false else {
                 return nil
