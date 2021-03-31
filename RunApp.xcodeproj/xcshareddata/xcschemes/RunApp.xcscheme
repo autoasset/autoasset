@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CDE6447C260E37D600DFC031"
-               BuildableName = "RunApp"
-               BlueprintName = "RunApp"
+               BuildableName = "Autoasset"
+               BlueprintName = "Autoasset"
                ReferencedContainer = "container:RunApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -46,8 +46,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CDE6447C260E37D600DFC031"
-            BuildableName = "RunApp"
-            BlueprintName = "RunApp"
+            BuildableName = "Autoasset"
+            BlueprintName = "Autoasset"
             ReferencedContainer = "container:RunApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -63,8 +63,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CDE6447C260E37D600DFC031"
-            BuildableName = "RunApp"
-            BlueprintName = "RunApp"
+            BuildableName = "Autoasset"
+            BlueprintName = "Autoasset"
             ReferencedContainer = "container:RunApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

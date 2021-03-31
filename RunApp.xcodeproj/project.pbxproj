@@ -24,7 +24,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		CDE6447D260E37D600DFC031 /* RunApp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RunApp; sourceTree = BUILT_PRODUCTS_DIR; };
+		CDE6447D260E37D600DFC031 /* Autoasset */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Autoasset; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDE64480260E37D600DFC031 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		CDE64489260E383E00DFC031 /* autoasset */ = {isa = PBXFileReference; lastKnownFileType = folder; path = autoasset; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -61,7 +61,7 @@
 		CDE6447E260E37D600DFC031 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CDE6447D260E37D600DFC031 /* RunApp */,
+				CDE6447D260E37D600DFC031 /* Autoasset */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -77,9 +77,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		CDE6447C260E37D600DFC031 /* RunApp */ = {
+		CDE6447C260E37D600DFC031 /* Autoasset */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CDE64484260E37D600DFC031 /* Build configuration list for PBXNativeTarget "RunApp" */;
+			buildConfigurationList = CDE64484260E37D600DFC031 /* Build configuration list for PBXNativeTarget "Autoasset" */;
 			buildPhases = (
 				CDE64479260E37D600DFC031 /* Sources */,
 				CDE6447A260E37D600DFC031 /* Frameworks */,
@@ -90,12 +90,12 @@
 			);
 			dependencies = (
 			);
-			name = RunApp;
+			name = Autoasset;
 			packageProductDependencies = (
 				CD0B123C260E3AE6004540B9 /* AutoassetApp */,
 			);
 			productName = RunApp;
-			productReference = CDE6447D260E37D600DFC031 /* RunApp */;
+			productReference = CDE6447D260E37D600DFC031 /* Autoasset */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -125,7 +125,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CDE6447C260E37D600DFC031 /* RunApp */,
+				CDE6447C260E37D600DFC031 /* Autoasset */,
 			);
 		};
 /* End PBXProject section */
@@ -312,7 +312,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CDE64484260E37D600DFC031 /* Build configuration list for PBXNativeTarget "RunApp" */ = {
+		CDE64484260E37D600DFC031 /* Build configuration list for PBXNativeTarget "Autoasset" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CDE64485260E37D600DFC031 /* Debug */,
