@@ -7,48 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "9E289F21-B60E-485B-8ABD-6AE94D62DBE0"
+            uuid = "8D5CF2AB-8291-426F-BC7F-7C9836A17D5E"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "autoasset/Sources/AutoassetTidy/TidyController.swift"
+            filePath = "autoasset/Sources/ASError/ASError.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "84"
-            endingLineNumber = "84"
-            landmarkName = "textMaker(_:variables:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "0B921B9C-9098-4DAA-90A6-4722F44D0C84"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "autoasset/Sources/AutoassetTidy/TidyController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "85"
-            endingLineNumber = "85"
-            landmarkName = "textMaker(_:variables:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "57C15B4C-38FD-4970-BA86-1E3C21F56F88"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "autoasset/Sources/AutoassetTidy/TidyController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "88"
-            endingLineNumber = "88"
-            landmarkName = "textMaker(_:variables:)"
+            startingLineNumber = "32"
+            endingLineNumber = "32"
+            landmarkName = "init(message:code:file:line:function:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

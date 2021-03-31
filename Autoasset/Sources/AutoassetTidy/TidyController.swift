@@ -25,6 +25,7 @@ import AutoassetModels
 import StemCrossPlatform
 import Logging
 import Git
+import ASError
 
 public struct TidyController {
     
@@ -116,6 +117,7 @@ extension TidyController {
         text = try self.textMaker(text, variables: variables)
         let output = try FilePath(path: item.output, type: .file)
         try? output.delete()
+        logger.info(.init(stringLiteral: "正在创建: \(item.output)"))
         try output.create(with: text.data(using: .utf8))
     }
     

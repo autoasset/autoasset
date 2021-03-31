@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 import Foundation
+import Bash
 
 // MARK: - ls-remote
 public extension Git {
@@ -81,7 +82,7 @@ public extension Git {
             + options.map(\.command)
             + [repository]
         let command = commands.joined(separator: " ")
-        return try shell(command)
+        return try shell(command, logger: logger)
     }
     
 }

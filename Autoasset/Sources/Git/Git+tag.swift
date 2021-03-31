@@ -21,7 +21,7 @@
 // SOFTWARE.
 
 import Foundation
-
+import Bash
 
 /// tag
 public extension Git {
@@ -47,7 +47,7 @@ public extension Git {
         let commands = ["git", "tag"]
             + options.map(\.command)
         let command = commands.joined(separator: " ")
-        return try shell(command)
+        return try shell(command, logger: logger)
     }
     
 }

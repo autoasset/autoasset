@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 import Foundation
+import Bash
 
 // MARK: - rev-parse
 public extension Git {
@@ -140,7 +141,7 @@ public extension Git {
             + filers.map(\.rawValue)
             + output.map(\.command)
         let command = commands.joined(separator: " ")
-        return try shell(command)
+        return try shell(command, logger: logger)
     }
     
 }

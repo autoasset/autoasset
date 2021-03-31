@@ -21,11 +21,10 @@
 // SOFTWARE.
 
 import Foundation
+import Bash
 
 struct GitManager {
 
     static let shared = GitManager()
-    
-    
     
 }

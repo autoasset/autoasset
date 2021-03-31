@@ -11,6 +11,8 @@ let AutoassetModels = "AutoassetModels"
 let AutoassetCocoapods = "AutoassetCocoapods"
 let Git = "Git"
 let CSV = "CSV"
+let Bash = "Bash"
+let ASError = "ASError"
 
 let package = Package(
     name: "autoasset",
@@ -33,6 +35,7 @@ let package = Package(
         
         .target(name: AutoassetTidy, dependencies: [
             .init(stringLiteral: Git),
+            .init(stringLiteral: ASError),
             .init(stringLiteral: AutoassetModels),
             .product(name: "StemCrossPlatform", package: "Stem"),
             .product(name: "Logging", package: "swift-log")
@@ -40,6 +43,7 @@ let package = Package(
         
         .target(name: AutoassetDownload, dependencies: [
             .init(stringLiteral: Git),
+            .init(stringLiteral: ASError),
             .init(stringLiteral: AutoassetModels),
             .product(name: "StemCrossPlatform", package: "Stem"),
             .product(name: "Logging", package: "swift-log")
@@ -49,6 +53,8 @@ let package = Package(
             .init(stringLiteral: Git),
             .init(stringLiteral: AutoassetTidy),
             .init(stringLiteral: AutoassetModels),
+            .init(stringLiteral: ASError),
+            .init(stringLiteral: Bash),
             .product(name: "StemCrossPlatform", package: "Stem"),
             .product(name: "SwiftShell", package: "SwiftShell"),
             .product(name: "Logging", package: "swift-log")
@@ -57,20 +63,32 @@ let package = Package(
         .target(name: AutoassetXcassets, dependencies: [
             .init(stringLiteral:CSV),
             .init(stringLiteral:AutoassetModels),
+            .init(stringLiteral: ASError),
             .product(name: "StemCrossPlatform", package: "Stem"),
             .product(name: "Logging", package: "swift-log")
         ]),
         
         .target(name: Git, dependencies: [
+            .init(stringLiteral: ASError),
+            .init(stringLiteral: Bash),
             .product(name: "StemCrossPlatform", package: "Stem"),
             .product(name: "SwiftShell", package: "SwiftShell"),
             .product(name: "Logging", package: "swift-log")
         ]),
         
-        .target(name: CSV, dependencies: []),
+        .target(name: Bash, dependencies: [
+            .init(stringLiteral: ASError),
+            .product(name: "SwiftShell", package: "SwiftShell"),
+            .product(name: "Logging", package: "swift-log")
+        ]),
         
+        .target(name: ASError, dependencies: []),
+        .target(name: CSV, dependencies: []),
+
         .target(name: AutoassetApp, dependencies: [
+            .init(stringLiteral: ASError),
             .init(stringLiteral: Git),
+            .init(stringLiteral: Bash),
             .init(stringLiteral: AutoassetDownload),
             .init(stringLiteral: AutoassetModels),
             .init(stringLiteral: AutoassetXcassets),

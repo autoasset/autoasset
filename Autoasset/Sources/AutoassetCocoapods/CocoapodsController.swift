@@ -27,6 +27,7 @@ import AutoassetModels
 import Git
 import SwiftShell
 import Logging
+import ASError
 
 public struct CocoapodsController {
     
@@ -114,6 +115,7 @@ public struct CocoapodsController {
             case .github:
                 try shell("pod trunk push \(file.path) --allow-warnings")
             case .git(url: let url):
+                let url = try tidy.textMaker(url, variables: variables)
                 var repoName = try getRepoName(url)
                 
                 if repoName == nil, let name = url.split(separator: "/").last?.split(separator: ".").first {

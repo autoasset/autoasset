@@ -164,9 +164,6 @@ extension ImageXcassetsController {
         #elseif canImport(AppKit)
         import AppKit
         #endif
-        #if canImport(SwiftUI)
-        import SwiftUI
-        #endif
 
         public protocol AutoAssetImageProtocol {
             init(named: String, in bundle: String?)
@@ -175,47 +172,57 @@ extension ImageXcassetsController {
             #elseif canImport(AppKit)
             func value() -> NSImage
             #endif
-            #if canImport(SwiftUI)
-            @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-            func value() -> SwiftUI.Image
-            #endif
         }
         """
     }
     
     func template_core() -> String {
-        """
+        #"""
         #if canImport(UIKit)
         import UIKit
         #elseif canImport(AppKit)
         import AppKit
         #endif
-        #if canImport(SwiftUI)
-        import SwiftUI
-        #endif
 
-        class AutoAssetImage: AutoAssetImageProtocol {
+        public class AutoAssetImage: AutoAssetImageProtocol {
             
-            let named: String
-            let bundle: String?
+            public let named: String
+            public let bundle: String?
             
-            required init(named: String, in bundle: String?) {
+            static var bundleMap = [String: Bundle]()
+            
+            required public init(named: String, in bundle: String?) {
                 self.named = named
                 self.bundle = bundle
             }
             
             #if canImport(UIKit)
-            func value() -> UIImage {
-                if let bundleName = bundle,
-                   let bundle = Bundle(identifier: bundleName),
-                   let image = UIImage(named: named, in: bundle, compatibleWith: nil) {
-                    return image
-                } else if let image = UIImage(named: named) {
-                    return image
-                } else {
-                    assertionFailure("can't find image: \\(named) in bundle: \\(bundle ?? "main")")
+            public func value() -> UIImage {
+                guard let bundleName = bundle else {
+                    if let image = UIImage(named: named) {
+                        return image
+                    }
+                    assertionFailure("can't find image: \(named) in bundle: \(bundle ?? "main")")
                     return UIImage()
                 }
+                
+                if let bundle = Self.bundleMap[bundleName] {
+                    if let image = UIImage(named: named, in: bundle, compatibleWith: nil) {
+                        return image
+                    }
+                    assertionFailure("can't find image: \(named) in bundle: \(bundleName)")
+                    return UIImage()
+                }
+                
+                if let url = Bundle(for: Self.self).url(forResource: bundle, withExtension: "bundle"),
+                   let bundle = Bundle(url: url),
+                   let image = UIImage(named: named, in: bundle, compatibleWith: nil) {
+                    Self.bundleMap[bundleName] = bundle
+                    return image
+                }
+                
+                assertionFailure("can't find image: \(named) in bundle: \(bundle ?? "main")")
+                return UIImage()
             }
             
             #elseif canImport(AppKit)
@@ -223,22 +230,9 @@ extension ImageXcassetsController {
                 return .init(imageLiteralResourceName: named)
             }
             #endif
-            
-            #if canImport(SwiftUI)
-            @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-            func value() -> SwiftUI.Image {
-                #if canImport(UIKit)
-                return SwiftUI.Image(uiImage: value())
-                #elseif canImport(AppKit)
-                return SwiftUI.Image(nsImage: value())
-                #else
-                return SwiftUI.Image("")
-                #endif
-            }
-            #endif
-            
         }
-        """
+
+        """#
     }
     
 }

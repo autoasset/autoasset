@@ -175,30 +175,47 @@ extension DataXcassetsController {
         import AppKit
         #endif
 
-        class AutoAsset\(named.className): AutoAsset\(named.className)Protocol {
+        public class AutoAsset\(named.className): AutoAsset\(named.className)Protocol {
 
-            let named: String
-            let bundle: String?
-            
-            required init(named: String, in bundle: String?) {
+            public let named: String
+            public let bundle: String?
+            static var bundleMap = [String: Bundle]()
+
+            public required init(named: String, in bundle: String?) {
                 self.named = named
                 self.bundle = bundle
             }
             
             @available(iOS 9.0, macOS 10.11, tvOS 6.0, watchOS 2.0, *)
             public func value() -> Foundation.Data {
-                if let bundleName = bundle,
-                   let bundle = Bundle(identifier: bundleName),
-                   let data = NSDataAsset(name: named, bundle: bundle)?.data {
-                    return data
-                } else if let data = NSDataAsset(name: named, bundle: Bundle.main)?.data {
-                    return data
-                } else {
+                guard let bundleName = bundle else {
+                    if let data = NSDataAsset(name: named, bundle: .main)?.data {
+                        return data
+                    }
                     assertionFailure("can't find data: \\(named) in bundle: \\(bundle ?? "main")")
                     return Foundation.Data()
                 }
+                
+                if let bundle = Self.bundleMap[bundleName] {
+                    if let data = NSDataAsset(name: named, bundle: bundle)?.data {
+                        return data
+                    }
+                    assertionFailure("can't find data: \\(named) in bundle: \\(bundleName)")
+                    return Foundation.Data()
+                }
+                
+                if let url = Bundle(for: Self.self).url(forResource: bundle, withExtension: "bundle"),
+                   let bundle = Bundle(url: url),
+                   let data = NSDataAsset(name: named, bundle: bundle)?.data {
+                    Self.bundleMap[bundleName] = bundle
+                    return data
+                }
+                
+                assertionFailure("can't find data: \\(named) in bundle: \\(bundleName)")
+                return Foundation.Data()
             }
         }
+
         """
     }
     

@@ -116,9 +116,6 @@ extension ColorXcassetsController {
         #elseif canImport(AppKit)
         import AppKit
         #endif
-        #if canImport(SwiftUI)
-        import SwiftUI
-        #endif
 
         public protocol AutoAssetColorProtocol {
             init(light: Int64, dark: Int64)
@@ -126,10 +123,6 @@ extension ColorXcassetsController {
             func value() -> UIColor
             #elseif canImport(AppKit)
             func value() -> NSColor
-            #endif
-            #if canImport(SwiftUI)
-            @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-            func value() -> SwiftUI.Color
             #endif
         }
         """
@@ -141,9 +134,6 @@ extension ColorXcassetsController {
         import UIKit
         #elseif canImport(AppKit)
         import AppKit
-        #endif
-        #if canImport(SwiftUI)
-        import SwiftUI
         #endif
 
         public class AutoAssetColor: AutoAssetColorProtocol {
@@ -226,18 +216,11 @@ extension ColorXcassetsController {
         }
 
         public extension AutoAssetColor {
-            
             #if canImport(UIKit)
             func value() -> UIColor { return system }
             #elseif canImport(AppKit)
             func value() -> NSColor { return system }
             #endif
-            
-            #if canImport(SwiftUI)
-            @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-            func value() -> SwiftUI.Color { return .init(system) }
-            #endif
-            
         }
         """
     }

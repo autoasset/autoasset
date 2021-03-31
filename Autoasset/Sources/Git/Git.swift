@@ -30,25 +30,5 @@ public struct Git {
     
     public init() {}
     
-    struct Error: LocalizedError {
-        
-        public let message: String
-        public let code: Int
-        public var errorDescription: String?
-        
-        public init(message: String, code: Int = 0) {
-            self.message = message
-            self.errorDescription = message
-            self.code = code
-        }
-    }
-    
-    @discardableResult
-    func shell(_ command: String) throws -> String {
-        logger.info(.init(stringLiteral: command))
-        let output = run(bash: command)
-        logger.info(.init(stringLiteral: output.stdout))
-        return output.stdout
-    }
 }
 

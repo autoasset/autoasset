@@ -30,6 +30,8 @@ import AutoassetDownload
 import AutoassetCocoapods
 import AutoassetTidy
 import Git
+import Bash
+import Logging
 
 public struct AutoAsset: ParsableCommand {
     
@@ -94,6 +96,8 @@ extension AutoAsset {
                 return
             }
             item.inputs.forEach(begin(path:))
+        case .bash(command: let command):
+            try Bash.shell(command, logger: Logger(label: "bash"))
         }
     }
     

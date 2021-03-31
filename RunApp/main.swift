@@ -11,6 +11,6 @@ import StemCrossPlatform
 
 // AutoAsset.main(["--version"])
 // AutoAsset.main(["--help"])
- AutoAsset.main(["--config", "autoasset.yml"])
+// AutoAsset.main(["--config", "autoasset.yml"])
 
-//AutoAsset.main()
+AutoAsset.main()

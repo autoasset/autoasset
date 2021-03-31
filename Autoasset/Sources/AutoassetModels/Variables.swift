@@ -79,9 +79,9 @@ public struct Variables {
         json.dictionaryValue.forEach { (key, result) in
             switch key {
             case PlaceHolder.dateFormat.variable:
-                dateFormat = result.string ?? dateFormat
+                dateFormat = result.string?.trimmingCharacters(in: .whitespacesAndNewlines) ?? dateFormat
             default:
-                let placeholder = PlaceHolder.custom(key: key, value: result.stringValue)
+                let placeholder = PlaceHolder.custom(key: key, value: result.stringValue.trimmingCharacters(in: .whitespacesAndNewlines))
                 placeHolders.append(placeholder)
                 placeHolderNames.append(placeholder.name)
             }

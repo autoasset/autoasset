@@ -30,6 +30,7 @@ public enum Mode {
     case xcassets
     case cocoapods
     case config(name: String)
+    case bash(command: String)
 
     
     init?(from json: JSON) {
@@ -37,6 +38,8 @@ public enum Mode {
             self = .tidy(name: tidy)
         } else if let config = json["config"].string {
             self = .config(name: config)
+        } else if let bash = json["bash"].string {
+            self = .bash(command: bash)
         } else {
             switch json.stringValue {
             case "download": self = .download

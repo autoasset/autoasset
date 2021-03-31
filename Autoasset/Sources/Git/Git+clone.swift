@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 import Foundation
+import Bash
 
 // MARK: - clone
 public extension Git {
@@ -44,7 +45,7 @@ public extension Git {
             + options.map(\.command)
             + [url, dir].compactMap { $0 }
         let command = commands.joined(separator: " ")
-        try shell(command)
+        try shell(command, logger: logger)
     }
     
 }

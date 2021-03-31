@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 import Foundation
+import Bash
 
 // MARK: - add
 public extension Git {
@@ -33,7 +34,7 @@ public extension Git {
         let commands = ["git", "add", path]
             + options.map(\.command)
         let command = commands.joined(separator: " ")
-        try shell(command)
+        try shell(command, logger: logger)
     }
     
 }

@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 import Foundation
+import Bash
 
 /// status
 public extension Git {
@@ -46,7 +47,7 @@ public extension Git {
         let commands = ["git", "status"]
             + options.map(\.command)
         let command = commands.joined(separator: " ")
-        return try shell(command)
+        return try shell(command, logger: logger)
     }
     
 }
