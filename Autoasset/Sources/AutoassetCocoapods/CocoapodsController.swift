@@ -22,36 +22,41 @@
 
 import Foundation
 import StemCrossPlatform
-import AutoassetTidy
+import VariablesMaker
 import AutoassetModels
+import Bash
 import Git
-import SwiftShell
 import Logging
 import ASError
 
 public struct CocoapodsController {
     
     private let model: Cocoapods
-    private let variables: Variables
     private let logger = Logger(label: "cocoapods")
     
-    public init(model: Cocoapods, variables: Variables) {
-        self.model = model
-        self.variables = variables
-    }
-    
-    @discardableResult
-    private func shell(_ command: String) throws -> String {
-        logger.info(.init(stringLiteral: command))
-        let output = SwiftShell.run(bash: command)
-        if output.succeeded {
-            logger.info(.init(stringLiteral: output.stdout))
-            return output.stdout
-        } else {
-            logger.error(.init(stringLiteral: command))
-            logger.error(.init(stringLiteral: output.stderror))
-            throw ASError(message: output.error?.description ?? output.stderror)
+    public init(model: Cocoapods, variables: Variables) throws {
+        let variablesMaker = VariablesMaker(variables)
+        
+        var git: Cocoapods.Git? = nil
+        
+        if let item = model.git {
+            git = try .init(commitMessage: variablesMaker.textMaker(model.podspec),
+                            pushMode: item.pushMode)
         }
+        
+        var trunk: Cocoapods.Trunk? = nil
+        if let item = model.trunk {
+            switch item {
+            case .git(url: let url):
+                trunk = .git(url: try variablesMaker.textMaker(url))
+            case .github:
+                trunk = .github
+            }
+        }
+        
+        self.model = try Cocoapods(trunk: trunk,
+                                   git: git,
+                                   podspec: variablesMaker.textMaker(model.podspec))
     }
     
     struct Repo {
@@ -74,7 +79,7 @@ public struct CocoapodsController {
     }
     
     fileprivate func getRepoName(_ url: String) throws -> String? {
-        return try shell("pod repo list")
+        return try shell("pod repo list", logger: logger)
             .components(separatedBy: "\n\n")
             .filter { $0.contains(url) }
             .first?
@@ -84,21 +89,19 @@ public struct CocoapodsController {
     }
     
     public func run() throws {
-        try shell("pod --version")
-        let file = try FilePath(path: model.podspec)
-        try shell("pod lib lint \(file.path) --allow-warnings")
+        try shell("pod --version", logger: logger)
+        let filePath = model.podspec
+        try shell("pod lib lint \(filePath) --allow-warnings", logger: logger)
         
         guard let gitConfig = model.git else {
             return
         }
         
         let git = Git()
-        let tidy = TidyController()
 
         switch gitConfig.pushMode {
         case .branch:
-            _ = try tidy.textMaker(gitConfig.commitMessage, variables: variables)
-            try? git.add(path: file.path)
+            try? git.add(path: filePath)
             try? git.commit(options: [.message(gitConfig.commitMessage)])
             try? git.push()
         case .tag:
@@ -106,20 +109,19 @@ public struct CocoapodsController {
                 return
             }
             
-            let message = try tidy.textMaker(gitConfig.commitMessage, variables: variables)
-            try? git.add(path: file.path)
-            try? git.commit(options: [.message(message)])
+            try? git.add(path: filePath)
+            try? git.commit(options: [.message(gitConfig.commitMessage)])
             try? git.push()
             
             switch trunk {
             case .github:
-                try shell("pod trunk push \(file.path) --allow-warnings")
+                try shell("pod trunk push \(filePath) --allow-warnings", logger: logger)
             case .git(url: let url):
-                let url = try tidy.textMaker(url, variables: variables)
+                let url = url
                 var repoName = try getRepoName(url)
                 
                 if repoName == nil, let name = url.split(separator: "/").last?.split(separator: ".").first {
-                    try shell("pod repo add \(name) \(url)")
+                    try shell("pod repo add \(name) \(url)", logger: logger)
                     repoName = try getRepoName(url)
                 }
                 
@@ -127,7 +129,7 @@ public struct CocoapodsController {
                     throw ASError(message: "无法获取对应 repo")
                 }
                 
-                try shell("pod repo push \(name) \(file.path) --allow-warnings")
+                try shell("pod repo push \(name) \(filePath) --allow-warnings", logger: logger)
             }
         case .none:
             return

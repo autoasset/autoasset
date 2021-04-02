@@ -52,6 +52,12 @@ public struct Cocoapods {
         public let commitMessage: String
         public let pushMode: GitPush
         
+        public init(commitMessage: String,
+                    pushMode: GitPush) {
+            self.commitMessage = commitMessage
+            self.pushMode = pushMode
+        }
+        
         init?(from json: JSON) {
             commitMessage = json["commitMessage"].stringValue
             if json["pushToBranch"].boolValue {
@@ -70,6 +76,14 @@ public struct Cocoapods {
     public let trunk: Trunk?
     public let git: Git?
     public let podspec: String
+    
+    public init(trunk: Trunk?,
+                git: Git?,
+                podspec: String) {
+        self.trunk = trunk
+        self.git = git
+        self.podspec = podspec
+    }
     
     init?(from json: JSON) {
         

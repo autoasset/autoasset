@@ -32,6 +32,7 @@ import AutoassetTidy
 import Git
 import Bash
 import Logging
+import VariablesMaker
 
 public struct AutoAsset: ParsableCommand {
     
@@ -71,9 +72,8 @@ extension AutoAsset {
                 }
                 if let bash = config.debug?.bash,
                    bash.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false {
-                    let tidyController = TidyController()
-                    try Bash.shell(tidyController.textMaker(bash, variables: config.variables),
-                                   logger: Logger(label: "bash"))
+                    let variablesMaker = VariablesMaker(config.variables)
+                    try Bash.shell(variablesMaker.textMaker(bash), logger: Logger(label: "bash"))
                 }
                 throw error
             }
@@ -86,26 +86,25 @@ extension AutoAsset {
         switch mode {
         case .download(name: let name):
             if let model = config.download {
-                try DownloadController(model: model).run(name: name)
+                try DownloadController(model: model, variables: config.variables).run(name: name)
             }
         case .cocoapods:
             if let model = config.cocoapods {
                 try CocoapodsController(model: model, variables: config.variables).run()
             }
         case .tidy(name: let name):
-            let tidyController = TidyController()
-            try tidyController.run(name: name, tidy: config.tidy, variables: config.variables)
+            let tidyController = TidyController(tidy: config.tidy, variables: config.variables)
+            try tidyController.run(name: name)
         case .xcassets:
-            try XcassetsController(model: config.xcassets).run()
+            try XcassetsController(model: config.xcassets, variables: config.variables).run()
         case .config(name: let name):
             guard let item = config.configs.first(where: { $0.name == name }) else {
                 return
             }
             item.inputs.forEach(begin(path:))
         case .bash(command: let command):
-            let tidyController = TidyController()
-            try Bash.shell(tidyController.textMaker(command, variables: config.variables),
-                           logger: Logger(label: "bash"))
+            let variablesMaker = VariablesMaker(config.variables)
+            try Bash.shell(variablesMaker.textMaker(command), logger: Logger(label: "bash"))
         }
     }
     

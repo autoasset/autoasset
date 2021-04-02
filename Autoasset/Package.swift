@@ -13,6 +13,7 @@ let Git = "Git"
 let CSV = "CSV"
 let Bash = "Bash"
 let ASError = "ASError"
+let VariablesMaker = "VariablesMaker"
 
 let package = Package(
     name: "autoasset",
@@ -34,8 +35,8 @@ let package = Package(
         ]),
         
         .target(name: AutoassetTidy, dependencies: [
-            .init(stringLiteral: Git),
             .init(stringLiteral: ASError),
+            .init(stringLiteral: VariablesMaker),
             .init(stringLiteral: AutoassetModels),
             .product(name: "StemCrossPlatform", package: "Stem"),
             .product(name: "Logging", package: "swift-log")
@@ -44,6 +45,7 @@ let package = Package(
         .target(name: AutoassetDownload, dependencies: [
             .init(stringLiteral: Git),
             .init(stringLiteral: ASError),
+            .init(stringLiteral: VariablesMaker),
             .init(stringLiteral: AutoassetModels),
             .product(name: "StemCrossPlatform", package: "Stem"),
             .product(name: "Logging", package: "swift-log")
@@ -51,7 +53,7 @@ let package = Package(
         
         .target(name: AutoassetCocoapods, dependencies: [
             .init(stringLiteral: Git),
-            .init(stringLiteral: AutoassetTidy),
+            .init(stringLiteral: VariablesMaker),
             .init(stringLiteral: AutoassetModels),
             .init(stringLiteral: ASError),
             .init(stringLiteral: Bash),
@@ -62,6 +64,7 @@ let package = Package(
         
         .target(name: AutoassetXcassets, dependencies: [
             .init(stringLiteral:CSV),
+            .init(stringLiteral: VariablesMaker),
             .init(stringLiteral:AutoassetModels),
             .init(stringLiteral: ASError),
             .product(name: "StemCrossPlatform", package: "Stem"),
@@ -82,6 +85,13 @@ let package = Package(
             .product(name: "Logging", package: "swift-log")
         ]),
         
+        .target(name: VariablesMaker, dependencies: [
+            .init(stringLiteral: ASError),
+            .init(stringLiteral: Git),
+            .init(stringLiteral: AutoassetModels),
+            .product(name: "StemCrossPlatform", package: "Stem"),
+        ]),
+        
         .target(name: ASError, dependencies: []),
         .target(name: CSV, dependencies: []),
 
@@ -89,6 +99,7 @@ let package = Package(
             .init(stringLiteral: ASError),
             .init(stringLiteral: Git),
             .init(stringLiteral: Bash),
+            .init(stringLiteral: VariablesMaker),
             .init(stringLiteral: AutoassetDownload),
             .init(stringLiteral: AutoassetModels),
             .init(stringLiteral: AutoassetXcassets),

@@ -29,8 +29,8 @@ import CSV
 struct ImageXcassetsController: XcassetsControllerProtocol {
     
     let xcassets: Xcassets
-    var resources: [Xcassets.Image] { xcassets.images }
-    let logger = Logger(label: "image")
+    private var resources: [Xcassets.Image] { xcassets.images }
+    private let logger = Logger(label: "image")
 
     func run() throws {
         setDefaultFiles()

@@ -24,13 +24,44 @@ import Foundation
 import StemCrossPlatform
 import AutoassetModels
 import Logging
+import VariablesMaker
 
 public struct XcassetsController {
     
-    let xcassets: Xcassets
-
-    public init(model: Xcassets) {
-        self.xcassets = model
+    private let xcassets: Xcassets
+    
+    public init(model: Xcassets, variables: Variables) throws {
+        let variablesMaker = VariablesMaker(variables)
+        self.xcassets = try Xcassets(colors: model.colors.map({ item -> Xcassets.Color in
+            return try .init(inputs: item.inputs.map(variablesMaker.textMaker(_:)),
+                             output: variablesMaker.textMaker(item.output),
+                             space: variablesMaker.textMaker(item.space))
+        }),
+        images: model.images.map({ item -> Xcassets.Image in
+            return try .init(inputs: item.inputs.map(variablesMaker.textMaker(_:)),
+                             output: variablesMaker.textMaker(item.output),
+                             report: variablesMaker.textMaker(item.report),
+                             prefix: variablesMaker.textMaker(item.prefix),
+                             contents: variablesMaker.textMaker(item.contents),
+                             bundle_name: variablesMaker.textMaker(item.bundle_name))
+        }),
+        gifs: model.gifs.map({ item -> Xcassets.Data in
+            return try .init(inputs: item.inputs.map(variablesMaker.textMaker(_:)),
+                             output: variablesMaker.textMaker(item.output),
+                             report: variablesMaker.textMaker(item.report),
+                             prefix: variablesMaker.textMaker(item.prefix),
+                             contents: variablesMaker.textMaker(item.contents),
+                             bundle_name: variablesMaker.textMaker(item.bundle_name))
+        }),
+        datas: model.datas.map({ item -> Xcassets.Data in
+            return try .init(inputs: item.inputs.map(variablesMaker.textMaker(_:)),
+                             output: variablesMaker.textMaker(item.output),
+                             report: variablesMaker.textMaker(item.report),
+                             prefix: variablesMaker.textMaker(item.prefix),
+                             contents: variablesMaker.textMaker(item.contents),
+                             bundle_name: variablesMaker.textMaker(item.bundle_name))
+        }),
+        template: Xcassets.Template(output: variablesMaker.textMaker(model.template?.output)))
     }
     
     public func run() throws {

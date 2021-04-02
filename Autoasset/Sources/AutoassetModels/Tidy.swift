@@ -25,10 +25,18 @@ import StemCrossPlatform
 
 public struct Tidy {
     
-    public class Copy {
+    public struct Copy {
         public let name: String
         public let inputs: [String]
         public let output: String
+        
+        public init(name: String,
+                    inputs: [String],
+                    output: String) {
+            self.name = name
+            self.inputs = inputs
+            self.output = output
+        }
         
         init?(from json: JSON) {
             name = json["name"].stringValue
@@ -47,15 +55,23 @@ public struct Tidy {
     }
     
     
-    public class Create {
+    public struct Create {
         public let name: String
         public let type: CreateInput
         public let output: String
-
+        
+        public init(name: String,
+                    type: CreateInput,
+                    output: String) {
+            self.name = name
+            self.type = type
+            self.output = output
+        }
+        
         init?(from json: JSON) {
             name = json["name"].stringValue
             output = json["output"].stringValue
-
+            
             if let item = json["text"].string, item.isEmpty == false {
                 type = .text(item)
             } else if let item = json["input"].string, item.isEmpty == false {
@@ -63,7 +79,7 @@ public struct Tidy {
             } else {
                 return nil
             }
-                        
+            
             guard name.isEmpty == false,
                   output.isEmpty == false else {
                 return nil
@@ -71,9 +87,15 @@ public struct Tidy {
         }
     }
     
-    public class Clear {
+    public struct Clear {
         public let name: String
         public let inputs: [String]
+        
+        public init(name: String,
+                    inputs: [String]) {
+            self.name = name
+            self.inputs = inputs
+        }
         
         init?(from json: JSON) {
             name = json["name"].stringValue
@@ -87,7 +109,13 @@ public struct Tidy {
     public let clears: [Clear]
     public let copies: [Copy]
     public let create: [Create]
-
+    
+    public init(clears: [Clear], copies: [Copy], create: [Create]) {
+        self.clears = clears
+        self.copies = copies
+        self.create = create
+    }
+    
     init(from json: JSON) {
         clears = json["clears"].arrayValue.compactMap(Clear.init(from:))
         copies = json["copies"].arrayValue.compactMap(Copy.init(from:))

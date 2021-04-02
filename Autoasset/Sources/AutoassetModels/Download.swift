@@ -31,6 +31,16 @@ public struct Download {
         public let output: String
         public let branch: String
         
+        public init(name: String,
+                    input: String,
+                    output: String,
+                    branch: String) {
+            self.name   = name
+            self.input  = input
+            self.output = output
+            self.branch = branch
+        }
+        
         init?(from json: JSON) {
             self.name   = json["name"].stringValue
             self.output = json["output"].stringValue
@@ -46,6 +56,10 @@ public struct Download {
     }
     
     public let gits: [Git]
+    
+    public init(gits: [Git]) {
+        self.gits = gits
+    }
     
     init(from json: JSON) {
         self.gits = json["gits"].arrayValue.compactMap(Git.init(from:))

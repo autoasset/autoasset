@@ -24,13 +24,21 @@ import Foundation
 import AutoassetModels
 import Git
 import Logging
+import VariablesMaker
 
 public struct DownloadController {
     
     public let model: Download
+    let logger = Logger(label: "download")
     
-    public init(model: Download) {
-        self.model = model
+    public init(model: Download, variables: Variables) throws {
+        let variablesMaker = VariablesMaker(variables)
+        self.model = try .init(gits: model.gits.map({ item -> Download.Git in
+            return try .init(name: item.name,
+                             input: variablesMaker.textMaker(item.input),
+                             output: variablesMaker.textMaker(item.output),
+                             branch: variablesMaker.textMaker(item.branch))
+        }))
     }
     
     public func run(name: String) throws {
@@ -39,7 +47,6 @@ public struct DownloadController {
         }
         
         let git = Git()
-        let logger = Logger(label: "download - \(name)")
         let desc = [task.input, task.branch, task.output].joined(separator: " ")
         logger.info(.init(stringLiteral: desc))
         try git.clone(url: task.input,
