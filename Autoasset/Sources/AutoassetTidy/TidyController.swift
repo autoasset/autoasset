@@ -40,19 +40,25 @@ public struct TidyController {
     }
     
     public func run(name: String) throws {
-        try clearTask(name)
-        try copyTask(name)
-        try createTask(name)
+        let flag1 = try clearTask(name)
+        let flag2 = try copyTask(name)
+        let flag3 = try createTask(name)
+        
+        if flag1 || flag2 || flag3 { } else {
+            logger.error(.init(stringLiteral: "未查询到任务: \(name)"))
+        }
     }
     
 }
 
 extension TidyController {
     
-    func createTask(_ name: String) throws {
+    func createTask(_ name: String) throws -> Bool {
         guard let item = tidy.create.first(where: { $0.name == name }) else {
-            return
+            return false
         }
+        
+        logger.info(.init(stringLiteral: "任务: \(name)"))
         
         var type: Tidy.CreateInput
         switch item.type {
@@ -80,12 +86,15 @@ extension TidyController {
         try? output.delete()
         logger.info(.init(stringLiteral: "正在创建: \(model.output)"))
         try output.create(with: text.data(using: .utf8))
+        
+        return true
     }
     
-    func clearTask(_ name: String) throws {
+    func clearTask(_ name: String) throws -> Bool {
         guard let item = tidy.clears.first(where: { $0.name == name }) else {
-            return
+            return false
         }
+        logger.info(.init(stringLiteral: "任务: \(name)"))
         
         let model = try Tidy.Clear(name: name, inputs: item.inputs.map(variablesMaker.textMaker(_:)))
         
@@ -97,17 +106,20 @@ extension TidyController {
                 logger.error(.init(stringLiteral: error.localizedDescription))
             }
         }
+        
+        return true
     }
     
-    func copyTask(_ name: String) throws {
+    func copyTask(_ name: String) throws -> Bool {
         guard let item = tidy.copies.first(where: { $0.name == name }) else {
-            return
+            return false
         }
+        logger.info(.init(stringLiteral: "任务: \(name)"))
         
         let model = try Tidy.Copy(name: name,
                                   inputs: item.inputs.map(variablesMaker.textMaker(_:)),
                                   output: variablesMaker.textMaker(item.output))
-
+        
         
         let output = try FilePath(path: model.output, type: .folder)
         
@@ -116,6 +128,7 @@ extension TidyController {
             try input.copy(to: output)
         }
         
+        return true
     }
     
 }

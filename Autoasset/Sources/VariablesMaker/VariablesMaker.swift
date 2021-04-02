@@ -13,7 +13,7 @@ import ASError
 
 public struct VariablesMaker {
     
-    let variables: Variables
+    public let variables: Variables
     
     public init(_ variables: Variables) {
         self.variables = variables
@@ -25,6 +25,8 @@ public struct VariablesMaker {
         }
         return try textMaker(text)
     }
+    
+    
     
     public func textMaker(_ text: String) throws -> String {
         var outputText = text
@@ -48,14 +50,10 @@ public struct VariablesMaker {
                 replace = try Git().revParse(output: [.abbrevRef(names: ["HEAD"])])
             case .gitCurrentBranchNumber:
                 replace = try Git().revParse(output: [.abbrevRef(names: ["HEAD"])]).filter(\.isNumber)
+            case .gitMaxTagNumber:
+                replace = "\(try getGitMaxTagMumber())"
             case .gitNextTagNumber:
-                let number = try Git().lsRemote(mode: [.tags], options: [.refs], repository: "origin")
-                    .split(separator: "\n")
-                    .compactMap { $0.split(separator: "\t").last?.filter(\.isNumber) }
-                    .compactMap { Int($0) }
-                    .sorted(by: >)
-                    .first ?? 0
-                replace = "\(number + 1)"
+                replace = "\(try getGitMaxTagMumber() + 1)"
             }
             
             guard replace.isEmpty == false else {
@@ -71,7 +69,7 @@ public struct VariablesMaker {
         
         return try self.textMaker(outputText)
     }
-
+    
     public func fileMaker(_ input: String) throws -> String {
         let inputPath = try self.textMaker(input)
         let inputPathFile = try FilePath(path: inputPath, type: .file)
@@ -82,4 +80,15 @@ public struct VariablesMaker {
     }
 }
 
-
+private extension VariablesMaker {
+    
+    func getGitMaxTagMumber() throws -> Int {
+        return try Git().lsRemote(mode: [.tags], options: [.refs], repository: "origin")
+            .split(separator: "\n")
+            .compactMap { $0.split(separator: "\t").last?.filter(\.isNumber) }
+            .compactMap { Int($0) }
+            .sorted(by: >)
+            .first ?? 0
+    }
+    
+}

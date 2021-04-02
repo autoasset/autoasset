@@ -28,7 +28,7 @@ protocol XcassetsControllerProtocol {}
 extension XcassetsControllerProtocol {
  
     func read(paths: [String], predicates: [FilePath.SearchPredicate]) throws -> [FilePath] {
-        return try paths.compactMap({ try FilePath(path: $0) })
+        return try paths.compactMap({ try? FilePath(path: $0) })
             .map({ path -> [FilePath] in
                 switch path.type {
                 case .file:

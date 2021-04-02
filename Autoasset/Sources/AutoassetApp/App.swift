@@ -47,41 +47,62 @@ public struct AutoAsset: ParsableCommand {
     public init() {}
     
     public func run() throws {
-        begin(path: configPath ?? "autoasset.yml")
+        begin(path: configPath ?? "autoasset.yml", variables: nil, superConfig: nil)
     }
 }
 
 extension AutoAsset {
     
-    func begin(path: String) {
+    func begin(config: Config, variables: Variables?, superConfig: Config?) throws {
+        var config = config
+        if config.debug == nil {
+            config.debug = superConfig?.debug
+        }
+        
+        if let placeHolders = variables?.placeHolders {
+            config.variables = Variables(placeHolders: config.variables.placeHolders + placeHolders,
+                                         dateFormat: config.variables.dateFormat)
+            
+        }
+        
         do {
+            try config.modes.forEach { try run(with: $0, config: config) }
+        } catch {
+            do {
+                if let path = config.debug?.error {
+                    let output = try FilePath(path: path, type: .file)
+                    try? output.delete()
+                    try output.create(with: error.localizedDescription.data(using: .utf8))
+                }
+                
+                if let command = config.debug?.bash {
+                    let variablesMaker = VariablesMaker(config.variables)
+                    try Bash.shell(variablesMaker.textMaker(command), logger: Logger(label: "bash"))
+                }
+            } catch {
+                throw error
+            }
+        }
+    }
+    
+    
+    func begin(path: String, variables: Variables?, superConfig: Config?) {
+        do {
+            let logger = Logger(label: "config")
+            logger.info(.init(stringLiteral: "path: \(path)"))
             let path = try FilePath(path: path, type: .file)
             let data = try path.data()
             guard let text = String(data: data, encoding: .utf8),
                   let yml = try Yams.load(yaml: text) else {
                 return
             }
-            let config = Config(from: JSON(yml))
-            do {
-                try config.modes.forEach { try run(with: $0, config: config) }
-            } catch {
-                if let output = config.debug?.error {
-                    let file = try FilePath(path: output, type: .file)
-                    try? file.delete()
-                    try file.create(with: error.localizedDescription.data(using: .utf8))
-                }
-                if let bash = config.debug?.bash,
-                   bash.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false {
-                    let variablesMaker = VariablesMaker(config.variables)
-                    try Bash.shell(variablesMaker.textMaker(bash), logger: Logger(label: "bash"))
-                }
-                throw error
-            }
+            try self.begin(config: Config(from: JSON(yml)), variables: variables, superConfig: superConfig)
         } catch {
             print(error.localizedDescription)
         }
-    }
         
+    }
+    
     func run(with mode: Mode, config: Config) throws {
         switch mode {
         case .download(name: let name):
@@ -101,7 +122,24 @@ extension AutoAsset {
             guard let item = config.configs.first(where: { $0.name == name }) else {
                 return
             }
-            item.inputs.forEach(begin(path:))
+            let variablesMaker = VariablesMaker(config.variables)
+            
+            let placeHolders = try item.variables.placeHolders.reduce([String: String]()) { (result, item) -> [String: String] in
+                switch item {
+                case .custom(key: let key, value: let value):
+                    var result = result
+                    result.updateValue(try variablesMaker.textMaker(value), forKey: key)
+                    return result
+                default:
+                    return result
+                }
+            }
+            
+            try item.inputs.forEach {
+                try begin(path: variablesMaker.textMaker($0),
+                          variables:.init(placeHolders: placeHolders),
+                          superConfig: config)
+            }
         case .bash(command: let command):
             let variablesMaker = VariablesMaker(config.variables)
             try Bash.shell(variablesMaker.textMaker(command), logger: Logger(label: "bash"))

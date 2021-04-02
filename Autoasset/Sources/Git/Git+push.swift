@@ -27,10 +27,23 @@ import Bash
 public extension Git {
     
     enum PushOptions {
-        var command: String { "" }
+        case delete
+        case repository(String)
+        case refspec(String)
+        
+        var command: String {
+            switch self {
+            case .delete:
+                return "--delete"
+            case .repository(let result):
+                return result
+            case .refspec(let result):
+                return result
+            }
+        }
     }
     
-    func push(options: [AddOptions] = []) throws {
+    func push(options: [PushOptions] = []) throws {
         let commands = ["git", "push"]
             + options.map(\.command)
         let command = commands.joined(separator: " ")

@@ -98,7 +98,7 @@ public struct CocoapodsController {
         }
         
         let git = Git()
-
+        
         switch gitConfig.pushMode {
         case .branch:
             try? git.add(path: filePath)
@@ -109,33 +109,45 @@ public struct CocoapodsController {
                 return
             }
             
+            let data = try FilePath(path: filePath, type: .file).data()
+            guard let version = String(data: data, encoding: .utf8)?
+                    .split(separator: "\n")
+                    .filter({ $0.contains("s.version") })
+                    .first?
+                    .filter(\.isNumber) else {
+                return
+            }
+            
             try? git.add(path: filePath)
             try? git.commit(options: [.message(gitConfig.commitMessage)])
-            try? git.push()
-            
-            switch trunk {
-            case .github:
-                try shell("pod trunk push \(filePath) --allow-warnings", logger: logger)
-            case .git(url: let url):
-                let url = url
-                var repoName = try getRepoName(url)
-                
-                if repoName == nil, let name = url.split(separator: "/").last?.split(separator: ".").first {
-                    try shell("pod repo add \(name) \(url)", logger: logger)
-                    repoName = try getRepoName(url)
+            try git.tag(tagname: version)
+            do {
+                try git.push(options: [.repository("origin"), .refspec(version)])
+                switch trunk {
+                case .github:
+                    try shell("pod trunk push \(filePath) --allow-warnings", logger: logger)
+                case .git(url: let url):
+                    let url = url
+                    var repoName = try getRepoName(url)
+                    
+                    if repoName == nil, let name = url.split(separator: "/").last?.split(separator: ".").first {
+                        try shell("pod repo add \(name) \(url)", logger: logger)
+                        repoName = try getRepoName(url)
+                    }
+                    
+                    guard let name = repoName else {
+                        throw ASError(message: "无法获取对应 repo")
+                    }
+                    
+                    try shell("pod repo push \(name) \(filePath) --allow-warnings", logger: logger)
                 }
-                
-                guard let name = repoName else {
-                    throw ASError(message: "无法获取对应 repo")
-                }
-                
-                try shell("pod repo push \(name) \(filePath) --allow-warnings", logger: logger)
+            } catch {
+                logger.error(.init(stringLiteral: error.localizedDescription))
+                throw error
             }
         case .none:
             return
         }
-        
-        
     }
     
 }

@@ -30,12 +30,14 @@ public enum PlaceHolder {
     case gitCurrentBranch
     case gitCurrentBranchNumber
     case gitNextTagNumber
+    case gitMaxTagNumber
     case custom(key: String, value: String)
     
     public static var systems: [PlaceHolder] { [.dateNow,
                                                 .dateFormat,
                                                 .gitCurrentBranch,
                                                 .gitCurrentBranchNumber,
+                                                .gitMaxTagNumber,
                                                 .gitNextTagNumber] }
     
     var variable: String {
@@ -45,6 +47,7 @@ public enum PlaceHolder {
         case .gitCurrentBranch:        return "autoasset.git.branch.current"
         case .gitCurrentBranchNumber:  return "autoasset.git.branch.current.number"
         case .gitNextTagNumber:        return "autoasset.git.tag.next.number"
+        case .gitMaxTagNumber:         return "autoasset.git.tag.max.number"
         case .custom(key: let key, _): return key
         }
     }
@@ -55,8 +58,9 @@ public enum PlaceHolder {
         case .dateFormat:              return "设置时间格式, 默认为 yyyy-MM-dd HH:mm:ss"
         case .gitCurrentBranch:        return "获取当前 Git Branch 名称"
         case .gitCurrentBranchNumber:  return "获取当前 Git Branch 名称中的数字部分"
-        case .gitNextTagNumber:        return "获取远端 Git Tags 中最大的数字, 未创建分支为 1"
-        case .custom(key: _, let value): return "\(value)"
+        case .gitNextTagNumber:        return "获取远端 Git Tags 中最大的数字 + 1, 未创建分支为 1"
+        case .gitMaxTagNumber:         return "获取远端 Git Tags 中最大的数字, 未创建分支为 0"
+        case .custom(key: let key, let value): return "key: \(key) value: \(value)"
         }
     }
     
@@ -67,29 +71,43 @@ public enum PlaceHolder {
 public struct Variables {
     
     public let dateFormat: String
-    public var placeHolders: [PlaceHolder]
-    public var placeHolderNames: [String]
+    public let placeHolders: [PlaceHolder]
+    public let placeHolderNames: Set<String>
     
-    init(from json: JSON) {
-        
-        var placeHolderNames = PlaceHolder.systems.map(\.name)
+    public init(placeHolders newList: [PlaceHolder], dateFormat: String = "yyyy-MM-dd HH:mm:ss") {
+        var placeHolderNames = Set(PlaceHolder.systems.map(\.name))
         var placeHolders = PlaceHolder.systems
-        var dateFormat = "yyyy-MM-dd HH:mm:ss"
+
+        for placeHolder in newList {
+            guard placeHolderNames.insert(placeHolder.name).inserted else {
+                continue
+            }
+            placeHolders.append(placeHolder)
+        }
         
-        json.dictionaryValue.forEach { (key, result) in
+        self.placeHolderNames = placeHolderNames
+        self.placeHolders = placeHolders
+        self.dateFormat = dateFormat
+    }
+    
+    public init(placeHolders dictionary: [String: String]) {
+        var dateFormat = "yyyy-MM-dd HH:mm:ss"
+        var placeHolders = [PlaceHolder]()
+        dictionary.forEach { (key, result) in
             switch key {
             case PlaceHolder.dateFormat.variable:
-                dateFormat = result.string?.trimmingCharacters(in: .whitespacesAndNewlines) ?? dateFormat
+                dateFormat = result.trimmingCharacters(in: .whitespacesAndNewlines)
             default:
-                let placeholder = PlaceHolder.custom(key: key, value: result.stringValue.trimmingCharacters(in: .whitespacesAndNewlines))
-                placeHolders.append(placeholder)
-                placeHolderNames.append(placeholder.name)
+                placeHolders.append(.custom(key: key, value: result.trimmingCharacters(in: .whitespacesAndNewlines)))
             }
         }
         
-        self.dateFormat = dateFormat
-        self.placeHolderNames = placeHolderNames
-        self.placeHolders = placeHolders
+        self.init(placeHolders: placeHolders, dateFormat: dateFormat)
+    }
+    
+    
+    init(from json: JSON) {
+        self.init(placeHolders: json.dictionaryValue.compactMapValues(\.string))
     }
     
 }

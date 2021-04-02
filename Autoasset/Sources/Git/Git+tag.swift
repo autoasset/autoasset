@@ -43,9 +43,11 @@ public extension Git {
         }
     }
     
-    func tag(options: [TagOptions] = []) throws -> String {
+    @discardableResult
+    func tag(options: [TagOptions] = [], tagname: String? = nil) throws -> String {
         let commands = ["git", "tag"]
             + options.map(\.command)
+            + [tagname].compactMap({$0})
         let command = commands.joined(separator: " ")
         return try shell(command, logger: logger)
     }

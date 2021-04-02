@@ -28,9 +28,17 @@ public struct Config {
     public class Children {
         public let name: String
         public let inputs: [String]
+        public let variables: Variables
+        
+        public init(name: String, inputs: [String], variables: Variables) {
+            self.name = name
+            self.inputs = inputs
+            self.variables = variables
+        }
         
         init?(from json: JSON) {
             name = json["name"].stringValue
+            variables = Variables(from: json["variables"])
             inputs = json["inputs"].arrayValue.compactMap(\.string)
             guard name.isEmpty == false else {
                 return nil
@@ -40,12 +48,12 @@ public struct Config {
     
     public let configs: [Children]
     public let modes: [Mode]
-    public let debug: Debug?
+    public var debug: Debug?
     public let cocoapods: Cocoapods?
     public let xcassets: Xcassets
     public let download: Download?
     public let tidy: Tidy
-    public let variables: Variables
+    public var variables: Variables
     
     public init(from json: JSON) {
         configs = json["configs"].arrayValue.compactMap(Children.init(from:))
