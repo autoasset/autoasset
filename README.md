@@ -232,7 +232,7 @@ cocoapods:
   podspec: APPName.podspec
   git:
     pushToTag: true
-		pushToBranch: false
+    pushToBranch: false
     commitMessage: "[ci skip] tag: ${Version}, date: ${timeNow}"
   trunk:
   	isGithub: false,
