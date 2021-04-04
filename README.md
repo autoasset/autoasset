@@ -2,7 +2,7 @@
 
 
 
-### Mode
+## mode
 
 > 任务编排模块, 由上至下依次执行任务.
 
@@ -12,7 +12,9 @@
 
 - `xcassets`: 执行 iOS中xcassets 资源文件处理模块任务.
 
-#### download
+
+
+## download
 
 >下载模块配置.
 
@@ -41,8 +43,7 @@ download:
 
 
 
-
-#### tidy
+## tidy
 
 >文件服务模块
 
@@ -119,7 +120,7 @@ download:
 
 
 
-#### xcassets
+## xcassets
 
 >UI资源快速快速处理为 xcassets 文件, 生成映射代码模块.
 
