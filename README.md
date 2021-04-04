@@ -106,7 +106,6 @@ download:
     mode:
       tidy: create-fastlane-env
       tidy: create-message
-    	
     tidy:
       create:
         - name: create-fastlane-env
