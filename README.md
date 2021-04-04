@@ -2,17 +2,51 @@
 
 
 
+## variables
+
+> 变量配置
+
+内置变量集:
+
+| autoasset.date.now                  | 获取当前时间                                       |
+| ----------------------------------- | -------------------------------------------------- |
+| autoasset.date.format               | 设置时间格式, 默认为 yyyy-MM-dd HH:mm:ss           |
+| autoasset.git.branch.current        | 获取当前 Git Branch 名称                           |
+| autoasset.git.branch.current.number | 获取当前 Git Branch 名称中的数字部分               |
+| autoasset.git.tag.next.number       | 获取远端 Git Tags 中最大的数字 + 1, 未创建分支为 1 |
+| autoasset.git.tag.max.number        | 获取远端 Git Tags 中最大的数字, 未创建分支为 0     |
+
+自定义变量:
+
+- 格式: <key>: <value>
+
+- 使用: 在文本中插入${<key>}, 则在使用到该变量时自动替换.
+
+- tips: 支持嵌套定义, 例如:
+
+  ```yaml
+  variables:
+    MessageVersion: ${autoasset.git.tag.max.number}
+    Message: ${MessageVersion}
+  ```
+
+- 范围: 只在以下两种情况下 `variables` 失效.
+
+  - 不适用: mode 中 <xxx>: <name>, 需要搜索的任务名需要明确.
+  - 不适用: tidy 中 copies 输入的文本内容. 因为直接复制文件,不读取内容, 需要替换可以使用`create`代替.
+
 ## mode
 
 > 任务编排模块, 由上至下依次执行任务.
 
 - `download: <name>`: 执行 `download` 模块中同名任务.
-
 - `tidy: <name>`: 执行 tidy模块中同名任务.
-
 - `xcassets`: 执行 iOS中xcassets 资源文件处理模块任务.
-
 - `cocoapods`: 内置的 cocoapods 校验上传模块.
+- `config: <name>`: 执行 `configs` 模块中同名任务.
+- `bash: <command>`: 执行 bash 语句.
+
+
 
 ## download
 
@@ -214,9 +248,11 @@ download:
   ```
   
 
+
+
 ## cocoapods
 
-> 1
+> 内置的 cocoapods 发布模块
 
 - `podspec`: 指定的`podspec`文件路径.
 - `git`: 推送/发布模块, 不配置不上传.
@@ -239,3 +275,35 @@ cocoapods:
     repo: git@github.com:autoasset/specs.git
 ```
 
+
+
+## configs
+
+> 子任务集
+
+- `name`: 任务名, 用于Mode中任务搜寻.
+- `inputs`: 子任务路径集.
+- `variables`: 从当前任务输入至子任务变量集.
+
+```yaml
+variables:
+  APPName: AutoAssets
+  Version: ${autoasset.git.tag.next.number}
+  MessageVersion: ${autoasset.git.tag.max.number}
+  timeNow: ${autoasset.date.now}
+
+configs:
+  - name: create-message-post
+    inputs:
+      - .autoasset/create-message-post.yml
+    variables:
+      message: |
+        AutoAssets  🎉🎉🎉
+        -------------------------------
+        >  版本号: ${MessageVersion}
+        ------------------------------
+        > pod '${APPName}', '${MessageVersion}'
+        -------------------------------
+        > pod update ${APPName}
+        -------------------------------
+```
