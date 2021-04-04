@@ -40,7 +40,7 @@ public struct CocoapodsController {
         var git: Cocoapods.Git? = nil
         
         if let item = model.git {
-            git = try .init(commitMessage: variablesMaker.textMaker(model.podspec),
+            git = try .init(commitMessage: variablesMaker.textMaker(item.commitMessage),
                             pushMode: item.pushMode)
         }
         
@@ -91,6 +91,7 @@ public struct CocoapodsController {
     public func run() throws {
         try shell("pod --version", logger: logger)
         let filePath = model.podspec
+        let rootPath = try FilePath(path: "./").path
         try shell("pod lib lint \(filePath) --allow-warnings", logger: logger)
         
         guard let gitConfig = model.git else {
@@ -101,14 +102,13 @@ public struct CocoapodsController {
         
         switch gitConfig.pushMode {
         case .branch:
-            try? git.add(path: filePath)
+            try? git.add(path: rootPath)
             try? git.commit(options: [.message(gitConfig.commitMessage)])
             try? git.push()
         case .tag:
             guard let trunk = model.trunk else {
                 return
             }
-            
             let data = try FilePath(path: filePath, type: .file).data()
             guard let version = String(data: data, encoding: .utf8)?
                     .split(separator: "\n")
@@ -118,10 +118,12 @@ public struct CocoapodsController {
                 return
             }
             
-            try? git.add(path: filePath)
-            try? git.commit(options: [.message(gitConfig.commitMessage)])
-            try git.tag(tagname: version)
             do {
+                try? git.add(path: ".")
+                try  git.commit(options: [.message(gitConfig.commitMessage)])
+                try? git.push(options: [.delete, .refspec(version)])
+                try? git.tag(options: [.delete], tagname: version)
+                try  git.tag(tagname: version)
                 try git.push(options: [.repository("origin"), .refspec(version)])
                 switch trunk {
                 case .github:
@@ -142,6 +144,7 @@ public struct CocoapodsController {
                     try shell("pod repo push \(name) \(filePath) --allow-warnings", logger: logger)
                 }
             } catch {
+                try? git.push(options: [.delete, .refspec(version)])
                 logger.error(.init(stringLiteral: error.localizedDescription))
                 throw error
             }

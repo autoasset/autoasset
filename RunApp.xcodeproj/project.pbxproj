@@ -281,6 +281,7 @@
 		CDE64485260E37D600DFC031 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Q5CT3J7RAS;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -292,6 +293,7 @@
 		CDE64486260E37D600DFC031 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Q5CT3J7RAS;
 				ENABLE_HARDENED_RUNTIME = YES;

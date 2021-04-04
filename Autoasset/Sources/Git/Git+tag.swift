@@ -33,9 +33,11 @@ public extension Git {
         case branch
         /// Show the number of entries currently stashed away.
         case showStash
-        
+        case delete
+
         var command: String {
             switch self {
+            case .delete: return "--delete"
             case .short: return "--short"
             case .branch: return "--branch"
             case .showStash: return "--show-stash"

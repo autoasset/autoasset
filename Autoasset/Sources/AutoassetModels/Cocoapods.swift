@@ -88,7 +88,7 @@ public struct Cocoapods {
     init?(from json: JSON) {
         
         trunk   = Trunk(from: json["trunk"])
-        git     = Git(from: json["trunk"])
+        git     = Git(from: json["git"])
         podspec = json["podspec"].stringValue
         
         if podspec.isEmpty {

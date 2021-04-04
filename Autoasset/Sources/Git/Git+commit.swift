@@ -35,7 +35,7 @@ public extension Git {
             case .allowEmpty:
                 return "--allow-empty"
             case .message(let result):
-                return "--message=\(result)"
+                return "--message=\"\(result)\""
             }
         }
     }

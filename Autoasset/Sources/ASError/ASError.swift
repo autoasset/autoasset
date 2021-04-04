@@ -30,10 +30,8 @@ public struct ASError: LocalizedError {
     
     public init(message: String,
                 code: Int = 0,
-                file: StaticString = #file,
-                line: UInt = #line,
                 function: StaticString = #function) {
-        let message = "\(file) - \(line) - \(function)\n\(message)"
+        let message = "\(function)\n\(message)"
         self.message = message
         self.errorDescription = message
         self.code = code
