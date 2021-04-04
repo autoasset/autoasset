@@ -22,8 +22,8 @@
 
 ```yaml
 mode:
-	download: download-autoasset
-	download: download-autoasset-2
+      download: download-autoasset
+      download: download-autoasset-2
 
 download:
 	#git数组
@@ -56,8 +56,8 @@ download:
 
     ```yaml
     mode:
-    	tidy: clear-sources
-    	tidy: clear-codes
+      tidy: clear-sources
+      tidy: clear-codes
     	
     tidy:
       clears:
@@ -79,17 +79,17 @@ download:
 
     ```yaml
     mode:
-    	tidy: copy-sources
-    	tidy: copy-codes
+      tidy: copy-sources
+      tidy: copy-codes
     	
     tidy:
       copies:
         - name: copy-sources
-    			output: Sources/UI
+          output: Sources/UI
           inputs:
             - UI
-    		- name: copy-codes
-    			output: Sources/codes
+        - name: copy-codes
+          output: Sources/codes
           inputs:
             - codes
     ```
@@ -106,8 +106,8 @@ download:
   
     ```yaml
     mode:
-    	tidy: create-fastlane-env
-    	tidy: create-message
+      tidy: create-fastlane-env
+      tidy: create-message
     	
     tidy:
       create:
