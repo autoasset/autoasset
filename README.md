@@ -12,7 +12,7 @@
 
 - `xcassets`: 执行 iOS中xcassets 资源文件处理模块任务.
 
-
+- `cocoapods`: 内置的 cocoapods 校验上传模块.
 
 ## download
 
@@ -210,9 +210,32 @@ download:
         bundle_name: DataBundle
         prefix: as_
         inputs:
-          - UI/gifs
+          - UI/data
   ```
   
-  
 
+## cocoapods
+
+> 1
+
+- `podspec`: 指定的`podspec`文件路径.
+- `git`: 推送/发布模块, 不配置不上传.
+  - `pushToTag`: true, 在Git仓库中创建与 `podspec`文件中版本号相同的tag并推送, 之后在`cocoapods`中发布该版本.
+  - `pushToBranch`: true, 在Git仓库推送变更至远端仓库.
+  - `commitMessage`: git 提交信息.
+- `trunk`:
+  - `isGithub`: true,  推送官方仓库.
+  - `repo`: 推送私有仓库的Git链接.
+
+```yaml
+cocoapods:
+  podspec: APPName.podspec
+  git:
+    pushToTag: true
+		pushToBranch: false
+    commitMessage: "[ci skip] tag: ${Version}, date: ${timeNow}"
+  trunk:
+  	isGithub: false,
+    repo: git@github.com:autoasset/specs.git
+```
 
