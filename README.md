@@ -26,7 +26,7 @@ mode:
       download: download-autoasset-2
 
 download:
-	#git数组
+  #git数组
   gits:
     - name: download-autoasset
       output: autoasset
@@ -58,13 +58,12 @@ download:
     mode:
       tidy: clear-sources
       tidy: clear-codes
-    	
     tidy:
       clears:
         - name: clear-sources
           inputs:
             - Sources
-    		- name: clear-codes
+        - name: clear-codes
           inputs:
             - codes
     ```
@@ -81,7 +80,6 @@ download:
     mode:
       tidy: copy-sources
       tidy: copy-codes
-    	
     tidy:
       copies:
         - name: copy-sources
@@ -162,8 +160,8 @@ download:
     [
       {"any": "#faefe6" },
       {"light": "#faefe6" },
-      {"light": "#faefe6", dark: "#faefe6" },
-      {"any": "#faefe6", dark: "#faefe6" }
+      {"light": "#faefe6", "dark": "#faefe6" },
+      {"any": "#faefe6", "dark": "#faefe6" }
     ]
     ```
 
