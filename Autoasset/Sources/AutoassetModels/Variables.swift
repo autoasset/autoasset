@@ -73,9 +73,9 @@ public enum PlaceHolder {
         case .gitNextTagNumber:        return "获取远端 Git Tags 中最大的数字 + 1, 未创建分支为 1"
         case .gitMaxTagNumber:         return "获取远端 Git Tags 中最大的数字, 未创建分支为 0"
         case .custom(key: let key, let value): return "key: \(key) value: \(value)"
-        case .gitCurrentCommitAuthor:  return "获取当前 Git Commit Author 信息"
-        case .gitCurrentCommitDate:    return "获取当前 Git Commit Date 信息"
-        case .gitCurrentCommitMessage: return "获取当前 Git Commit 信息"
+        case .gitCurrentCommitAuthor:  return "获取当前 Git Commit 作者信息"
+        case .gitCurrentCommitDate:    return "获取当前 Git Commit 提交日期"
+        case .gitCurrentCommitMessage: return "获取当前 Git Commit 提交信息"
         case .gitCurrentCommitHash:    return "获取当前 Git Commit hash"
         }
     }
