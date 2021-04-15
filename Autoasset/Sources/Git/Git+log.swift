@@ -72,7 +72,7 @@ public extension Git {
                     date = nil
                     message = ""
                 }
-                hash = row.description.st.deleting(prefix: "commit: ").trimmingCharacters(in: .whitespacesAndNewlines)
+                hash = row.description.st.deleting(prefix: "commit ").trimmingCharacters(in: .whitespacesAndNewlines)
             } else if row.hasPrefix("Author: ") {
                 author = row.description.st.deleting(prefix: "Author: ").trimmingCharacters(in: .whitespacesAndNewlines)
             } else if row.hasPrefix("Date: ") {
