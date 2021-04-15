@@ -54,6 +54,14 @@ public struct VariablesMaker {
                 replace = "\(try getGitMaxTagMumber())"
             case .gitNextTagNumber:
                 replace = "\(try getGitMaxTagMumber() + 1)"
+            case .gitCurrentCommitMessage:
+                replace = try Git().log(options: [.maxCount(1)]).first?.message ?? " "
+            case .gitCurrentCommitHash:
+                replace = try Git().log(options: [.maxCount(1)]).first?.hash ?? ""
+            case .gitCurrentCommitAuthor:
+                replace = try Git().log(options: [.maxCount(1)]).first?.author ?? ""
+            case .gitCurrentCommitDate:
+                replace = try Git().log(options: [.maxCount(1)]).first?.date ?? ""
             }
             
             guard replace.isEmpty == false else {
