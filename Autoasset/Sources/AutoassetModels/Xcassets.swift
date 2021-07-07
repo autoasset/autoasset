@@ -84,11 +84,23 @@ public struct Xcassets {
     
     public class Image: Resource {
         
+        public struct Properties {
+            // 启用保留矢量格式数据, 默认为 true
+            public let preserves_vector_representation: Bool
+            public let template_rendering_intent: String
+            
+            init(from json: JSON) {
+                preserves_vector_representation = json["preserves_vector_representation"].boolValue
+                template_rendering_intent = json["template_rendering_intent"].stringValue
+            }
+        }
+        
         public let report: String?
         public let prefix: String
         public let contents: String?
         public let bundle_name: String?
-        
+        public let properties: Properties
+
         public init(inputs: [String],
                     output: String,
                     report: String?,
@@ -99,6 +111,7 @@ public struct Xcassets {
             self.prefix = prefix
             self.contents = contents
             self.bundle_name = bundle_name
+            self.properties = Properties(from: JSON())
             super.init(inputs: inputs, output: output)
         }
         
@@ -107,6 +120,7 @@ public struct Xcassets {
             report = json["report"].string
             bundle_name = json["bundle_name"].string
             prefix = json["prefix"].stringValue
+            self.properties = Properties(from: json["properties"])
             super.init(from: json)
         }
         

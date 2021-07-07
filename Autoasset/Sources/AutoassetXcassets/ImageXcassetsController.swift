@@ -81,7 +81,7 @@ struct ImageXcassetsController: XcassetsControllerProtocol {
                     let target = try FilePath(url: imageset.url.appendingPathComponent("Contents.json", isDirectory: false), type: .file)
                     try content.copy(to: target)
                 } else {
-                    let data = try conversion(files: filePaths)
+                    let data = try conversion(files: filePaths, properties: resource.properties)
                     try imageset.create(file: "Contents.json", data: data)
                 }
                 
@@ -278,16 +278,20 @@ extension ImageXcassetsController {
         }
     }
     
-    func conversion(files: [FilePath]) throws -> Data {
-        let pdf_properties: [String: Any] = ["compression-type": "automatic", "preserves-vector-representation": true]
+    func conversion(files: [FilePath], properties: Xcassets.Image.Properties) throws -> Data {
         
         var contents: [String: Any] = [:]
-        let info: [String: Any] = ["version": 1, "author": "xcode"]
-        contents["info"] = info
+        contents["info"] = ["version": 1, "author": "xcode"]
         
-        let pdfs = try files.filter { try $0.data().st.mimeType == .pdf }
-        if pdfs.isEmpty == false {
-            contents["properties"] = pdf_properties
+        var propertiesDict = [String: Any]()
+        if properties.preserves_vector_representation {
+            propertiesDict["preserves-vector-representation"] = true
+        }
+        if properties.template_rendering_intent.isEmpty == false {
+            propertiesDict["template-rendering-intent"] = properties.template_rendering_intent
+        }
+        if propertiesDict.isEmpty == false {
+            contents["properties"] = propertiesDict
         }
                 
         let store = files

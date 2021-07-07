@@ -247,6 +247,11 @@ download:
         report: .report/images.csv
         bundle_name: IconBundle
         contents: .contents/images
+        properties:
+          # 启用保留矢量格式数据, 默认为 true
+          preserves_vector_representation: true
+          # render as
+          template_rendering_intent: template
         prefix: as_
         inputs:
           - UI/icon
