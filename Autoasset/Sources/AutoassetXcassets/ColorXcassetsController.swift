@@ -48,8 +48,9 @@ struct ColorXcassetsController: XcassetsControllerProtocol {
     
     func task(with resource: Xcassets.Color) throws {
         var unique = Set<StemColor>()
-        let folder = try FilePath(path: resource.output, type: .folder)
+        let folder = try FilePath.Folder(path: resource.output)
         let colors = try read(paths: resource.inputs, predicates: [.skipsHiddenFiles, .custom({ $0.type == .file })])
+            .map { FilePath.File(url: $0.url) }
             .map { try JSON(data: $0.data()).arrayValue }
             .joined()
             .compactMap { Color(json: $0) }
@@ -74,7 +75,7 @@ extension ColorXcassetsController {
             return
         }
         do {
-            let folder = try FilePath(path: output, type: .folder)
+            let folder = try FilePath.Folder(path: output)
             try folder.create(file: "autoasset_color_protocol.swift", data: template_protocol().data(using: .utf8))
             try folder.create(file: "autoasset_color.swift", data: template_core().data(using: .utf8))
         } catch {
@@ -101,7 +102,7 @@ extension ColorXcassetsController {
         
         let str = "public extension AutoAssetColorProtocol {\n\(list)\n}"
         do {
-            let folder = try FilePath(path: output, type: .folder)
+            let folder = try FilePath.Folder(path: output)
             try folder.create(file: "autoasset_color_list.swift", data: str.data(using: .utf8))
         } catch {
             logger.error(.init(stringLiteral: error.localizedDescription))

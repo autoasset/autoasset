@@ -43,6 +43,7 @@ public struct XcassetsController {
                              report: variablesMaker.textMaker(item.report),
                              prefix: variablesMaker.textMaker(item.prefix),
                              contents: variablesMaker.textMaker(item.contents),
+                             properties: item.properties,
                              bundle_name: variablesMaker.textMaker(item.bundle_name))
         }),
         gifs: model.gifs.map({ item -> Xcassets.Data in
@@ -51,6 +52,7 @@ public struct XcassetsController {
                              report: variablesMaker.textMaker(item.report),
                              prefix: variablesMaker.textMaker(item.prefix),
                              contents: variablesMaker.textMaker(item.contents),
+                             properties: item.properties,
                              bundle_name: variablesMaker.textMaker(item.bundle_name))
         }),
         datas: model.datas.map({ item -> Xcassets.Data in
@@ -59,6 +61,7 @@ public struct XcassetsController {
                              report: variablesMaker.textMaker(item.report),
                              prefix: variablesMaker.textMaker(item.prefix),
                              contents: variablesMaker.textMaker(item.contents),
+                             properties: item.properties,
                              bundle_name: variablesMaker.textMaker(item.bundle_name))
         }),
         template: Xcassets.Template(output: variablesMaker.textMaker(model.template?.output)))

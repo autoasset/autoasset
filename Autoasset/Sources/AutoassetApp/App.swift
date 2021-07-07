@@ -70,7 +70,7 @@ extension AutoAsset {
         } catch {
             do {
                 if let path = config.debug?.error {
-                    let output = try FilePath(path: path, type: .file)
+                    let output = try FilePath.File(path: path)
                     try? output.delete()
                     try output.create(with: error.localizedDescription.data(using: .utf8))
                 }
@@ -90,7 +90,7 @@ extension AutoAsset {
         do {
             let logger = Logger(label: "config")
             logger.info(.init(stringLiteral: "path: \(path)"))
-            let path = try FilePath(path: path, type: .file)
+            let path = try FilePath.File(path: path)
             let data = try path.data()
             guard let text = String(data: data, encoding: .utf8),
                   let yml = try Yams.load(yaml: text) else {

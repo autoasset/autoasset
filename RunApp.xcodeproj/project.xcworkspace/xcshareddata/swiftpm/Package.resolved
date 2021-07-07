@@ -5,9 +5,9 @@
         "package": "Stem",
         "repositoryURL": "https://github.com/linhay/Stem.git",
         "state": {
-          "branch": null,
-          "revision": "c7508a36723a0e30ef1777f50c758a8b714146b7",
-          "version": "0.0.39"
+          "branch": "master",
+          "revision": "1803e5c8667aceb205d7b440199b7054dc73e75f",
+          "version": null
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/apple/swift-argument-parser",
         "state": {
           "branch": null,
-          "revision": "831ed5e860a70e745bc1337830af4786b2576881",
-          "version": "0.4.1"
+          "revision": "986d191f94cec88f6350056da59c2e59e83d1229",
+          "version": "0.4.3"
         }
       },
       {
@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/jpsim/Yams.git",
         "state": {
           "branch": null,
-          "revision": "4ec0a3c5d6a2446667a2b22c8c7d0fc82dd1d3de",
-          "version": "4.0.5"
+          "revision": "9ff1cc9327586db4e0c8f46f064b6a82ec1566fa",
+          "version": "4.0.6"
         }
       }
     ]

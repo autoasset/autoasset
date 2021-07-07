@@ -80,7 +80,7 @@ public struct VariablesMaker {
     
     public func fileMaker(_ input: String) throws -> String {
         let inputPath = try self.textMaker(input)
-        let inputPathFile = try FilePath(path: inputPath, type: .file)
+        let inputPathFile = FilePath.File(url: .init(fileURLWithPath: inputPath))
         guard let text = String(data: try inputPathFile.data(), encoding: .utf8) else {
             throw ASError(message: #function)
         }

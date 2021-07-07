@@ -75,14 +75,14 @@ extension TidyController {
         var text: String
         switch model.type {
         case .input(let path):
-            let input = try FilePath(path: path, type: .file).data()
+            let input = try FilePath.File(path: path).data()
             text = String(data: input, encoding: .utf8) ?? ""
         case .text(let result):
             text = result
         }
         
         text = try variablesMaker.textMaker(text)
-        let output = try FilePath(path: model.output, type: .file)
+        let output = try FilePath.File(path: model.output)
         try? output.delete()
         logger.info(.init(stringLiteral: "正在创建: \(model.output)"))
         try output.create(with: text.data(using: .utf8))
@@ -121,11 +121,11 @@ extension TidyController {
                                   output: variablesMaker.textMaker(item.output))
         
         
-        let output = try FilePath(path: model.output, type: .folder)
+        let output = try FilePath.Folder(path: model.output)
         
         for input in model.inputs.compactMap({ try? FilePath(path: $0) }) {
-            logger.info("正在复制: \(output.path)")
-            try input.copy(to: output)
+            logger.info("正在复制: \(output.url.path)")
+            try input.copy(into: output)
         }
         
         return true

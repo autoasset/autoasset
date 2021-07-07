@@ -59,7 +59,8 @@ class DataXcassetsController: XcassetsControllerProtocol {
     func task(with resource: Xcassets.Data) throws {
         var reportRows = [XcassetsReport.Row]()
         let contents = try read(paths: [resource.contents].compactMap{ $0 }, predicates: [.custom{ $0.attributes.name.hasSuffix(".json") }])
-            .reduce([String: FilePath](), { (result, filePath) -> [String: FilePath] in
+            .map({ FilePath.File(url: $0.url) })
+            .reduce([String: FilePath.File](), { (result, filePath) -> [String: FilePath.File] in
                 guard let name = filePath.attributes.name.split(separator: ".").first?.description else {
                     return result
                 }
@@ -69,19 +70,19 @@ class DataXcassetsController: XcassetsControllerProtocol {
             })
         
         var unique = Set<String>()
-        let folder = try FilePath(path: resource.output, type: .folder)
-        let currentPath = try FilePath(path: "./").path + "/"
+        let folder = try FilePath.Folder(path: resource.output)
+        let currentPath = try FilePath.Folder(path: "./").url.path + "/"
         let names = try read(paths: resource.inputs, predicates: [.skipsHiddenFiles, .custom({ $0.type == .file })])
             .filter({ unique.insert($0.attributes.name).inserted })
+            .map({ FilePath.File(url: $0.url) })
             .map({ file -> String in
                 let filename = file.attributes.name
                 let name = filename.split(separator: ".").first!.description
                 let imageset = try folder.create(folder: "\(resource.prefix)\(name).dataset")
                 logger.info(.init(stringLiteral: filename))
-                try file.copy(to: imageset)
+                try file.copy(into: imageset)
                 if let content = contents[name] {
-                    let target = try FilePath(url: imageset.url.appendingPathComponent("Contents.json", isDirectory: false))
-                    try content.copy(to: target)
+                    try content.replace(imageset.create(file: "Contents.json", data: nil))
                 } else {
                     let data = try conversion(name: filename)
                     try imageset.create(file: "Contents.json", data: data)
@@ -89,10 +90,10 @@ class DataXcassetsController: XcassetsControllerProtocol {
                 
                 if resource.report != nil {
                     reportRows.append(.init(variableName: .init(item: NameFormatter().variableName(name)),
-                                            inputs: .init(item: [file.path.st.deleting(prefix: currentPath)]),
+                                            inputs: .init(item: [file.url.path.st.deleting(prefix: currentPath)]),
                                             outputFolderName: .init(item: filename),
-                                            outputFolderPath: .init(item: imageset.path.st.deleting(prefix: currentPath)),
-                                            inputSize: .init(item: file.attributes.size ?? 0)))
+                                            outputFolderPath: .init(item: imageset.url.path.st.deleting(prefix: currentPath)),
+                                            inputSize: .init(item: file.attributes.size)))
                 }
                 
                 return name
@@ -110,7 +111,7 @@ extension DataXcassetsController {
             return
         }
         do {
-            let file = try FilePath(path: output, type: .file)
+            let file = try FilePath.File(path: output)
             try? file.delete()
             try file.create(with: CSV(rows: rows.sorted(by: { $0.inputSize.item > $1.inputSize.item})).file())
         } catch {
@@ -123,7 +124,7 @@ extension DataXcassetsController {
             return
         }
         do {
-            let folder = try FilePath(path: output, type: .folder)
+            let folder = try FilePath.Folder(path: output)
             try folder.create(file: "autoasset_\(named.rawValue)_protocol.swift", data: template_protocol().data(using: .utf8))
             try folder.create(file: "autoasset_\(named.rawValue).swift", data: template_core().data(using: .utf8))
         } catch {
@@ -144,7 +145,7 @@ extension DataXcassetsController {
         let str = "public extension AutoAsset\(named.className)Protocol {\n\(list)\n}"
         
         do {
-            let folder = try FilePath(path: output, type: .folder)
+            let folder = try FilePath.Folder(path: output)
             try folder.create(file: "autoasset_\(named.rawValue)_list_\(resource.bundle_name ?? "main").swift", data: str.data(using: .utf8))
         } catch {
             logger.error(.init(stringLiteral: error.localizedDescription))

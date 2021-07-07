@@ -91,7 +91,7 @@ public struct CocoapodsController {
     public func run() throws {
         try shell("pod --version", logger: logger)
         let filePath = model.podspec
-        let rootPath = try FilePath(path: "./").path
+        let rootPath = try FilePath.Folder(path: "./").url.path
         try shell("pod lib lint \(filePath) --allow-warnings", logger: logger)
         
         guard let gitConfig = model.git else {
@@ -109,7 +109,7 @@ public struct CocoapodsController {
             guard let trunk = model.trunk else {
                 return
             }
-            let data = try FilePath(path: filePath, type: .file).data()
+            let data = try FilePath.File(path: filePath).data()
             guard let version = String(data: data, encoding: .utf8)?
                     .split(separator: "\n")
                     .filter({ $0.contains("s.version") })

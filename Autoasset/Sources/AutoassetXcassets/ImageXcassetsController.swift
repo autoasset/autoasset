@@ -31,7 +31,7 @@ struct ImageXcassetsController: XcassetsControllerProtocol {
     let xcassets: Xcassets
     private var resources: [Xcassets.Image] { xcassets.images }
     private let logger = Logger(label: "image")
-
+    
     func run() throws {
         setDefaultFiles()
         try resources.forEach { try task(with: $0) }
@@ -39,10 +39,11 @@ struct ImageXcassetsController: XcassetsControllerProtocol {
     
     func task(with resource: Xcassets.Image) throws {
         var reportRows = [XcassetsReport.Row]()
-        let folder = try FilePath(path: resource.output, type: .folder)
+        let folder = try FilePath.Folder(path: resource.output)
         let formatter = NameFormatter(split: ["_dark@", "_dark.", "@3x.", "@2x.", "@1x.", "."])
         let contents = try read(paths: [resource.contents].compactMap{ $0 }, predicates: [.custom{ $0.attributes.name.hasSuffix(".json") }])
-            .reduce([String: FilePath](), { (result, filePath) -> [String: FilePath] in
+            .map({ FilePath.File(url: $0.url) })
+            .reduce([String: FilePath.File](), { (result, filePath) -> [String: FilePath.File] in
                 guard let name = filePath.attributes.name.split(separator: ".").first?.description else {
                     return result
                 }
@@ -51,50 +52,54 @@ struct ImageXcassetsController: XcassetsControllerProtocol {
                 return result
             })
         
-        let names = try read(paths: resource.inputs,
-                 predicates: [.custom({ item -> Bool in
-                    if item.attributes.name.lowercased().hasSuffix(".svg") {
-                        return true
-                    }
-                    return try [.png, .jpeg, .pdf].contains(item.data().st.mimeType)
-                 })])
-            .reduce([String: [FilePath]](), { (result, filePath) -> [String: [FilePath]] in
-                var result = result
-                let name = formatter.fileName(filePath.attributes.name)
-                if var list = result[name] {
-                    list.append(filePath)
-                    result[name] = list
-                } else {
-                    result[name] = [filePath]
-                }
-                return result
-            })
-            .compactMap({ (name, filePaths) -> String? in
-                guard filePaths.isEmpty == false else {
-                    return nil
-                }
-                let filename = resource.prefix + name
-                let imageset = try folder.create(folder: "\(filename).imageset")
-                logger.info(.init(stringLiteral:"bundle: \(resource.bundle_name ?? "main"), name: \(filename)"))
-                try filePaths.forEach { try $0.copy(to: imageset) }
-                if let content = contents[name] {
-                    let target = try FilePath(url: imageset.url.appendingPathComponent("Contents.json", isDirectory: false), type: .file)
-                    try content.copy(to: target)
-                } else {
-                    let data = try conversion(files: filePaths, properties: resource.properties)
-                    try imageset.create(file: "Contents.json", data: data)
-                }
-                
-                if resource.report != nil {
-                    let currentPath = try FilePath(path: "./").path + "/"
-                    reportRows.append(.init(variableName: .init(item: NameFormatter().variableName(name)),
-                                            inputs: .init(item: filePaths.map(\.path).map{ $0.st.deleting(prefix: currentPath) }),
-                                            outputFolderName: .init(item: filename),
-                                            outputFolderPath: .init(item: imageset.path.st.deleting(prefix: currentPath)),
-                                            inputSize: .init(item: filePaths.map(\.attributes).compactMap(\.size).reduce(0, {$0 + $1}))))
-                }
-                return name
-            })
+        let names = try read(paths: resource.inputs, predicates: [.custom({ item -> Bool in
+            guard item.type  == .file else {
+                return false
+            }
+            
+            if item.attributes.name.lowercased().hasSuffix(".svg") {
+                return true
+            }
+            
+            let file = FilePath.File(url: item.url)
+            return try [.png, .jpeg, .pdf].contains(file.data().st.mimeType)
+        })])
+        .reduce([String: [FilePath]](), { (result, filePath) -> [String: [FilePath]] in
+            var result = result
+            let name = formatter.fileName(filePath.attributes.name)
+            if var list = result[name] {
+                list.append(filePath)
+                result[name] = list
+            } else {
+                result[name] = [filePath]
+            }
+            return result
+        })
+        .compactMap({ (name, filePaths) -> String? in
+            guard filePaths.isEmpty == false else {
+                return nil
+            }
+            let filename = resource.prefix + name
+            let imageset = try folder.create(folder: "\(filename).imageset")
+            logger.info(.init(stringLiteral:"bundle: \(resource.bundle_name ?? "main"), name: \(filename)"))
+            try filePaths.forEach { try $0.copy(into: imageset) }
+            if let content = contents[name] {
+                try content.replace(imageset.create(file: "Contents.json", data: nil))
+            } else {
+                let data = try conversion(files: filePaths, properties: resource.properties)
+                try imageset.create(file: "Contents.json", data: data)
+            }
+            
+            if resource.report != nil {
+                let currentPath = try FilePath.Folder(path: "./").url.path
+                reportRows.append(.init(variableName: .init(item: NameFormatter().variableName(name)),
+                                        inputs: .init(item: filePaths.map(\.url.path).map{ $0.st.deleting(prefix: currentPath) }),
+                                        outputFolderName: .init(item: filename),
+                                        outputFolderPath: .init(item: imageset.url.path.st.deleting(prefix: currentPath)),
+                                        inputSize: .init(item: filePaths.map(\.attributes).map(\.size).reduce(0, {$0 + $1}))))
+            }
+            return name
+        })
         
         setTemplateList(names: names, in: resource)
         report(rows: reportRows, in: resource)
@@ -103,13 +108,13 @@ struct ImageXcassetsController: XcassetsControllerProtocol {
 }
 
 extension ImageXcassetsController {
-
+    
     func report(rows: [XcassetsReport.Row], in resource: Xcassets.Image) {
         guard let output = resource.report else {
             return
         }
         do {
-            let file = try FilePath(path: output, type: .file)
+            let file = try FilePath.File(path: output)
             try? file.delete()
             try file.create(with: CSV(rows: rows.sorted(by: { $0.inputSize.item > $1.inputSize.item})).file())
         } catch {
@@ -126,7 +131,7 @@ extension ImageXcassetsController {
             return
         }
         do {
-            let folder = try FilePath(path: output, type: .folder)
+            let folder = try FilePath.Folder(path: output)
             try folder.create(file: "autoasset_image_protocol.swift", data: template_protocol().data(using: .utf8))
             try folder.create(file: "autoasset_image.swift", data: template_core().data(using: .utf8))
         } catch {
@@ -145,7 +150,7 @@ extension ImageXcassetsController {
         
         let str = "public extension AutoAssetImageProtocol {\n\(list)\n}"
         do {
-            let folder = try FilePath(path: output, type: .folder)
+            let folder = try FilePath.Folder(path: output)
             try folder.create(file: "autoasset_image_list_\(resource.bundle_name ?? "main").swift", data: str.data(using: .utf8))
         } catch {
             logger.error(.init(stringLiteral: error.localizedDescription))
@@ -159,7 +164,7 @@ extension ImageXcassetsController {
         #elseif canImport(AppKit)
         import AppKit
         #endif
-
+        
         public protocol AutoAssetImageProtocol {
             init(named: String, in bundle: String?)
             #if canImport(UIKit)
@@ -173,13 +178,13 @@ extension ImageXcassetsController {
     
     func template_core() -> String {
         #"""
-        #if canImport(UIKit)
-        import UIKit
-        #elseif canImport(AppKit)
-        import AppKit
-        #endif
-
-        public class AutoAssetImage: AutoAssetImageProtocol {
+            #if canImport(UIKit)
+            import UIKit
+            #elseif canImport(AppKit)
+            import AppKit
+            #endif
+            
+            public class AutoAssetImage: AutoAssetImageProtocol {
             
             public let named: String
             public let bundle: String?
@@ -187,46 +192,46 @@ extension ImageXcassetsController {
             static var bundleMap = [String: Bundle]()
             
             required public init(named: String, in bundle: String?) {
-                self.named = named
-                self.bundle = bundle
+            self.named = named
+            self.bundle = bundle
             }
             
             #if canImport(UIKit)
             public func value() -> UIImage {
-                guard let bundleName = bundle else {
-                    if let image = UIImage(named: named) {
-                        return image
-                    }
-                    assertionFailure("can't find image: \(named) in bundle: \(bundle ?? "main")")
-                    return UIImage()
-                }
-                
-                if let bundle = Self.bundleMap[bundleName] {
-                    if let image = UIImage(named: named, in: bundle, compatibleWith: nil) {
-                        return image
-                    }
-                    assertionFailure("can't find image: \(named) in bundle: \(bundleName)")
-                    return UIImage()
-                }
-                
-                if let url = Bundle(for: Self.self).url(forResource: bundle, withExtension: "bundle"),
-                   let bundle = Bundle(url: url),
-                   let image = UIImage(named: named, in: bundle, compatibleWith: nil) {
-                    Self.bundleMap[bundleName] = bundle
-                    return image
-                }
-                
-                assertionFailure("can't find image: \(named) in bundle: \(bundle ?? "main")")
-                return UIImage()
+            guard let bundleName = bundle else {
+            if let image = UIImage(named: named) {
+            return image
+            }
+            assertionFailure("can't find image: \(named) in bundle: \(bundle ?? "main")")
+            return UIImage()
+            }
+            
+            if let bundle = Self.bundleMap[bundleName] {
+            if let image = UIImage(named: named, in: bundle, compatibleWith: nil) {
+            return image
+            }
+            assertionFailure("can't find image: \(named) in bundle: \(bundleName)")
+            return UIImage()
+            }
+            
+            if let url = Bundle(for: Self.self).url(forResource: bundle, withExtension: "bundle"),
+            let bundle = Bundle(url: url),
+            let image = UIImage(named: named, in: bundle, compatibleWith: nil) {
+            Self.bundleMap[bundleName] = bundle
+            return image
+            }
+            
+            assertionFailure("can't find image: \(named) in bundle: \(bundle ?? "main")")
+            return UIImage()
             }
             
             #elseif canImport(AppKit)
             func value() -> NSImage {
-                return .init(imageLiteralResourceName: named)
+            return .init(imageLiteralResourceName: named)
             }
             #endif
-        }
-
+            }
+            
         """#
     }
     
@@ -273,13 +278,12 @@ extension ImageXcassetsController {
                                                       "scale": item.rawValue]
                         result["filename"] = images[item]
                         result["appearances"] = appearance.conversion
-                return result
-            }
+                        return result
+                    }
         }
     }
     
     func conversion(files: [FilePath], properties: Xcassets.Image.Properties) throws -> Data {
-        
         var contents: [String: Any] = [:]
         contents["info"] = ["version": 1, "author": "xcode"]
         
@@ -293,7 +297,12 @@ extension ImageXcassetsController {
         if propertiesDict.isEmpty == false {
             contents["properties"] = propertiesDict
         }
-                
+        
+        if files.count == 1 {
+            contents["images"] = [["filename" : files.first!.attributes.name, "idiom" : "universal"]]
+            return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
+        }
+        
         let store = files
             .reduce([ImageContentType: [FilePath]]()) { result, file -> [ImageContentType: [FilePath]] in
                 var result = result
@@ -344,7 +353,7 @@ extension ImageXcassetsController {
             }
             return content
         }
-
+        
         
         contents["images"] = imageContentMaker(.light).conversion + imageContentMaker(.dark).conversion
         return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])

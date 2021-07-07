@@ -106,12 +106,13 @@ public struct Xcassets {
                     report: String?,
                     prefix: String,
                     contents: String?,
+                    properties: Properties,
                     bundle_name: String?) {
             self.report = report
             self.prefix = prefix
             self.contents = contents
             self.bundle_name = bundle_name
-            self.properties = Properties(from: JSON())
+            self.properties = properties
             super.init(inputs: inputs, output: output)
         }
         
