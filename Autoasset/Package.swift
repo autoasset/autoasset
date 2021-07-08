@@ -6,6 +6,7 @@ import PackageDescription
 let AutoassetApp = "AutoassetApp"
 let AutoassetTidy = "AutoassetTidy"
 let AutoassetXcassets = "AutoassetXcassets"
+let AutoassetIconFont = "AutoassetIconFont"
 let AutoassetDownload = "AutoassetDownload"
 let AutoassetModels = "AutoassetModels"
 let AutoassetCocoapods = "AutoassetCocoapods"
@@ -71,6 +72,14 @@ let package = Package(
             .product(name: "Logging", package: "swift-log")
         ]),
         
+        .target(name: AutoassetIconFont, dependencies: [
+            .init(stringLiteral: VariablesMaker),
+            .init(stringLiteral:AutoassetModels),
+            .init(stringLiteral: ASError),
+            .product(name: "StemCrossPlatform", package: "Stem"),
+            .product(name: "Logging", package: "swift-log")
+        ]),
+        
         .target(name: Git, dependencies: [
             .init(stringLiteral: ASError),
             .init(stringLiteral: Bash),
@@ -105,6 +114,7 @@ let package = Package(
             .init(stringLiteral: AutoassetXcassets),
             .init(stringLiteral: AutoassetCocoapods),
             .init(stringLiteral: AutoassetTidy),
+            .init(stringLiteral: AutoassetIconFont),
             .product(name: "StemCrossPlatform", package: "Stem"),
             .product(name: "Yams", package: "Yams"),
             .product(name: "SwiftShell", package: "SwiftShell"),

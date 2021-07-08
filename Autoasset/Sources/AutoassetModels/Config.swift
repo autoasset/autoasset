@@ -54,6 +54,8 @@ public struct Config {
     public let download: Download?
     public let tidy: Tidy
     public var variables: Variables
+    public var iconfonts: [IconFont]
+
     
     public init(from json: JSON) {
         configs = json["configs"].arrayValue.compactMap(Children.init(from:))
@@ -64,6 +66,7 @@ public struct Config {
         download = Download(from: json["download"])
         tidy = Tidy(from: json["tidy"])
         variables = Variables(from: json["variables"])
+        iconfonts = json["iconfonts"].arrayValue.compactMap(IconFont.init(from:))
     }
     
 }

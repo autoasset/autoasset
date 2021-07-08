@@ -28,6 +28,7 @@ import AutoassetModels
 import AutoassetXcassets
 import AutoassetDownload
 import AutoassetCocoapods
+import AutoassetIconFont
 import AutoassetTidy
 import Git
 import Bash
@@ -105,6 +106,10 @@ extension AutoAsset {
     
     func run(with mode: Mode, config: Config) throws {
         switch mode {
+        case .iconfont:
+           try config.iconfonts.forEach { iconfont in
+                try IconFontController(iconfont).run()
+            }
         case .download(name: let name):
             if let model = config.download {
                 try DownloadController(model: model, variables: config.variables).run(name: name)
