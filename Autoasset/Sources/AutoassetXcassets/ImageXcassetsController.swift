@@ -144,8 +144,12 @@ extension ImageXcassetsController {
             return
         }
         let bundle_name = resource.bundle_name == nil ? "nil" : "\"\(resource.bundle_name!)\""
-        let list = names.map({ item -> String in
-            return "   static var \(NameFormatter().variableName(item)): Self { self.init(named: \"\(resource.prefix)\(item)\", in: \(bundle_name)) }"
+        let list = names.map({ item in
+            return (variable: NameFormatter().variableName(item), named: "\(resource.prefix)\(item)")
+        }).sorted(by: { lhs, rhs in
+            return lhs.variable < rhs.variable
+        }).map({ item -> String in
+            return "   static var \(item.variable): Self { self.init(named: \"\(item.named)\", in: \(bundle_name)) }"
         }).joined(separator: "\n")
         
         let str = "public extension AutoAssetImageProtocol {\n\(list)\n}"
@@ -177,62 +181,62 @@ extension ImageXcassetsController {
     }
     
     func template_core() -> String {
-        #"""
+            #"""
             #if canImport(UIKit)
             import UIKit
             #elseif canImport(AppKit)
             import AppKit
             #endif
-            
+
             public class AutoAssetImage: AutoAssetImageProtocol {
-            
-            public let named: String
-            public let bundle: String?
-            
-            static var bundleMap = [String: Bundle]()
-            
-            required public init(named: String, in bundle: String?) {
-            self.named = named
-            self.bundle = bundle
+                
+                public let named: String
+                public let bundle: String?
+                
+                static var bundleMap = [String: Bundle]()
+                
+                required public init(named: String, in bundle: String?) {
+                    self.named = named
+                    self.bundle = bundle
+                }
+                
+                #if canImport(UIKit)
+                public func value() -> UIImage {
+                    guard let bundleName = bundle else {
+                        if let image = UIImage(named: named) {
+                            return image
+                        }
+                        assertionFailure("can't find image: \(named) in bundle: \(bundle ?? "main")")
+                        return UIImage()
+                    }
+                    
+                    if let bundle = Self.bundleMap[bundleName] {
+                        if let image = UIImage(named: named, in: bundle, compatibleWith: nil) {
+                            return image
+                        }
+                        assertionFailure("can't find image: \(named) in bundle: \(bundleName)")
+                        return UIImage()
+                    }
+                    
+                    if let url = Bundle(for: Self.self).url(forResource: bundle, withExtension: "bundle"),
+                       let bundle = Bundle(url: url),
+                       let image = UIImage(named: named, in: bundle, compatibleWith: nil) {
+                        Self.bundleMap[bundleName] = bundle
+                        return image
+                    }
+                    
+                    assertionFailure("can't find image: \(named) in bundle: \(bundle ?? "main")")
+                    return UIImage()
+                }
+                
+                #elseif canImport(AppKit)
+                func value() -> NSImage {
+                    return .init(imageLiteralResourceName: named)
+                }
+                #endif
             }
-            
-            #if canImport(UIKit)
-            public func value() -> UIImage {
-            guard let bundleName = bundle else {
-            if let image = UIImage(named: named) {
-            return image
-            }
-            assertionFailure("can't find image: \(named) in bundle: \(bundle ?? "main")")
-            return UIImage()
-            }
-            
-            if let bundle = Self.bundleMap[bundleName] {
-            if let image = UIImage(named: named, in: bundle, compatibleWith: nil) {
-            return image
-            }
-            assertionFailure("can't find image: \(named) in bundle: \(bundleName)")
-            return UIImage()
-            }
-            
-            if let url = Bundle(for: Self.self).url(forResource: bundle, withExtension: "bundle"),
-            let bundle = Bundle(url: url),
-            let image = UIImage(named: named, in: bundle, compatibleWith: nil) {
-            Self.bundleMap[bundleName] = bundle
-            return image
-            }
-            
-            assertionFailure("can't find image: \(named) in bundle: \(bundle ?? "main")")
-            return UIImage()
-            }
-            
-            #elseif canImport(AppKit)
-            func value() -> NSImage {
-            return .init(imageLiteralResourceName: named)
-            }
-            #endif
-            }
-            
-        """#
+
+            """#
     }
     
 }
@@ -298,8 +302,10 @@ extension ImageXcassetsController {
             contents["properties"] = propertiesDict
         }
         
-        if files.count == 1 {
-            contents["images"] = [["filename" : files.first!.attributes.name, "idiom" : "universal"]]
+        if files.count == 1,
+           let filename = files.first?.attributes.name,
+           ["@3x.", "@2x.", "@1x."].first(where: { filename.contains($0) }) == nil {
+            contents["images"] = [["filename" : filename, "idiom" : "universal"]]
             return try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
         }
         

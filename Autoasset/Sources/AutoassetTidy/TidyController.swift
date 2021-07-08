@@ -124,8 +124,17 @@ extension TidyController {
         let output = try FilePath.Folder(path: model.output)
         
         for input in model.inputs.compactMap({ try? FilePath(path: $0) }) {
-            logger.info("正在复制: \(output.url.path)")
-            try input.copy(into: output)
+            switch input.type {
+            case .file:
+                try input.copy(into: output)
+                logger.info("正在复制: \(input.url.path) 至 \(output.url.path)")
+            case .folder:
+                let folder = FilePath.Folder(url: input.url)
+               try folder.subFilePaths().forEach { item in
+                logger.info("正在复制: \(item.url.path) 至 \(output.url.path)")
+                    try item.copy(into: output)
+                }
+            }
         }
         
         return true

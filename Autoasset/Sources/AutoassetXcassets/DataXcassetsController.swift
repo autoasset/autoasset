@@ -136,10 +136,14 @@ extension DataXcassetsController {
         guard let output = xcassets.template?.output else {
             return
         }
-        let formatter = NameFormatter()
+        
         let bundle_name = resource.bundle_name == nil ? "nil" : "\"\(resource.bundle_name!)\""
-        let list = names.map({ item -> String in
-            return "   static var \(formatter.variableName(item)): Self { self.init(named: \"\(resource.prefix)\(item)\", in: \(bundle_name)) }"
+        let list = names.map({ item in
+            return (variable: NameFormatter().variableName(item), named: "\(resource.prefix)\(item)")
+        }).sorted(by: { lhs, rhs in
+            return lhs.variable < rhs.variable
+        }).map({ item -> String in
+            return "   static var \(item.variable): Self { self.init(named: \"\(item.named)\", in: \(bundle_name)) }"
         }).joined(separator: "\n")
         
         let str = "public extension AutoAsset\(named.className)Protocol {\n\(list)\n}"
