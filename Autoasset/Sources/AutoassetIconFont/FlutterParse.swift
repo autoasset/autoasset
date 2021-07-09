@@ -11,13 +11,24 @@ import AutoassetModels
 struct FlutterParse {
     
     let model: IconFont.Model
+    let template: IconFont.FlutterTemplate
     
-    var body: String {
-        let header = ""
-        let functions = ""
-        let footer = ""
+    var code: String {
+        let functions = model.glyphs
+            .sorted(by: { $0.name < $1.name })
+            .map { item in
+            return "  static const IconData \(item.name) = const IconData(0x\(item.unicode), fontFamily: '\(template.fontFamily)');"
+        }.joined(separator: "\n")
+        let main = """
+        import 'package:flutter/widgets.dart';
         
-        return [header, functions, footer].joined(separator: "\n")
+        class \(template.fontFamily) {
+        
+        \(functions)
+        
+        }
+        """
+        return main
     }
     
 }

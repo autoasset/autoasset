@@ -10,5 +10,5 @@ import StemCrossPlatform
 
 // AutoAsset.main(["--version"])
 // AutoAsset.main(["--help"])
-// AutoAsset.main(["--config", ".autoasset/create-xcassets.yml"])
+// AutoAsset.main(["--config", ".autoasset/run-tags.yml"])
 AutoAsset.main()

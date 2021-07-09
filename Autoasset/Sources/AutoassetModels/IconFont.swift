@@ -54,29 +54,43 @@ public struct IconFont {
         case woff2
     }
     
-    public enum TemplateType: String {
-        case swift
-        case flutter
+    public enum TemplateType {
+        case flutter(FlutterTemplate)
     }
     
-    public struct Template {
+    public struct FlutterTemplate {
         public let output: String
-        public let type: TemplateType
+        public let fontFamily: String
     }
     
-    public let input: String
-    public let fontType: FontType
-    public let template: Template
+    public struct Font {
+        public let output: String
+        public let fontType: FontType
+    }
     
+    public let package: String
+    public let font: Font
+    public let template: TemplateType
+
     init?(from json: JSON) {
-        guard let input = json["input"].string,
-              let output = json["template"]["output"].string,
-              let templateType = TemplateType(rawValue: json["template"]["type"].stringValue) else {
+        guard let package = json["package"].string else { return nil }
+        self.package = package
+        
+        let font = json["font"]
+        guard font.exists(), let output = font["output"].string else { return nil }
+        
+        self.font = .init(output: output,
+                          fontType: FontType(rawValue: font["type"].stringValue) ?? .ttf)
+        
+        
+        if json["flutter"].exists() {
+            let template = json["flutter"]
+            guard let output = template["output"].string else { return nil }
+            self.template = .flutter(.init(output: output,
+                                           fontFamily: template["font_family"].string ?? "IconFont"))
+        } else {
             return nil
         }
-        self.input = input
-        self.fontType = FontType(rawValue: json["font_type"].stringValue) ?? .ttf
-        self.template = .init(output: output, type: templateType)
     }
     
 }

@@ -69,6 +69,31 @@ brew upgrade autoasset/autoasset/autoasset
 
 
 
+## [30] iconfonts
+
+> iconfont 模块配置
+
+- `package`: iconfont 资源文件夹
+- `font`:
+  - `output`: 字体文件输出路径
+  - `type`: 字体文件格式 
+- `flutter`: flutter 硬编码配置
+  - `output`: 代码文件输出路径
+  - `font_family`: `IconData(0xe3e6, fontFamily: '${font_family}');`
+
+```yaml
+iconfonts:
+  - package: IconFont
+    font:
+        output: ${TTFOutput}
+        type: ttf
+    flutter: 
+        font_family: ${font_family}
+        output: ${CodeOutput}
+```
+
+
+
 ## download
 
 >下载模块配置.
@@ -272,7 +297,6 @@ download:
         inputs:
           - UI/data
   ```
-  
 
 
 

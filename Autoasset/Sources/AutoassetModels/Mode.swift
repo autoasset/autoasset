@@ -28,7 +28,7 @@ public enum Mode {
     case download(name: String)
     case tidy(name: String)
     case xcassets
-    case iconfont
+    case iconfonts
     case cocoapods
     case config(name: String)
     case bash(command: String)
@@ -46,7 +46,7 @@ public enum Mode {
         } else {
             switch json.stringValue {
             case "xcassets": self = .xcassets
-            case "iconfont": self = .iconfont
+            case "iconfonts": self = .iconfonts
             case "cocoapods": self = .cocoapods
             default:
                 return nil
