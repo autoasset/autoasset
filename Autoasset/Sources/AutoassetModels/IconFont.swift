@@ -60,6 +60,7 @@ public struct IconFont {
     
     public struct FlutterTemplate {
         public let output: String
+        public let className: String
         public let fontFamily: String
     }
     
@@ -86,8 +87,10 @@ public struct IconFont {
         if json["flutter"].exists() {
             let template = json["flutter"]
             guard let output = template["output"].string else { return nil }
+            let fontFamily = template["font_family"].string ?? "IconFont"
             self.template = .flutter(.init(output: output,
-                                           fontFamily: template["font_family"].string ?? "IconFont"))
+                                           className: template["class_name"].string ?? fontFamily,
+                                           fontFamily: fontFamily))
         } else {
             return nil
         }

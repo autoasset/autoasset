@@ -25,6 +25,7 @@ import StemCrossPlatform
 import AutoassetModels
 import Logging
 import CSV
+import VariablesMaker
 
 struct ImageXcassetsController: XcassetsControllerProtocol {
     
@@ -66,7 +67,7 @@ struct ImageXcassetsController: XcassetsControllerProtocol {
         })])
         .reduce([String: [FilePath]](), { (result, filePath) -> [String: [FilePath]] in
             var result = result
-            let name = formatter.fileName(filePath.attributes.name)
+            let name = formatter.file(filePath.attributes.name)
             if var list = result[name] {
                 list.append(filePath)
                 result[name] = list
@@ -92,7 +93,7 @@ struct ImageXcassetsController: XcassetsControllerProtocol {
             
             if resource.report != nil {
                 let currentPath = try FilePath.Folder(path: "./").url.path
-                reportRows.append(.init(variableName: .init(item: NameFormatter().variableName(name)),
+                reportRows.append(.init(variableName: .init(item: NameFormatter().variable(name)),
                                         inputs: .init(item: filePaths.map(\.url.path).map{ $0.st.deleting(prefix: currentPath) }),
                                         outputFolderName: .init(item: filename),
                                         outputFolderPath: .init(item: imageset.url.path.st.deleting(prefix: currentPath)),
@@ -145,7 +146,7 @@ extension ImageXcassetsController {
         }
         let bundle_name = resource.bundle_name == nil ? "nil" : "\"\(resource.bundle_name!)\""
         let list = names.map({ item in
-            return (variable: NameFormatter().variableName(item), named: "\(resource.prefix)\(item)")
+            return (variable: NameFormatter().variable(item), named: "\(resource.prefix)\(item)")
         }).sorted(by: { lhs, rhs in
             return lhs.variable < rhs.variable
         }).map({ item -> String in

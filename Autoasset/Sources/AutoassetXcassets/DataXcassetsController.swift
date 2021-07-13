@@ -25,6 +25,7 @@ import StemCrossPlatform
 import AutoassetModels
 import Logging
 import CSV
+import VariablesMaker
 
 class DataXcassetsController: XcassetsControllerProtocol {
     
@@ -89,7 +90,7 @@ class DataXcassetsController: XcassetsControllerProtocol {
                 }
                 
                 if resource.report != nil {
-                    reportRows.append(.init(variableName: .init(item: NameFormatter().variableName(name)),
+                    reportRows.append(.init(variableName: .init(item: NameFormatter().variable(name)),
                                             inputs: .init(item: [file.url.path.st.deleting(prefix: currentPath)]),
                                             outputFolderName: .init(item: filename),
                                             outputFolderPath: .init(item: imageset.url.path.st.deleting(prefix: currentPath)),
@@ -139,7 +140,7 @@ extension DataXcassetsController {
         
         let bundle_name = resource.bundle_name == nil ? "nil" : "\"\(resource.bundle_name!)\""
         let list = names.map({ item in
-            return (variable: NameFormatter().variableName(item), named: "\(resource.prefix)\(item)")
+            return (variable: NameFormatter().variable(item), named: "\(resource.prefix)\(item)")
         }).sorted(by: { lhs, rhs in
             return lhs.variable < rhs.variable
         }).map({ item -> String in

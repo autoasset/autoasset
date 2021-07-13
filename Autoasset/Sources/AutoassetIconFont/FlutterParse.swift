@@ -22,7 +22,7 @@ struct FlutterParse {
         let main = """
         import 'package:flutter/widgets.dart';
         
-        class \(template.fontFamily) {
+        class \(template.className) {
         
         \(functions)
         
