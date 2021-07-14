@@ -62,6 +62,7 @@ public struct IconFont {
         public let output: String
         public let className: String
         public let fontFamily: String
+        public let fontPackage: String
     }
     
     public struct Font {
@@ -90,7 +91,8 @@ public struct IconFont {
             let fontFamily = template["font_family"].string ?? "IconFont"
             self.template = .flutter(.init(output: output,
                                            className: template["class_name"].string ?? fontFamily,
-                                           fontFamily: fontFamily))
+                                           fontFamily: fontFamily,
+                                           fontPackage: template["font_package"].string ?? fontFamily))
         } else {
             return nil
         }

@@ -89,6 +89,8 @@ iconfonts:
         type: ttf
     flutter: 
         font_family: ${font_family}
+        font_package:  ${font_family}
+        class_name:  ${font_family}
         output: ${CodeOutput}
 ```
 

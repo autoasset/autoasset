@@ -17,7 +17,7 @@ struct FlutterParse {
         let functions = model.glyphs
             .sorted(by: { $0.name < $1.name })
             .map { item in
-            return "  static const IconData \(item.name) = const IconData(0x\(item.unicode), fontFamily: '\(template.fontFamily)');"
+                return "static const IconData  \(item.name) = const IconData(0x\(item.unicode), fontFamily: '\(template.fontFamily)',fontPackage: '\(template.fontPackage)');"
         }.joined(separator: "\n")
         let main = """
         import 'package:flutter/widgets.dart';
