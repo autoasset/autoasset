@@ -20,5 +20,133 @@
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DF04E32B-2428-4DC3-ACBC-D03722530F3D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "autoasset/Sources/AutoassetTidy/TidyController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "131"
+            endingLineNumber = "131"
+            landmarkName = "copyTask(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A8971EA0-817D-43FF-818A-16778DE9C036"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "autoasset/Sources/AutoassetTidy/TidyController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "134"
+            endingLineNumber = "134"
+            landmarkName = "copyTask(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "A8971EA0-817D-43FF-818A-16778DE9C036 - f30e75a9b011e0da"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "AutoassetTidy.TidyController.copyTask(Swift.String) throws -&gt; Swift.Bool"
+                  moduleName = "Autoasset"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/linhey/Desktop/autoasset/autoasset/Sources/AutoassetTidy/TidyController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "133"
+                  endingLineNumber = "133"
+                  offsetFromSymbolStart = "3903">
+               </Location>
+               <Location
+                  uuid = "A8971EA0-817D-43FF-818A-16778DE9C036 - 65af32b89eb0ca"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #3 (StemCrossPlatform.FilePath) throws -&gt; () in AutoassetTidy.TidyController.copyTask(Swift.String) throws -&gt; Swift.Bool"
+                  moduleName = "Autoasset"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/linhey/Desktop/autoasset/autoasset/Sources/AutoassetTidy/TidyController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "134"
+                  endingLineNumber = "134"
+                  offsetFromSymbolStart = "284">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "48F29B03-2AAD-461A-BCD9-12D50AA44743"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "autoasset/Sources/AutoassetTidy/TidyController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "127"
+            endingLineNumber = "127"
+            landmarkName = "copyTask(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "48F29B03-2AAD-461A-BCD9-12D50AA44743 - f30e75a9b011e1bd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "AutoassetTidy.TidyController.copyTask(Swift.String) throws -&gt; Swift.Bool"
+                  moduleName = "Autoasset"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/linhey/Desktop/autoasset/autoasset/Sources/AutoassetTidy/TidyController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "126"
+                  endingLineNumber = "126"
+                  offsetFromSymbolStart = "2512">
+               </Location>
+               <Location
+                  uuid = "48F29B03-2AAD-461A-BCD9-12D50AA44743 - dfb7449899e7097"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.String) -&gt; Swift.Optional&lt;StemCrossPlatform.FilePath&gt; in AutoassetTidy.TidyController.copyTask(Swift.String) throws -&gt; Swift.Bool"
+                  moduleName = "Autoasset"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/linhey/Desktop/autoasset/autoasset/Sources/AutoassetTidy/TidyController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "126"
+                  endingLineNumber = "126"
+                  offsetFromSymbolStart = "39">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7EA12FC7-D0C4-4D79-8B3A-7D1CA8C77B9C"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "autoasset/Sources/AutoassetTidy/TidyController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "136"
+            endingLineNumber = "136"
+            landmarkName = "copyTask(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>
