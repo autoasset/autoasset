@@ -68,16 +68,16 @@ public struct XcassetsController {
     }
     
     public func run() throws {
-        let colorController = ColorXcassetsController(asset: xcassets)
+        let colorController = try ColorXcassetsController(xcassets: xcassets)
         try colorController.run()
         
-        let imageController = ImageXcassetsController(xcassets: xcassets)
+        let imageController = try ImageXcassetsController(xcassets: xcassets)
         try imageController.run()
         
-        let gifsController = DataXcassetsController(named: .gifs, resources: xcassets.gifs, xcassets: xcassets)
+        let gifsController = try DataXcassetsController(named: .gifs, resources: xcassets.gifs, xcassets: xcassets)
         try gifsController.run()
         
-        let dataController = DataXcassetsController(named: .data, resources: xcassets.datas, xcassets: xcassets)
+        let dataController = try DataXcassetsController(named: .data, resources: xcassets.datas, xcassets: xcassets)
         try dataController.run()
     }
     

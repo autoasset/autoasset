@@ -62,6 +62,8 @@ public struct VariablesMaker {
                 replace = try Git().log(options: [.maxCount(1)]).first?.author ?? ""
             case .gitCurrentCommitDate:
                 replace = try Git().log(options: [.maxCount(1)]).first?.date ?? ""
+            case .gitRemoteURL:
+                replace = try Git().lsRemote(options: [.getURL])
             }
             
             guard replace.isEmpty == false else {

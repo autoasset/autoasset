@@ -37,18 +37,26 @@ import VariablesMaker
 
 public struct AutoAsset: ParsableCommand {
     
-    public static let configuration = CommandConfiguration(version: "33")
+    public static let configuration = CommandConfiguration(version: "34")
     
     @Option(name: [.customLong("config")], help: "配置文件路径")
     var configPath: String?
     
+    @Option(name: [.customLong("env")], help: "环境变量文件路径")
+    var envPath: String?
+        
     @Flag(help: .init("内置变量列表:\n" + PlaceHolder.systems.map{ "- \($0.name)\n  \($0.desc)"}.joined(separator: "\n") + "\n"))
     var variables = false
     
     public init() {}
     
     public func run() throws {
-        begin(path: configPath ?? "autoasset.yml", variables: nil, superConfig: nil)
+        if let path = envPath {
+            let logger = Logger(label: "env")
+            logger.info(.init(stringLiteral: "path: \(path)"))
+            Global.env = try config(from: path)?.variables
+        }
+        begin(path: configPath ?? "autoasset.yml", variables: Global.env, superConfig: nil)
     }
 }
 
@@ -60,11 +68,7 @@ extension AutoAsset {
             config.debug = superConfig?.debug
         }
         
-        if let placeHolders = variables?.placeHolders {
-            config.variables = Variables(placeHolders: config.variables.placeHolders + placeHolders,
-                                         dateFormat: config.variables.dateFormat)
-            
-        }
+        config.variables = config.variables.merge(variables).merge(Global.env)
         
         do {
             try config.modes.forEach { try run(with: $0, config: config) }
@@ -86,22 +90,22 @@ extension AutoAsset {
         }
     }
     
-    
     func begin(path: String, variables: Variables?, superConfig: Config?) {
-        do {
-            let logger = Logger(label: "config")
-            logger.info(.init(stringLiteral: "path: \(path)"))
-            let path = try FilePath.File(path: path)
-            let data = try path.data()
-            guard let text = String(data: data, encoding: .utf8),
-                  let yml = try Yams.load(yaml: text) else {
-                return
-            }
-            try self.begin(config: Config(from: JSON(yml)), variables: variables, superConfig: superConfig)
-        } catch {
-            print(error.localizedDescription)
+        let logger = Logger(label: "config")
+        logger.info(.init(stringLiteral: "path: \(path)"))
+        guard let config = try? config(from: path) else {
+            return
         }
-        
+        try? self.begin(config: config, variables: variables, superConfig: superConfig)
+    }
+    
+    func config(from path: String) throws -> Config? {
+        let path = try FilePath.File(path: path)
+        let data = try path.data()
+        guard let text = String(data: data, encoding: .utf8), let yml = try Yams.load(yaml: text) else {
+            return nil
+        }
+       return Config(from: JSON(yml))
     }
     
     func run(with mode: Mode, config: Config) throws {

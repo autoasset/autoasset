@@ -27,6 +27,8 @@ public enum PlaceHolder {
     
     case dateNow
     case dateFormat
+    
+    case gitRemoteURL
     case gitCurrentBranch
     case gitCurrentBranchNumber
     case gitCurrentCommitHash
@@ -35,10 +37,12 @@ public enum PlaceHolder {
     case gitCurrentCommitMessage
     case gitNextTagNumber
     case gitMaxTagNumber
+    
     case custom(key: String, value: String)
     
     public static var systems: [PlaceHolder] { [.dateNow,
                                                 .dateFormat,
+                                                .gitRemoteURL,
                                                 .gitCurrentBranch,
                                                 .gitCurrentBranchNumber,
                                                 .gitCurrentCommitHash,
@@ -52,6 +56,7 @@ public enum PlaceHolder {
         switch self {
         case .dateNow:                 return "autoasset.date.now"
         case .dateFormat:              return "autoasset.date.format"
+        case .gitRemoteURL:            return "autoasset.git.remote.url"
         case .gitCurrentBranch:        return "autoasset.git.branch.current"
         case .gitCurrentBranchNumber:  return "autoasset.git.branch.current.number"
         case .gitCurrentCommitHash:    return "autoasset.git.commit.current.hash"
@@ -72,11 +77,12 @@ public enum PlaceHolder {
         case .gitCurrentBranchNumber:  return "获取当前 Git Branch 名称中的数字部分"
         case .gitNextTagNumber:        return "获取远端 Git Tags 中最大的数字 + 1, 未创建分支为 1"
         case .gitMaxTagNumber:         return "获取远端 Git Tags 中最大的数字, 未创建分支为 0"
-        case .custom(key: let key, let value): return "key: \(key) value: \(value)"
         case .gitCurrentCommitAuthor:  return "获取当前 Git Commit 作者信息"
         case .gitCurrentCommitDate:    return "获取当前 Git Commit 提交日期"
         case .gitCurrentCommitMessage: return "获取当前 Git Commit 提交信息"
         case .gitCurrentCommitHash:    return "获取当前 Git Commit hash"
+        case .gitRemoteURL: return "获取远程 URL"
+        case .custom(key: let key, let value): return "key: \(key) value: \(value)"
         }
     }
     
@@ -89,6 +95,13 @@ public struct Variables {
     public let dateFormat: String
     public let placeHolders: [PlaceHolder]
     public let placeHolderNames: Set<String>
+    
+    public func merge(_ model: Variables?) -> Variables {
+        guard let model = model else {
+            return self
+        }
+        return  Variables(placeHolders: placeHolders + model.placeHolders, dateFormat: dateFormat)
+    }
     
     public init(placeHolders newList: [PlaceHolder], dateFormat: String = "yyyy-MM-dd HH:mm:ss") {
         var placeHolderNames = Set(PlaceHolder.systems.map(\.name))

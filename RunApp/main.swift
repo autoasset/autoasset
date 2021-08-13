@@ -8,7 +8,8 @@
 import AutoassetApp
 import StemCrossPlatform
 
-// AutoAsset.main(["--version"])
-// AutoAsset.main(["--help"])
-// AutoAsset.main(["--config", ".autoasset/run-tags.yml"])
+//AutoAsset.main(["--version"])
+//AutoAsset.main(["--help"])
+//AutoAsset.main(["--config", ".autoasset/run-tags.yml",
+//                "--env", ".autoasset/env.yml"])
 AutoAsset.main()

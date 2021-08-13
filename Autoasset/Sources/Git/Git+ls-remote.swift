@@ -74,14 +74,14 @@ public extension Git {
     }
     
     /// Displays references available in a remote repository along with the associated commit IDs.
-    func lsRemote(mode: [LsRemoteModeOptions],
+    func lsRemote(mode: [LsRemoteModeOptions] = [],
                   options: [LsRemoteOptions] = [],
-                  repository: String) throws -> String {
+                  repository: String? = nil) throws -> String {
         let commands = ["git", "ls-remote"]
             + mode.map(\.command)
             + options.map(\.command)
             + [repository]
-        let command = commands.joined(separator: " ")
+        let command = commands.compactMap({ $0 }).joined(separator: " ")
         return try shell(command, logger: logger)
     }
     
