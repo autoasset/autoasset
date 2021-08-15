@@ -28,7 +28,6 @@ brew upgrade autoasset/autoasset/autoasset
 | autoasset.date.now                   | 获取当前时间                                       | 27   |
 | ------------------------------------ | -------------------------------------------------- | ---- |
 | autoasset.date.format                | 设置时间格式, 默认为 yyyy-MM-dd HH:mm:ss           | 27   |
-| autoasset.git.remote.url             | 获取当前 Git 远端仓库 URL                          | 34   |
 | autoasset.git.branch.current         | 获取当前 Git Branch 名称                           | 27   |
 | autoasset.git.branch.current.number  | 获取当前 Git Branch 名称中的数字部分               | 27   |
 | autoasset.git.tag.next.number        | 获取远端 Git Tags 中最大的数字 + 1, 未创建分支为 1 | 27   |
@@ -37,6 +36,7 @@ brew upgrade autoasset/autoasset/autoasset
 | autoasset.git.commit.current.author  | 获取当前 Git Commit 作者信息                       | 28   |
 | autoasset.git.commit.current.date    | 获取当前 Git Commit 提交日期                       | 28   |
 | autoasset.git.commit.current.message | 获取当前 Git Commit 提交信息                       | 28   |
+| autoasset.git.remote.url             | 获取当前 Git 远端仓库 URL                          | 34   |
 | recommend.package.name               | 获取当前 git URL 后缀名/根文件夹名                 | 35   |
 | recommend.package.name(.camelCase)   | 获取当前 git URL 后缀名/根文件夹名(驼峰命名)       | 35   |
 | recommend.package.name(.snakeCase)   | 获取当前 git URL 后缀名/根文件夹名(下划线分割命名) | 35   |
