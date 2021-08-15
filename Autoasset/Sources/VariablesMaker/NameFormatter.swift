@@ -42,58 +42,6 @@ public class NameFormatter {
     public init(split: [String] = []) {
         self.splitChars = split
     }
-    
-    /// 驼峰
-    public func camelCased(_ str: String) -> String {
-        var words = [String]()
-        var buffer = [String]()
-        var bufferIsNumber = false
-        
-        for item in str {
-            let char = String(item)
-            
-            if splitChars.contains(char) {
-                words.append(buffer.joined())
-                buffer.removeAll()
-                continue
-            }
-            
-            /// 切割非法字符
-            guard item.isNumber || ("a"..."z").contains(item.lowercased()) else {
-                words.append(buffer.joined())
-                buffer.removeAll()
-                continue
-            }
-            
-            guard item.isLowercase else {
-                words.append(buffer.joined())
-                buffer.removeAll()
-                buffer.append(char)
-                continue
-            }
-            
-            /// 切割数字/字母
-            if buffer.isEmpty {
-                bufferIsNumber = item.isNumber
-            }
-                        
-            if item.isNumber == bufferIsNumber {
-                buffer.append(char)
-            } else {
-                words.append(buffer.joined())
-                buffer.removeAll()
-                buffer.append(char)
-            }
-        }
-        
-        words.append(buffer.joined())
-    
-        return words
-            .filter({ $0.isEmpty == false })
-            .enumerated()
-            .map { $0.offset > 0 ? $0.element.capitalized : $0.element.lowercased() }
-            .joined()
-    }
 
     /// 获取文件名
     public func file(_ str: String) -> String {
@@ -106,17 +54,8 @@ public class NameFormatter {
         return name
     }
     
-    /// 连字符
-    enum Hyphen {
-        /// 驼峰
-        case camelCased
-        /// 自定义连字符
-        case custom(String)
-    }
-    
     /// 处理变量名
     public func variable(_ str: String, prefix: String? = nil) -> String {
-        
         if let prefix = prefix, splitChars.contains(prefix) {
             let name = variable(str, prefix: nil)
             if name.hasPrefix(prefix) {
@@ -170,5 +109,73 @@ public class NameFormatter {
         .map({ String($0) })
         .joined()
     }
+    
+}
+
+public extension NameFormatter {
+
+    /// 驼峰
+     func camelCased(_ str: String) -> String {
+        return splitWords(str)
+            .enumerated()
+            .map { $0.offset > 0 ? $0.element.capitalized : $0.element.lowercased() }
+            .joined()
+    }
+    
+    /// 下划线
+     func snakeCased(_ str: String) -> String {
+        return splitWords(str).joined(separator: "_")
+    }
+    
+}
+
+public extension NameFormatter {
+    
+    func splitWords(_ str: String) -> [String] {
+        var words = [String]()
+        var buffer = [String]()
+        var bufferIsNumber = false
+        
+        for item in str {
+            let char = String(item)
+            
+            if splitChars.contains(char) {
+                words.append(buffer.joined())
+                buffer.removeAll()
+                continue
+            }
+            
+            /// 切割非法字符
+            guard item.isNumber || ("a"..."z").contains(item.lowercased()) else {
+                words.append(buffer.joined())
+                buffer.removeAll()
+                continue
+            }
+            
+            guard item.isLowercase else {
+                words.append(buffer.joined())
+                buffer.removeAll()
+                buffer.append(char)
+                continue
+            }
+            
+            /// 切割数字/字母
+            if buffer.isEmpty {
+                bufferIsNumber = item.isNumber
+            }
+                        
+            if item.isNumber == bufferIsNumber {
+                buffer.append(char)
+            } else {
+                words.append(buffer.joined())
+                buffer.removeAll()
+                buffer.append(char)
+            }
+        }
+        
+        words.append(buffer.joined())
+        return words.filter({ $0.isEmpty == false }).map({ $0.lowercased() })
+    }
+
     
 }

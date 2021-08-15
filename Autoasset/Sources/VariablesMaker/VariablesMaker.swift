@@ -10,9 +10,11 @@ import AutoassetModels
 import StemCrossPlatform
 import Git
 import ASError
+import Logging
 
 public struct VariablesMaker {
     
+    private let logger = Logger(label: "VariablesMaker")
     public let variables: Variables
     
     public init(_ variables: Variables) {
@@ -25,8 +27,6 @@ public struct VariablesMaker {
         }
         return try textMaker(text)
     }
-    
-    
     
     public func textMaker(_ text: String) throws -> String {
         var outputText = text
@@ -64,12 +64,19 @@ public struct VariablesMaker {
                 replace = try Git().log(options: [.maxCount(1)]).first?.date ?? ""
             case .gitRemoteURL:
                 replace = try Git().lsRemote(options: [.getURL])
+            case .recommendPackageName:
+                replace = try recommendPackageName()
+            case .recommendPackageNameCamelCase:
+                replace = NameFormatter().splitWords(try recommendPackageName()).map(\.localizedCapitalized).joined()
+            case .recommendPackageNameSnakeCase:
+                replace = NameFormatter().snakeCased(try recommendPackageName())
             }
             
             guard replace.isEmpty == false else {
                 throw ASError(message: "\(placeHolder.name) 无法获取值")
             }
             
+            logger.info("系统变量替换 \(key): \(replace)")
             outputText = outputText.replacingOccurrences(of: key, with: replace)
         }
         
@@ -78,6 +85,30 @@ public struct VariablesMaker {
         }
         
         return try self.textMaker(outputText)
+    }
+    
+    
+    private func recommendPackageName() throws -> String {
+        
+        func rootFolderName() throws -> String {
+            let folder = try FilePath.Folder(path: "./")
+            return folder.url.lastPathComponent
+        }
+        
+        do {
+            if let name = try Git().lsRemote(options: [.getURL])
+                .split(separator: "/")
+                .last?
+                .split(separator: ".")
+                .first?
+                .description {
+                return name
+            } else {
+                return try rootFolderName()
+            }
+        } catch {
+            return try rootFolderName()
+        }
     }
     
     public func fileMaker(_ input: String) throws -> String {

@@ -37,23 +37,34 @@ public enum PlaceHolder {
     case gitCurrentCommitMessage
     case gitNextTagNumber
     case gitMaxTagNumber
+    case recommendPackageName
+    case recommendPackageNameCamelCase
+    case recommendPackageNameSnakeCase
     
     case custom(key: String, value: String)
     
-    public static var systems: [PlaceHolder] { [.dateNow,
-                                                .dateFormat,
-                                                .gitRemoteURL,
-                                                .gitCurrentBranch,
-                                                .gitCurrentBranchNumber,
-                                                .gitCurrentCommitHash,
-                                                .gitCurrentCommitAuthor,
-                                                .gitCurrentCommitDate,
-                                                .gitCurrentCommitMessage,
-                                                .gitMaxTagNumber,
-                                                .gitNextTagNumber] }
+    public static var systems: [PlaceHolder] { [
+        .dateNow,
+        .recommendPackageName,
+        .recommendPackageNameCamelCase,
+        .recommendPackageNameSnakeCase,
+        .dateFormat,
+        .gitRemoteURL,
+        .gitCurrentBranch,
+        .gitCurrentBranchNumber,
+        .gitCurrentCommitHash,
+        .gitCurrentCommitAuthor,
+        .gitCurrentCommitDate,
+        .gitCurrentCommitMessage,
+        .gitMaxTagNumber,
+        .gitNextTagNumber]
+    }
     
     var variable: String {
         switch self {
+        case .recommendPackageName: return "recommend.package.name"
+        case .recommendPackageNameCamelCase: return "recommend.package.name(.camelCase)"
+        case .recommendPackageNameSnakeCase: return "recommend.package.name(.snakeCase)"
         case .dateNow:                 return "autoasset.date.now"
         case .dateFormat:              return "autoasset.date.format"
         case .gitRemoteURL:            return "autoasset.git.remote.url"
@@ -71,6 +82,9 @@ public enum PlaceHolder {
     
     public var desc: String {
         switch self {
+        case .recommendPackageName: return "获取当前 git URL 后缀名/根文件夹名"
+        case .recommendPackageNameCamelCase: return "获取当前 git URL 后缀名/根文件夹名(驼峰命名)"
+        case .recommendPackageNameSnakeCase: return "获取当前 git URL 后缀名/根文件夹名(下划线分割命名)"
         case .dateNow:                 return "获取当前时间"
         case .dateFormat:              return "设置时间格式, 默认为 yyyy-MM-dd HH:mm:ss"
         case .gitCurrentBranch:        return "获取当前 Git Branch 名称"
