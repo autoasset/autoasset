@@ -152,7 +152,7 @@ private extension ColorCodeTemplate {
                     let blue    = CGFloat( value & 0x0000FF       ) / divisor
                     return [red, green, blue, 1]
                 } else {
-                    assertionFailure("StemColor: 位数错误, 只支持 6 或 8 位, count: \(count)")
+                    assertionFailure("StemColor: 位数错误, 只支持 6 或 8 位, count: \\(count)")
                 }
                 
                 return [0,0,0,1]
