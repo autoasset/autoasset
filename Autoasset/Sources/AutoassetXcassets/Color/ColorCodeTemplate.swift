@@ -83,12 +83,6 @@ private extension ColorCodeTemplate {
         #endif
         public class AutoAssetColor: AutoAssetColorProtocol {
             
-            public enum State {
-                case light
-                case dark
-                case system
-            }
-            
             #if canImport(UIKit)
             let light: UIColor
             let dark: UIColor
@@ -99,12 +93,44 @@ private extension ColorCodeTemplate {
             let system: NSColor
             #endif
             
-            public private(set) static var state: State = .system
-            
-            public static func enable(_ state: State) {
-                self.state = state
+            public required init(light hex1: Int64, dark hex2: Int64) {
+                let color1 = Self.color(values: Self.values(hex: hex1))
+                let color2 = Self.color(values: Self.values(hex: hex2))
+                self.light  = color1
+                self.dark   = color2
+                
+                #if canImport(UIKit)
+                if #available(iOS 13.0, *) {
+                    self.system = .init(dynamicProvider: { $0.userInterfaceStyle == .dark ? color2 : color1 })
+                } else {
+                    self.system = color1
+                }
+                #elseif canImport(AppKit)
+                self.system = color1
+                #endif
             }
+        }
+
+        public extension AutoAssetColor {
+            #if canImport(UIKit)
+            func value() -> UIColor { return system }
+            #elseif canImport(AppKit)
+            func value() -> NSColor { return system }
+            #endif
+        }
+
+        private extension AutoAssetColor {
             
+            #if canImport(UIKit)
+            static func color(values: [CGFloat]) -> UIColor {
+                return UIColor(red: values[0], green: values[1], blue: values[2], alpha: values[3])
+            }
+            #elseif canImport(AppKit)
+            static func color(values: [CGFloat]) -> NSColor {
+                return NSColor(red: values[0], green: values[1], blue: values[2], alpha: values[3])
+            }
+            #endif
+
             /// 十六进制色: 0x666666
             ///
             /// - Parameter RGBValue: 十六进制颜色
@@ -126,45 +152,12 @@ private extension ColorCodeTemplate {
                     let blue    = CGFloat( value & 0x0000FF       ) / divisor
                     return [red, green, blue, 1]
                 } else {
-                    assertionFailure("StemColor: 位数错误, 只支持 6 或 8 位, count: \\(count)")
+                    assertionFailure("StemColor: 位数错误, 只支持 6 或 8 位, count: \(count)")
                 }
                 
                 return [0,0,0,1]
             }
             
-            #if canImport(UIKit)
-            static func color(values: [CGFloat]) -> UIColor {
-                return UIColor(red: values[0], green: values[1], blue: values[2], alpha: values[3])
-            }
-            #elseif canImport(AppKit)
-            static func color(values: [CGFloat]) -> NSColor {
-                return NSColor(red: values[0], green: values[1], blue: values[2], alpha: values[3])
-            }
-            #endif
-            
-            public required init(light hex1: Int64, dark hex2: Int64) {
-                let color1 = Self.color(values: Self.values(hex: hex1))
-                let color2 = Self.color(values: Self.values(hex: hex2))
-                self.light  = color1
-                self.dark   = color2
-                
-                #if canImport(UIKit)
-                if #available(iOS 13.0, *) {
-                    self.system = .init(dynamicProvider: { $0.userInterfaceStyle == .dark ? color2 : color1 })
-                } else {
-                    self.system = color1
-                }
-                #elseif canImport(AppKit)
-                self.system = color1
-                #endif
-            }
-        }
-        public extension AutoAssetColor {
-            #if canImport(UIKit)
-            func value() -> UIColor { return system }
-            #elseif canImport(AppKit)
-            func value() -> NSColor { return system }
-            #endif
         }
         """
     }

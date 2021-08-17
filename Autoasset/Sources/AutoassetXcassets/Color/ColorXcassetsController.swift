@@ -79,27 +79,17 @@ extension ColorXcassetsController {
             element["components"] = self.components(color.light)
             colors.append(["idiom": "universal", "color": element])
         } else {
-            
             var element_light = [String: Any]()
             element_light["color-space"] = resource.space
             element_light["components"] = self.components(color.light)
-            colors.append(["idiom": "universal", "color": element_light])
             
             var element_dark = [String: Any]()
             element_dark["color-space"] = resource.space
             element_dark["components"] = self.components(color.dark)
-            colors.append(["idiom": "universal", "color": element_dark])
             
-            var appearance_light = [String: Any]()
-            appearance_light["appearance"] = "luminosity"
-            appearance_light["value"] = "light"
-            
-            var appearance_dark = [String: Any]()
-            appearance_dark["appearance"] = "luminosity"
-            appearance_dark["value"] = "dark"
-            
-            colors.append(["appearances": [appearance_light], "idiom": "universal", "color": element_light])
-            colors.append(["appearances": [appearance_dark], "idiom": "universal", "color": element_dark])
+            colors.append(["idiom": "universal", "color": element_light])
+            colors.append(["appearances": [["appearance": "luminosity", "value": "light"]], "idiom": "universal", "color": element_light])
+            colors.append(["appearances": [["appearance": "luminosity", "value": "dark"]], "idiom": "universal", "color": element_dark])
             
         }
         
@@ -113,14 +103,14 @@ extension ColorXcassetsController {
     func components(_ color: StemColor) -> [String: String] {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
-        formatter.formatWidth = 4
-        formatter.minimumFractionDigits = 4
-        formatter.maximumFractionDigits = 4
-        
+        formatter.formatWidth = 3
+        formatter.minimumFractionDigits = 3
+        formatter.maximumFractionDigits = 3
+        let hex = color.hexString(.digits6, prefix: .none).map(\.description)
         return ["alpha": formatter.string(from: .init(value: color.alpha))!,
-                "blue" : formatter.string(from: .init(value: color.rgbSpace.blue))!,
-                "green": formatter.string(from: .init(value: color.rgbSpace.green))!,
-                "red"  : formatter.string(from: .init(value: color.rgbSpace.red))!]
+                "blue" : "0x\(hex[4...5].joined().uppercased())",
+                "green": "0x\(hex[2...3].joined().uppercased())",
+                "red"  : "0x\(hex[0...1].joined().uppercased())"]
     }
     
 }

@@ -81,13 +81,12 @@ private extension ImageCodeTemplate {
     
     func template_core() -> String {
         #"""
-            #if canImport(UIKit)
-            import UIKit
-            #elseif canImport(AppKit)
-            import AppKit
-            #endif
-            
-            public class AutoAssetImage: AutoAssetImageProtocol {
+        #if canImport(UIKit)
+        import UIKit
+        #elseif canImport(AppKit)
+        import AppKit
+        #endif
+        public class AutoAssetImage: AutoAssetImageProtocol {
             
             public let named: String
             public let bundle: String?
@@ -95,47 +94,46 @@ private extension ImageCodeTemplate {
             static var bundleMap = [String: Bundle]()
             
             required public init(named: String, in bundle: String?) {
-            self.named = named
-            self.bundle = bundle
+                self.named = named
+                self.bundle = bundle
             }
             
             #if canImport(UIKit)
             public func value() -> UIImage {
-            guard let bundleName = bundle else {
-            if let image = UIImage(named: named) {
-            return image
-            }
-            assertionFailure("can't find image: \(named) in bundle: \(bundle ?? "main")")
-            return UIImage()
-            }
-            
-            if let bundle = Self.bundleMap[bundleName] {
-            if let image = UIImage(named: named, in: bundle, compatibleWith: nil) {
-            return image
-            }
-            assertionFailure("can't find image: \(named) in bundle: \(bundleName)")
-            return UIImage()
-            }
-            
-            if let url = Bundle(for: Self.self).url(forResource: bundle, withExtension: "bundle"),
-            let bundle = Bundle(url: url),
-            let image = UIImage(named: named, in: bundle, compatibleWith: nil) {
-            Self.bundleMap[bundleName] = bundle
-            return image
-            }
-            
-            assertionFailure("can't find image: \(named) in bundle: \(bundle ?? "main")")
-            return UIImage()
+                guard let bundleName = bundle else {
+                    if let image = UIImage(named: named) {
+                        return image
+                    }
+                    assertionFailure("can't find image: \(named) in bundle: \(bundle ?? "main")")
+                    return UIImage()
+                }
+                
+                if let bundle = Self.bundleMap[bundleName] {
+                    if let image = UIImage(named: named, in: bundle, compatibleWith: nil) {
+                        return image
+                    }
+                    assertionFailure("can't find image: \(named) in bundle: \(bundleName)")
+                    return UIImage()
+                }
+                
+                if let url = Bundle(for: Self.self).url(forResource: bundle, withExtension: "bundle"),
+                   let bundle = Bundle(url: url),
+                   let image = UIImage(named: named, in: bundle, compatibleWith: nil) {
+                    Self.bundleMap[bundleName] = bundle
+                    return image
+                }
+                
+                assertionFailure("can't find image: \(named) in bundle: \(bundle ?? "main")")
+                return UIImage()
             }
             
             #elseif canImport(AppKit)
             func value() -> NSImage {
-            return .init(imageLiteralResourceName: named)
+                return .init(imageLiteralResourceName: named)
             }
             #endif
-            }
-            
-            """#
+        }
+        """#
     }
     
 }

@@ -77,7 +77,7 @@ public struct Xcassets {
         }
         
         override init?(from json: JSON) {
-            space = json["space"].string
+            space = json["space"].string ?? "display-p3"
             super.init(from: json)
         }
     }
