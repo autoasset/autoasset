@@ -58,7 +58,7 @@ struct ColorXcassetsController: XcassetsControllerProtocol {
             .map({ (color: $0, try conversion(color: $0, resource: resource)) })
             .map({ (color, data) -> Color in
                 let name = color.light.hexString(.digits6, prefix: .none)
-                let imageset = try folder.create(folder: "\(resource.prefix)\(name).colorset")
+                let imageset = try folder.create(folder: "\(resource.prefix)\(name)\(resource.suffix).colorset")
                 logger.info(.init(stringLiteral: imageset.attributes.name))
                 try imageset.create(file: "Contents.json", data: data)
                 return color

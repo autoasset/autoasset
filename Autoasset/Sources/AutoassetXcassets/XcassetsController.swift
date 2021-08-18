@@ -36,6 +36,7 @@ public struct XcassetsController {
             return try .init(inputs: item.inputs.map(variablesMaker.textMaker(_:)),
                              output: variablesMaker.textMaker(item.output),
                              prefix: variablesMaker.textMaker(item.prefix),
+                             suffix: variablesMaker.textMaker(item.suffix),
                              space: variablesMaker.textMaker(item.space))
         }),
         images: model.images.map({ item -> Xcassets.Image in

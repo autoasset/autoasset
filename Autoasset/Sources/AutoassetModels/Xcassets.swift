@@ -70,19 +70,23 @@ public struct Xcassets {
         
         public let space: String?
         public let prefix: String
+        public let suffix: String
 
         public init(inputs: [String],
                     output: String,
                     prefix: String,
+                    suffix: String,
                     space: String?) {
             self.space = space
             self.prefix = prefix
+            self.suffix = suffix
             super.init(inputs: inputs, output: output)
         }
         
         override init?(from json: JSON) {
             space = json["space"].string ?? "display-p3"
             prefix = json["prefix"].stringValue
+            suffix = json["suffix"].stringValue
             super.init(from: json)
         }
     }

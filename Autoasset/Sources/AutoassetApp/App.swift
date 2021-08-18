@@ -37,7 +37,7 @@ import VariablesMaker
 
 public struct AutoAsset: ParsableCommand {
     
-    public static let configuration = CommandConfiguration(version: "37")
+    public static let configuration = CommandConfiguration(version: "38")
     
     @Option(name: [.customLong("config")], help: "配置文件路径")
     var configPath: String?
