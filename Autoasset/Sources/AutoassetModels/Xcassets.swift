@@ -67,17 +67,22 @@ public struct Xcassets {
     }
     
     public class Color: Resource {
-        public let space: String?
         
+        public let space: String?
+        public let prefix: String
+
         public init(inputs: [String],
                     output: String,
+                    prefix: String,
                     space: String?) {
             self.space = space
+            self.prefix = prefix
             super.init(inputs: inputs, output: output)
         }
         
         override init?(from json: JSON) {
             space = json["space"].string ?? "display-p3"
+            prefix = json["prefix"].stringValue
             super.init(from: json)
         }
     }
