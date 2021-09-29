@@ -93,10 +93,14 @@ iconfonts:
         output: ${TTFOutput}
         type: ttf
     flutter: 
+        output: ${CodeOutput}
         font_family: ${font_family}
         font_package:  ${font_family}
         class_name:  ${font_family}
+    iOS:
         output: ${CodeOutput}
+        bundle: 所在 bundle 名, 默认为 "", 在 Bundle.main
+        prefix: 对应 xcassets.datas.prefix 值
 ```
 
 
