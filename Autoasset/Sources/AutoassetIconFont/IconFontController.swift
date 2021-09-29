@@ -41,19 +41,30 @@ public struct IconFontController {
                 .flatMap({ FilePath.File(url: $0.url) }) else {
             return
         }
-            
-        let target = try FilePath.File(path: try variablesMaker.textMaker(iconfont.font.output))
-        _ = try? target.delete()
-        _ = try target.parentFolder()?.create()
-        try font.replace(target)
-        
-        switch iconfont.template {
-        case .flutter(let template):
-            let parse = FlutterParse(model: source, template: template)
-            let file = try FilePath.File(path: try variablesMaker.textMaker(template.output))
-            try file.delete()
-            try file.create(with: variablesMaker.textMaker(parse.code).data(using: .utf8))
+                    
+        for template in iconfont.templates {
+            switch template {
+            case .flutter(let template):
+                let target = try FilePath.File(path: try variablesMaker.textMaker(iconfont.font.output))
+                _ = try? target.delete()
+                _ = try target.parentFolder()?.create()
+                try font.replace(target)
+                
+                let parse = FlutterParse(model: source, template: template)
+                let file = try FilePath.File(path: try variablesMaker.textMaker(template.output))
+                try file.delete()
+                try file.create(with: variablesMaker.textMaker(parse.code).data(using: .utf8))
+            case .iOS(let template):
+                let outputFolder = try FilePath.Folder(path: try variablesMaker.textMaker(template.output))
+                let parse = SwiftParse(model: source,
+                                       template: template,
+                                       folder: outputFolder,
+                                       variablesMaker: variablesMaker)
+                try parse.createDefaultFiles()
+                try parse.createListFile()
+            }
         }
+
     }
     
 }

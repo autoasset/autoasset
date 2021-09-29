@@ -37,7 +37,7 @@ import VariablesMaker
 
 public struct AutoAsset: ParsableCommand {
     
-    public static let configuration = CommandConfiguration(version: "38")
+    public static let configuration = CommandConfiguration(version: "39")
     
     @Option(name: [.customLong("config")], help: "配置文件路径")
     var configPath: String?
@@ -111,8 +111,8 @@ extension AutoAsset {
     func run(with mode: Mode, config: Config) throws {
         switch mode {
         case .iconfonts:
-           try config.iconfonts.forEach { iconfont in
-            try IconFontController(iconfont, variables: config.variables).run()
+            try config.iconfonts.forEach { iconfont in
+                try IconFontController(iconfont, variables: config.variables).run()
             }
         case .download(name: let name):
             if let model = config.download {

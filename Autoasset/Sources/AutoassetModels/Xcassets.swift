@@ -136,13 +136,16 @@ public struct Xcassets {
         
     }
     
+    public class IconFont: Resource {
+        
+    }
+    
     public typealias Data = Image
     
     public let colors: [Color]
     public let images: [Image]
     public let gifs: [Data]
     public let datas: [Data]
-    public let iconFonts: [Data]
     public let template: Template?
     
     public init(colors: [Color],

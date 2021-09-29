@@ -10,6 +10,14 @@ import StemCrossPlatform
 
 public struct IconFont {
     
+    /*
+     {
+       "name": "my_ddmall",
+       "font_class": "iconfont",
+       "unicode": "e001",
+       "unicode_value": ""
+     }
+     */
     public struct Model {
         
         public struct Glyph {
@@ -56,6 +64,7 @@ public struct IconFont {
     
     public enum TemplateType {
         case flutter(FlutterTemplate)
+        case iOS(iOSTemplate)
     }
     
     public struct FlutterTemplate {
@@ -65,6 +74,12 @@ public struct IconFont {
         public let fontPackage: String
     }
     
+    public struct iOSTemplate {
+        public let output: String
+        public let bundle: String
+        public let prefix: String
+    }
+    
     public struct Font {
         public let output: String
         public let fontType: FontType
@@ -72,30 +87,40 @@ public struct IconFont {
     
     public let package: String
     public let font: Font
-    public let template: TemplateType
+    public let templates: [TemplateType]
 
     init?(from json: JSON) {
         guard let package = json["package"].string else { return nil }
         self.package = package
         
         let font = json["font"]
-        guard font.exists(), let output = font["output"].string else { return nil }
+        guard font.exists() else { return nil }
         
-        self.font = .init(output: output,
-                          fontType: FontType(rawValue: font["type"].stringValue) ?? .ttf)
+        self.font = .init(output: font["output"].stringValue, fontType: FontType(rawValue: font["type"].stringValue) ?? .ttf)
         
-        
+        var templates = [TemplateType]()
+                
         if json["flutter"].exists() {
             let template = json["flutter"]
-            guard let output = template["output"].string else { return nil }
-            let fontFamily = template["font_family"].string ?? "IconFont"
-            self.template = .flutter(.init(output: output,
-                                           className: template["class_name"].string ?? fontFamily,
-                                           fontFamily: fontFamily,
-                                           fontPackage: template["font_package"].string ?? fontFamily))
-        } else {
-            return nil
+            if let output = template["output"].string {
+                let fontFamily = template["font_family"].string ?? "IconFont"
+                templates.append(.flutter(.init(output: output,
+                                                className: template["class_name"].string ?? fontFamily,
+                                                fontFamily: fontFamily,
+                                                fontPackage: template["font_package"].string ?? fontFamily)))
+            }
         }
+        
+        if json["iOS"].exists() {
+            let template = json["iOS"]
+            if let output = template["output"].string {
+                templates.append(.iOS(.init(output: output,
+                                            bundle: template["bundle"].stringValue,
+                                            prefix: template["prefix"].stringValue)))
+            }
+        }
+     
+        self.templates = templates
     }
     
 }
