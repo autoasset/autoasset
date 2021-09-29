@@ -142,6 +142,7 @@ public struct Xcassets {
     public let images: [Image]
     public let gifs: [Data]
     public let datas: [Data]
+    public let iconFonts: [Data]
     public let template: Template?
     
     public init(colors: [Color],

@@ -17,11 +17,13 @@ struct DataCodeTemplate {
         
         case data = "data"
         case gifs = "gifs"
+        case iconfonts = "iconfonts"
         
         var className: String {
             switch self {
             case .data: return "Data"
             case .gifs: return "GIF"
+            case .iconfonts: return "IconFont"
             }
         }
         
