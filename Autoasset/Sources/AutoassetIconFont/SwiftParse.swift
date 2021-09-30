@@ -40,7 +40,16 @@ struct SwiftParse {
             ].joined()
         }.joined(separator: "\n")
         
-        let str = "public extension AutoAssetIconFontProtocol {\n\(list)\n}"
+        let header =
+        #"""
+        #if canImport(AppKit)
+        import AppKit
+        #elseif canImport(UIKit)
+        import UIKit
+        #endif
+        """#
+        
+        let str = header + "public extension AutoAssetIconFontProtocol {\n\(list)\n}"
         try folder.create(file: "autoasset_iconfont_list.swift", data: str.data(using: .utf8))
     }
     
@@ -61,6 +70,12 @@ private extension SwiftParse {
     
     func template_protocol() -> String {
         #"""
+        #if canImport(AppKit)
+        import AppKit
+        #elseif canImport(UIKit)
+        import UIKit
+        #endif
+        
         public protocol AutoAssetIconFontProtocol {
             init(code: String, in bundle: String, familyName: String, dataName: String)
         }
@@ -69,6 +84,12 @@ private extension SwiftParse {
     
     func template_core() -> String {
         #"""
+        #if canImport(AppKit)
+        import AppKit
+        #elseif canImport(UIKit)
+        import UIKit
+        #endif
+
         public class AutoAssetIconFont: AutoAssetIconFontProtocol {
 
             let code: String
@@ -101,6 +122,16 @@ private extension SwiftParse {
                 }
                 return code
             }
+            
+            #if canImport(AppKit)
+            func font(ofSize: CGFloat) -> NSFont {
+                return NSFont(name: familyName, size: ofSize) ?? .systemFont(ofSize: ofSize)
+            }
+            #elseif canImport(UIKit)
+            func font(ofSize: CGFloat) -> UIFont {
+                return UIFont(name: familyName, size: ofSize) ?? .systemFont(ofSize: ofSize)
+            }
+            #endif
             
             func attributedString(fontSize: CGFloat, attributes: [NSAttributedString.Key: Any] = [:]) -> NSAttributedString {
                 let string = string
@@ -157,7 +188,6 @@ private extension SwiftParse {
             }
             
         }
-
         """#
     }
     

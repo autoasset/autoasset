@@ -106,7 +106,21 @@ public enum PlaceHolder {
 
 public struct Variables {
     
+    public struct RecommendPackage {
+        public var name: String?
+        public var camelName: String?
+        public var snakeName: String?
+        
+        public func merge(_ model: RecommendPackage) -> RecommendPackage {
+            return RecommendPackage(name: name ?? model.name,
+                                    camelName: camelName ?? model.camelName,
+                                    snakeName: snakeName ?? model.snakeName)
+        }
+    }
+    
     public let dateFormat: String
+    public let recommendPackage: RecommendPackage
+
     public let placeHolders: [PlaceHolder]
     public let placeHolderNames: Set<String>
     
@@ -114,10 +128,14 @@ public struct Variables {
         guard let model = model else {
             return self
         }
-        return  Variables(placeHolders: placeHolders + model.placeHolders, dateFormat: dateFormat)
+        return Variables(placeHolders: placeHolders + model.placeHolders,
+                         dateFormat: dateFormat == "yyyy-MM-dd HH:mm:ss" ? model.dateFormat : dateFormat,
+                         recommendPackage: recommendPackage.merge(model.recommendPackage))
     }
     
-    public init(placeHolders newList: [PlaceHolder], dateFormat: String = "yyyy-MM-dd HH:mm:ss") {
+    public init(placeHolders newList: [PlaceHolder],
+                dateFormat: String = "yyyy-MM-dd HH:mm:ss",
+                recommendPackage: RecommendPackage) {
         var placeHolderNames = Set(PlaceHolder.systems.map(\.name))
         var placeHolders = PlaceHolder.systems
         
@@ -131,13 +149,34 @@ public struct Variables {
         self.placeHolderNames = placeHolderNames
         self.placeHolders = placeHolders
         self.dateFormat = dateFormat
+        self.recommendPackage = recommendPackage
     }
     
     public init(placeHolders dictionary: [String: String]) {
         var dateFormat = "yyyy-MM-dd HH:mm:ss"
+        var recommendPackage = RecommendPackage()
+        
         var placeHolders = [PlaceHolder]()
         dictionary.forEach { (key, result) in
             switch key {
+            case PlaceHolder.recommendPackageName.variable:
+                let result = result.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard result.isEmpty == false else {
+                    break
+                }
+                recommendPackage.name = result
+            case PlaceHolder.recommendPackageNameCamelCase.variable:
+                let result = result.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard result.isEmpty == false else {
+                    break
+                }
+                recommendPackage.camelName = result
+            case PlaceHolder.recommendPackageNameSnakeCase.variable:
+                let result = result.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard result.isEmpty == false else {
+                    break
+                }
+                recommendPackage.snakeName = result
             case PlaceHolder.dateFormat.variable:
                 dateFormat = result.trimmingCharacters(in: .whitespacesAndNewlines)
             default:
@@ -145,7 +184,9 @@ public struct Variables {
             }
         }
         
-        self.init(placeHolders: placeHolders, dateFormat: dateFormat)
+        self.init(placeHolders: placeHolders,
+                  dateFormat: dateFormat,
+                  recommendPackage: recommendPackage)
     }
     
     

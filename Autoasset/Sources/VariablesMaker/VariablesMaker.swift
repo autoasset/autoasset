@@ -67,9 +67,17 @@ public struct VariablesMaker {
             case .recommendPackageName:
                 replace = try recommendPackageName()
             case .recommendPackageNameCamelCase:
-                replace = NameFormatter().splitWords(try recommendPackageName()).map(\.localizedCapitalized).joined()
+                if let name = variables.recommendPackage.camelName {
+                    replace = name
+                } else {
+                    replace = NameFormatter().splitWords(try recommendPackageName()).map(\.localizedCapitalized).joined()
+                }
             case .recommendPackageNameSnakeCase:
-                replace = NameFormatter().snakeCased(try recommendPackageName())
+                if let name = variables.recommendPackage.snakeName {
+                    replace = name
+                } else {
+                    replace = NameFormatter().snakeCased(try recommendPackageName())
+                }
             }
             
             guard replace.isEmpty == false else {
@@ -89,6 +97,9 @@ public struct VariablesMaker {
     
     
     private func recommendPackageName() throws -> String {
+        if let name = variables.recommendPackage.name {
+            return name
+        }
         
         func rootFolderName() throws -> String {
             let folder = try FilePath.Folder(path: "./")

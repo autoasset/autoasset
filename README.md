@@ -41,6 +41,14 @@ brew upgrade autoasset/autoasset/autoasset
 | recommend.package.name(.camelCase)   | 获取当前 git URL 后缀名/根文件夹名(驼峰命名)       | 35   |
 | recommend.package.name(.snakeCase)   | 获取当前 git URL 后缀名/根文件夹名(下划线分割命名) | 35   |
 
+支持覆盖的系统变量
+
+```
+  [27] autoasset.date.format: yyyy-MM-dd
+  [40] recommend.package.name: as-asset
+  [40] recommend.package.name(.camelCase): as-asset-camel
+  [40] recommend.package.name(.snakeCase): as-asset-snakeCase
+```
 
 自定义变量:
 
