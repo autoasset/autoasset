@@ -49,7 +49,7 @@ struct SwiftParse {
         #endif
         """#
         
-        let str = header + "public extension AutoAssetIconFontProtocol {\n\(list)\n}"
+        let str = header + "\n" + "public extension AutoAssetIconFontProtocol {\n\(list)\n}"
         try folder.create(file: "autoasset_iconfont_list.swift", data: str.data(using: .utf8))
     }
     
