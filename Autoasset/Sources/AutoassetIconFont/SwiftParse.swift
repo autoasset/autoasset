@@ -104,6 +104,15 @@ private extension SwiftParse {
                 self.bundle = bundle
                 self.familyName = familyName
                 self.dataName = dataName
+                
+                if Self.registerMap[familyName] == true {
+                    return
+                }
+                
+                if isAvailable(familyName: familyName) == false {
+                    try? register(data: data())
+                    Self.registerMap[familyName] = true
+                }
             }
             
         }
@@ -111,15 +120,6 @@ private extension SwiftParse {
         public extension AutoAssetIconFont {
 
             var string: String {
-                if Self.registerMap[familyName] == true {
-                    return code
-                }
-                
-                if isAvailable(familyName: familyName) == false {
-                    try? register(data: data())
-                    Self.registerMap[familyName] = true
-                    return code
-                }
                 return code
             }
             
@@ -188,6 +188,7 @@ private extension SwiftParse {
             }
             
         }
+
         """#
     }
     
