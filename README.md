@@ -108,9 +108,8 @@ iconfonts:
     iOS:
         output: ${CodeOutput}
         bundle: 所在 bundle 名, 默认为 "", 在 Bundle.main
-        prefix: 对应 xcassets.datas.prefix 值
+        dataName: 对应 在 xcassets.datas 中文件名
 ```
-
 
 
 ## download
