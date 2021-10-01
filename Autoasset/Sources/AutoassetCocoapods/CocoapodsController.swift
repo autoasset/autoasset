@@ -122,7 +122,7 @@ public struct CocoapodsController {
                 try? git.add(path: ".")
                 try  git.commit(options: [.message(gitConfig.commitMessage)])
                 try? git.push(options: [.delete, .refspec(version)])
-                try? git.tag(options: [.delete], tagname: version)
+                _ = try? git.tag(options: [.delete], tagname: version)
                 try  git.tag(tagname: version)
                 try git.push(options: [.repository("origin"), .refspec(version)])
                 switch trunk {

@@ -35,7 +35,7 @@ struct SwiftParse {
                 #"", familyName: ""#,
                 model.fontFamily,
                 #"", dataName: ""#,
-                try variablesMaker.textMaker(template.prefix) + model.fontFamily,
+                try variablesMaker.textMaker(template.dataName),
                 #"") }"#
             ].joined()
         }.joined(separator: "\n")

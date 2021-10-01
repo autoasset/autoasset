@@ -122,7 +122,7 @@ extension TidyController {
         
         
         let output = try FilePath.Folder(path: model.output)
-        try? output.create()
+        _ = try? output.create()
         
         for input in model.inputs.compactMap({ try? FilePath(path: $0) }) {
             switch input.type {

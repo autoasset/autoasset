@@ -77,7 +77,7 @@ public struct IconFont {
     public struct iOSTemplate {
         public let output: String
         public let bundle: String
-        public let prefix: String
+        public let dataName: String
     }
     
     public struct Font {
@@ -116,7 +116,7 @@ public struct IconFont {
             if let output = template["output"].string {
                 templates.append(.iOS(.init(output: output,
                                             bundle: template["bundle"].stringValue,
-                                            prefix: template["prefix"].stringValue)))
+                                            dataName: template["dataName"].stringValue)))
             }
         }
      
