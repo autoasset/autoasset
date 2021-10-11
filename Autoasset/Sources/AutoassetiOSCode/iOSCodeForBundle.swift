@@ -37,6 +37,11 @@ public struct iOSCodeForBundle {
         extension Foundation.Bundle {
             /// Returns the resource bundle associated with the current Swift module.
             static func module(name: String) -> Bundle {
+                /**
+                    Using the Swift Package Manager integration requires adding the "AutoAsset_Enable_SPM" macro to the Package file
+                    使用 Swift Package Manager 集成需要在 Package 文件中添加 "AutoAsset_Enable_SPM" 宏
+                    targets: [.target(..., swiftSettings: [.define("AutoAsset_Enable_SPM")])]
+                */
                 #if AutoAsset_Enable_SPM
                 return .module
                 #else
