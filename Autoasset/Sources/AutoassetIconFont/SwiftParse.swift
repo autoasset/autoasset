@@ -134,13 +134,8 @@ private extension SwiftParse {
             #endif
             
             func attributedString(fontSize: CGFloat, attributes: [NSAttributedString.Key: Any] = [:]) -> NSAttributedString {
-                let string = string
-                guard let font = UIFont(name: familyName, size: fontSize) else {
-                    assertionFailure()
-                    return .init()
-                }
                 var attributes = attributes
-                attributes[.font] = font
+                attributes[.font] = font(ofSize: fontSize)
                 return .init(string: string, attributes: attributes)
             }
             
@@ -150,18 +145,11 @@ private extension SwiftParse {
             
             @available(iOS 9.0, macOS 10.11, tvOS 6.0, watchOS 2.0, *)
             func data() -> Foundation.Data {
-                if let url = Bundle(for: Self.self).url(forResource: bundle, withExtension: "bundle"),
-                   let bundle = Bundle(url: url),
-                   let data = NSDataAsset(name: dataName, bundle: bundle)?.data {
-                    return data
+                guard let data = NSDataAsset(name: dataName, bundle: Bundle.module(name: bundle))?.data else {
+                    assertionFailure("can't find data: \(dataName) in bundle: \(bundle)")
+                    return Foundation.Data()
                 }
-                
-                if let data = NSDataAsset(name: dataName, bundle: Bundle.main)?.data {
-                    return data
-                }
-                
-                assertionFailure("can't find data: \(dataName) in bundle: \(bundle)")
-                return Foundation.Data()
+                return data
             }
             
             func register(data: Data) throws {
@@ -188,7 +176,6 @@ private extension SwiftParse {
             }
             
         }
-
         """#
     }
     

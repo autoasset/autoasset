@@ -53,7 +53,7 @@ struct DataCodeTemplate {
         }).sorted(by: { lhs, rhs in
             return lhs.variable < rhs.variable
         }).map({ item -> String in
-            return "   static var \(item.variable): Self { self.init(named: \"\(item.named)\", in: \(bundle_name)) }"
+            return "   static var \(item.variable): Self { .init(named: \"\(item.named)\", in: \(bundle_name)) }"
         }).joined(separator: "\n")
         
         let str = "public extension AutoAsset\(named.className)Protocol {\n\(list)\n}"
@@ -101,11 +101,9 @@ private extension DataCodeTemplate {
         #endif
 
         public class AutoAsset\(named.className): AutoAsset\(named.className)Protocol {
-
             public let named: String
             public let bundle: String?
-            static var bundleMap = [String: Bundle]()
-
+            
             public required init(named: String, in bundle: String?) {
                 self.named = named
                 self.bundle = bundle
@@ -113,31 +111,12 @@ private extension DataCodeTemplate {
             
             @available(iOS 9.0, macOS 10.11, tvOS 6.0, watchOS 2.0, *)
             public func value() -> Foundation.Data {
-                guard let bundleName = bundle else {
-                    if let data = NSDataAsset(name: named, bundle: .main)?.data {
-                        return data
-                    }
-                    assertionFailure("can't find data: \\(named) in bundle: \\(bundle ?? "main")")
+                guard let bundle = bundle,
+                      let data = NSDataAsset(name: named, bundle: Bundle.module(name: bundle))?.data else {
+                    assertionFailure("can't find data: \\(named) in bundle: \\(bundle ?? "")")
                     return Foundation.Data()
                 }
-                
-                if let bundle = Self.bundleMap[bundleName] {
-                    if let data = NSDataAsset(name: named, bundle: bundle)?.data {
-                        return data
-                    }
-                    assertionFailure("can't find data: \\(named) in bundle: \\(bundleName)")
-                    return Foundation.Data()
-                }
-                
-                if let url = Bundle(for: Self.self).url(forResource: bundle, withExtension: "bundle"),
-                   let bundle = Bundle(url: url),
-                   let data = NSDataAsset(name: named, bundle: bundle)?.data {
-                    Self.bundleMap[bundleName] = bundle
-                    return data
-                }
-                
-                assertionFailure("can't find data: \\(named) in bundle: \\(bundleName)")
-                return Foundation.Data()
+                return data
             }
         }
 

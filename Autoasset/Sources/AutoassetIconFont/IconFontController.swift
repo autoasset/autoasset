@@ -6,11 +6,12 @@
 //
 
 import Foundation
-import AutoassetModels
-import StemCrossPlatform
 import Logging
+import StemCrossPlatform
 import VariablesMaker
 import ASError
+import AutoassetModels
+import AutoassetiOSCode
 
 public struct IconFontController {
     
@@ -60,6 +61,8 @@ public struct IconFontController {
                                        template: template,
                                        folder: outputFolder,
                                        variablesMaker: variablesMaker)
+                
+                try iOSCodeForBundle(folder: outputFolder, logger: logger).createDefaultFiles()
                 try parse.createDefaultFiles()
                 try parse.createListFile()
             }

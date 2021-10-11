@@ -21,15 +21,17 @@
 // SOFTWARE.
 
 import Foundation
-import StemCrossPlatform
-import AutoassetModels
 import Logging
+import StemCrossPlatform
 import VariablesMaker
+import AutoassetModels
+import AutoassetiOSCode
 
 public struct XcassetsController {
     
     private let xcassets: Xcassets
-    
+    private let logger = Logger(label: "xcassets")
+
     public init(model: Xcassets, variables: Variables) throws {
         let variablesMaker = VariablesMaker(variables)
         self.xcassets = try Xcassets(
@@ -71,6 +73,10 @@ public struct XcassetsController {
     }
     
     public func run() throws {
+        if let output = xcassets.template?.output {
+            try iOSCodeForBundle(folder: try .init(path: output), logger: logger).createDefaultFiles()
+        }
+    
         let colorController = try ColorXcassetsController(xcassets: xcassets)
         try colorController.run()
         
