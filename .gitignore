@@ -1,5 +1,5 @@
-Autoasset.xcodeproj/project.xcworkspace/xcuserdata
 .DS_Store
-Autoasset.xcodeproj/xcuserdata
-RunApp.xcodeproj/project.xcworkspace/xcuserdata/linhey.xcuserdatad
-RunApp.xcodeproj/xcuserdata
+/.build
+/Packages
+/*.xcodeproj
+xcuserdata/
