@@ -54,23 +54,49 @@ public struct TidyController {
 extension TidyController {
     
     func createTask(_ name: String) throws -> Bool {
-        guard let item = tidy.create.first(where: { $0.name == name }) else {
+        guard let model = tidy.create.first(where: { $0.name == name }) else {
             return false
         }
         
         logger.info(.init(stringLiteral: "任务: \(name)"))
-        
+        try Self.task(with: model, variablesMaker: variablesMaker, logger: logger)
+        return true
+    }
+    
+    func clearTask(_ name: String) throws -> Bool {
+        guard let model = tidy.clears.first(where: { $0.name == name }) else {
+            return false
+        }
+        logger.info(.init(stringLiteral: "任务: \(name)"))
+        try Self.task(with: model, variablesMaker: variablesMaker, logger: logger)
+        return true
+    }
+    
+    func copyTask(_ name: String) throws -> Bool {
+        guard let model = tidy.copies.first(where: { $0.name == name }) else {
+            return false
+        }
+        logger.info(.init(stringLiteral: "任务: \(name)"))
+        try Self.task(with: model, variablesMaker: variablesMaker, logger: logger)
+        return true
+    }
+    
+}
+
+public extension TidyController {
+    
+    static func task(with model: Tidy.Create, variablesMaker: VariablesMaker, logger: Logger?) throws {
         var type: Tidy.CreateInput
-        switch item.type {
+        switch model.type {
         case .input(let result):
             type = .input(try variablesMaker.textMaker(result))
         case .text(let result):
             type = .text(try variablesMaker.textMaker(result))
         }
         
-        let model = try Tidy.Create(name: name,
+        let model = try Tidy.Create(name: model.name,
                                     type: type,
-                                    output: variablesMaker.textMaker(item.output))
+                                    output: variablesMaker.textMaker(model.output))
         
         var text: String
         switch model.type {
@@ -84,50 +110,27 @@ extension TidyController {
         text = try variablesMaker.textMaker(text)
         let output = try FilePath.File(path: model.output)
         try? output.delete()
-        logger.info(.init(stringLiteral: "正在创建: \(model.output)"))
+        logger?.info(.init(stringLiteral: "正在创建: \(model.output)"))
         try output.create(with: text.data(using: .utf8))
-        
-        return true
     }
     
-    func clearTask(_ name: String) throws -> Bool {
-        guard let item = tidy.clears.first(where: { $0.name == name }) else {
-            return false
-        }
-        logger.info(.init(stringLiteral: "任务: \(name)"))
-        
-        let model = try Tidy.Clear(name: name, inputs: item.inputs.map(variablesMaker.textMaker(_:)))
-        
+    static func task(with model: Tidy.Clear, variablesMaker: VariablesMaker, logger: Logger?) throws {
+        let model = try Tidy.Clear(name: model.name, inputs: model.inputs.map(variablesMaker.textMaker(_:)))
         for input in model.inputs {
             do {
-                logger.info("正在移除: \(input)")
+                logger?.info("正在移除: \(input)")
                 try FilePath(path: input).delete()
             } catch {
-                logger.error(.init(stringLiteral: error.localizedDescription))
+                logger?.error(.init(stringLiteral: error.localizedDescription))
             }
         }
-        
-        return true
     }
     
-    func copyTask(_ name: String) throws -> Bool {
-        guard let item = tidy.copies.first(where: { $0.name == name }) else {
-            return false
-        }
-        logger.info(.init(stringLiteral: "任务: \(name)"))
+    static func task(with model: Tidy.Copy, variablesMaker: VariablesMaker, logger: Logger?) throws {
+        let model = try Tidy.Copy(name: model.name,
+                                  inputs: model.inputs.map(variablesMaker.textMaker(_:)),
+                                  output: variablesMaker.textMaker(model.output))
         
-        let model = try Tidy.Copy(name: name,
-                                  inputs: item.inputs.map(variablesMaker.textMaker(_:)),
-                                  output: variablesMaker.textMaker(item.output))
-        try TidyController.copy(with: model, logger: logger)
-        return true
-    }
-    
-}
-
-public extension TidyController {
-    
-    static func copy(with model: Tidy.Copy, logger: Logger?) throws {
         let output = try FilePath.Folder(path: model.output)
         _ = try? output.create()
         

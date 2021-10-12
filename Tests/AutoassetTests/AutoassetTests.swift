@@ -13,8 +13,27 @@ final class AutoassetTests: XCTestCase {
     }
     
     
+    
     func testConfigHelp() throws {
         print(try runApp(arguments: ["config", "--help"]))
+    }
+    
+    func testTidy() throws {
+        print(try runApp(arguments: "tidy create -t '${recommend.package.name}' -o ./test.txt -d"
+                            .split(separator: " ")
+                            .map(\.description)))
+        
+        print(try runApp(arguments: "tidy copy -i ./test.txt -o /Users/linhey/Desktop -d"
+                            .split(separator: " ")
+                            .map(\.description)))
+        
+        print(try runApp(arguments: "tidy copy -i ./test.txt -o /Users/linhey/Desktop/debug -d"
+                            .split(separator: " ")
+                            .map(\.description)))
+        
+        print(try runApp(arguments: "tidy clear -i /Users/linhey/Desktop/test.txt -d"
+                            .split(separator: " ")
+                            .map(\.description)))
     }
     
     func testVariablesHelp() throws {
