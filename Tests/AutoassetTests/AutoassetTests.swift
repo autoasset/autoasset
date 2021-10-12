@@ -19,21 +19,10 @@ final class AutoassetTests: XCTestCase {
     }
     
     func testTidy() throws {
-        print(try runApp(arguments: "tidy create -t '${recommend.package.name}' -o ./test.txt -d"
-                            .split(separator: " ")
-                            .map(\.description)))
-        
-        print(try runApp(arguments: "tidy copy -i ./test.txt -o /Users/linhey/Desktop -d"
-                            .split(separator: " ")
-                            .map(\.description)))
-        
-        print(try runApp(arguments: "tidy copy -i ./test.txt -o /Users/linhey/Desktop/debug -d"
-                            .split(separator: " ")
-                            .map(\.description)))
-        
-        print(try runApp(arguments: "tidy clear -i /Users/linhey/Desktop/test.txt -d"
-                            .split(separator: " ")
-                            .map(\.description)))
+        print(try runApp(bash: "tidy create -t '${recommend.package.name}' -o ./test.txt -d"))
+        print(try runApp(bash: "tidy copy -i ./test.txt -o /Users/linhey/Desktop -d"))
+        print(try runApp(bash: "tidy copy -i ./test.txt -o /Users/linhey/Desktop/debug -d"))
+        print(try runApp(bash: "tidy clear -i /Users/linhey/Desktop/test.txt -d"))
     }
     
     func testVariablesHelp() throws {
@@ -47,6 +36,10 @@ final class AutoassetTests: XCTestCase {
     func testVariables() throws {
         print(try runApp(arguments: ["variables", "-t", "${autoasset.date.now}"]))
         print(try runApp(arguments: ["variables", "--text", "${autoasset.date.now}"]))
+    }
+    
+    func runApp(bash: String) throws -> String {
+       return try runApp(arguments: bash.split(separator: " ").map(\.description))
     }
     
     func runApp(arguments: [String]) throws -> String {
