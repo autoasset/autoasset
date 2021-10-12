@@ -14,11 +14,12 @@ import Logging
 
 public struct VariablesMaker {
     
-    private let logger = Logger(label: "VariablesMaker")
+    private let logger: Logger?
     public let variables: Variables
     
-    public init(_ variables: Variables) {
+    public init(_ variables: Variables, logger: Logger? = Logger(label: "VariablesMaker")) {
         self.variables = variables
+        self.logger = logger
     }
     
     public func textMaker(_ text: String?) throws -> String? {
@@ -94,7 +95,7 @@ public struct VariablesMaker {
                 throw ASError(message: "\(placeHolder.name) 无法获取值")
             }
             
-            logger.info("系统变量替换 \(key): \(replace)")
+            logger?.info("系统变量替换 \(key): \(replace)")
             outputText = outputText.replacingOccurrences(of: key, with: replace)
         }
         
@@ -116,7 +117,7 @@ public struct VariablesMaker {
 }
 
 private extension VariablesMaker {
-
+    
     private func recommendPackageName() throws -> String {
         if let name = variables.recommendPackage.name {
             return name

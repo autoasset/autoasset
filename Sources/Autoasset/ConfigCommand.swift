@@ -1,29 +1,13 @@
-// MIT License
 //
-// Copyright (c) 2020 linhey
+//  File.swift
+//  
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
+//  Created by linhey on 2021/10/11.
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
 
 import Foundation
 import ArgumentParser
 import Stem
-import Yams
 import AutoassetModels
 import AutoassetXcassets
 import AutoassetDownload
@@ -35,33 +19,38 @@ import Bash
 import Logging
 import VariablesMaker
 
-@main
-public struct AutoAsset: ParsableCommand {
+public struct ConfigCommand: ParsableCommand {
+
+    public static var configuration = CommandConfiguration(commandName: "config",
+                                                           abstract:  "执行配置文件")
     
-    public static let configuration = CommandConfiguration(version: "44")
-    
-    @Option(name: [.customLong("config")], help: "配置文件路径")
-    var configPath: String?
+    @Option(name: [.customLong("path"), .customLong("config")], help: "配置文件路径")
+    var path: String
     
     @Option(name: [.customLong("env")], help: "环境变量文件路径")
     var envPath: String?
-        
-    @Flag(help: .init("内置变量列表:\n" + PlaceHolder.systems.map{ "- \($0.name)\n  \($0.desc)"}.joined(separator: "\n") + "\n"))
-    var variables = false
     
     public init() {}
+    
+    public func validate() throws {
+        guard try FilePath.File(path: path).isExist else {
+            throw ValidationError("配置文件不存在: \(path)")
+        }
+    }
     
     public func run() throws {
         if let path = envPath {
             let logger = Logger(label: "env")
             logger.info(.init(stringLiteral: "path: \(path)"))
-            Global.env = try config(from: path)?.variables
+            Global.env = try Global.config(from: path)?.variables
         }
-        begin(path: configPath ?? "autoasset.yml", variables: Global.env, superConfig: nil)
+        begin(path: path, variables: Global.env, superConfig: nil)
     }
+    
 }
 
-extension AutoAsset {
+
+extension ConfigCommand {
     
     func begin(config: Config, variables: Variables?, superConfig: Config?) throws {
         var config = config
@@ -94,19 +83,10 @@ extension AutoAsset {
     func begin(path: String, variables: Variables?, superConfig: Config?) {
         let logger = Logger(label: "config")
         logger.info(.init(stringLiteral: "path: \(path)"))
-        guard let config = try? config(from: path) else {
+        guard let config = try? Global.config(from: path) else {
             return
         }
         try? self.begin(config: config, variables: variables, superConfig: superConfig)
-    }
-    
-    func config(from path: String) throws -> Config? {
-        let path = try FilePath.File(path: path)
-        let data = try path.data()
-        guard let text = String(data: data, encoding: .utf8), let yml = try Yams.load(yaml: text) else {
-            return nil
-        }
-       return Config(from: JSON(yml))
     }
     
     func run(with mode: Mode, config: Config) throws {
