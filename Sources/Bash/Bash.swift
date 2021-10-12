@@ -15,7 +15,7 @@ public func shell(_ command: String, logger: Logger?) throws -> String {
     logger?.info(.init(stringLiteral: command))
     let output = SwiftShell.run(bash: command)
     if output.succeeded {
-        logger?.info(.init(stringLiteral: output.stdout))
+        logger?.info(.init(stringLiteral: "\n" + output.stdout))
         return output.stdout
     } else {
         logger?.error(.init(stringLiteral: command))

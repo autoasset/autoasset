@@ -30,7 +30,8 @@ public struct DownloadController {
     
     public let model: Download
     let logger = Logger(label: "download")
-    
+    let gitLogger = Logger(label: "download.git")
+
     public init(model: Download, variables: Variables) throws {
         let variablesMaker = VariablesMaker(variables)
         self.model = try .init(gits: model.gits.map({ item -> Download.Git in
@@ -46,7 +47,7 @@ public struct DownloadController {
             return
         }
         
-        let git = Git()
+        let git = Git(logger: gitLogger)
         let desc = [task.input, task.branch, task.output].joined(separator: " ")
         logger.info(.init(stringLiteral: desc))
         try git.clone(url: task.input,

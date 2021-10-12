@@ -67,6 +67,7 @@ public enum PlaceHolder {
         .gitCurrentCommitMessage,
         .gitMaxTagNumber,
         .gitNextTagNumber,
+        .gitTagMaxVersion,
         .gitTagNextMajorVersion,
         .gitTagNextMinorVersion,
         .gitTagNextPatchVersion,

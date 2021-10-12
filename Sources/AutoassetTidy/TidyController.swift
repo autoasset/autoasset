@@ -119,8 +119,15 @@ extension TidyController {
         let model = try Tidy.Copy(name: name,
                                   inputs: item.inputs.map(variablesMaker.textMaker(_:)),
                                   output: variablesMaker.textMaker(item.output))
-        
-        
+        try TidyController.copy(with: model, logger: logger)
+        return true
+    }
+    
+}
+
+public extension TidyController {
+    
+    static func copy(with model: Tidy.Copy, logger: Logger?) throws {
         let output = try FilePath.Folder(path: model.output)
         _ = try? output.create()
         
@@ -128,17 +135,15 @@ extension TidyController {
             switch input.type {
             case .file:
                 try input.copy(into: output)
-                logger.info("正在复制: \(input.url.path) 至 \(output.url.path)")
+                logger?.info("正在复制: \(input.url.path) 至 \(output.url.path)")
             case .folder:
                 let folder = FilePath.Folder(url: input.url)
                 try folder.subFilePaths().forEach { item in
-                    logger.info("正在复制: \(item.url.path) 至 \(output.url.path)")
+                    logger?.info("正在复制: \(item.url.path) 至 \(output.url.path)")
                     try item.copy(into: output)
                 }
             }
         }
-        
-        return true
     }
     
 }

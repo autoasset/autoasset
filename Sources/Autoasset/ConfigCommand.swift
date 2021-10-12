@@ -21,8 +21,7 @@ import VariablesMaker
 
 public struct ConfigCommand: ParsableCommand {
 
-    public static var configuration = CommandConfiguration(commandName: "config",
-                                                           abstract:  "执行配置文件")
+    public static var configuration = CommandConfiguration(commandName: "config", abstract:  "执行配置文件")
     
     @Option(name: [.customLong("path"), .customLong("config")], help: "配置文件路径")
     var path: String

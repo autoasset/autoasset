@@ -6,8 +6,12 @@ final class AutoassetTests: XCTestCase {
     func testExample() throws {
         print(try runApp(arguments: ["--version"]))
         print(try runApp(arguments: ["--help"]))
+    }
+    
+    func testApp1() throws {
         print(try runApp(arguments: []))
     }
+    
     
     func testConfigHelp() throws {
         print(try runApp(arguments: ["config", "--help"]))

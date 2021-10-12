@@ -26,9 +26,11 @@ import SwiftShell
 
 public struct Git {
     
-    let logger = Logger(label: "git")
+    let logger: Logger?
     
-    public init() {}
+    public init(logger: Logger?) {
+        self.logger = logger
+    }
     
 }
 

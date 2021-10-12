@@ -19,14 +19,17 @@ public struct VariablesCommand: ParsableCommand {
     @Option(name: [.customLong("text"), .customShort("t")], help: "环境变量名, 例如: ${autoasset.date.now}")
     var text: String?
     
-    @Option(name: [.customLong("env")], help: "环境变量文件路径")
+    @Option(name: [.customLong("env"), .customShort("e")], help: "环境变量文件路径")
     var envPath: String?
+    
+    @Flag(name: [.long, .short])
+    var debug: Int
     
     public init() {}
     
     public func run() throws {
         let env = try envPath.flatMap({ try Global.config(from: $0)?.variables }) ?? Variables(placeHolders: [:])
-        let result = try VariablesMaker(env, logger: nil).textMaker(text)
+        let result = try VariablesMaker(env, logger: debug > 0 ? .init(label: "variables") : nil).textMaker(text)
         print(result ?? text ?? "")
     }
     
@@ -37,7 +40,7 @@ extension VariablesCommand {
     
     struct List: ParsableCommand {
         
-        public static var configuration = CommandConfiguration(commandName: "list")
+        public static var configuration = CommandConfiguration(abstract: "打印内置的变量列表")
         
         func run() throws {
             print("内置变量列表:")

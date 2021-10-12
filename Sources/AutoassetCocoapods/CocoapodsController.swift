@@ -33,7 +33,8 @@ public struct CocoapodsController {
     
     private let model: Cocoapods
     private let logger = Logger(label: "cocoapods")
-    
+    private let gitLogger = Logger(label: "cocoapods->git")
+
     public init(model: Cocoapods, variables: Variables) throws {
         let variablesMaker = VariablesMaker(variables)
         
@@ -98,7 +99,7 @@ public struct CocoapodsController {
             return
         }
         
-        let git = Git()
+        let git = Git(logger: gitLogger)
         
         switch gitConfig.pushMode {
         case .branch:

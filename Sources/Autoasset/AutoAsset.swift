@@ -29,7 +29,8 @@ public struct AutoAsset: ParsableCommand {
     public static let configuration = CommandConfiguration(commandName: "autoasset",
                                                            version: "44",
                                                            subcommands: [VariablesCommand.self,
-                                                                         ConfigCommand.self],
+                                                                         ConfigCommand.self,
+                                                                         TidyCommand.self],
                                                            defaultSubcommand: ConfigCommand.self)
     
     public init() {}

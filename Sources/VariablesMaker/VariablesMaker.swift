@@ -15,11 +15,13 @@ import Logging
 public struct VariablesMaker {
     
     private let logger: Logger?
+    private let gitLogger: Logger?
     public let variables: Variables
     
     public init(_ variables: Variables, logger: Logger? = Logger(label: "VariablesMaker")) {
         self.variables = variables
         self.logger = logger
+        self.gitLogger = logger.flatMap({ .init(label: "\($0.label).git")})
     }
     
     public func textMaker(_ text: String?) throws -> String? {
@@ -48,23 +50,23 @@ public struct VariablesMaker {
                 dateFormatter.dateFormat = variables.dateFormat
                 replace = dateFormatter.string(from: Date())
             case .gitCurrentBranch:
-                replace = try Git().revParse(output: [.abbrevRef(names: ["HEAD"])])
+                replace = try Git(logger: gitLogger).revParse(output: [.abbrevRef(names: ["HEAD"])])
             case .gitCurrentBranchNumber:
-                replace = try Git().revParse(output: [.abbrevRef(names: ["HEAD"])]).filter(\.isNumber)
+                replace = try Git(logger: gitLogger).revParse(output: [.abbrevRef(names: ["HEAD"])]).filter(\.isNumber)
             case .gitMaxTagNumber:
                 replace = "\(try getGitMaxTagMumber())"
             case .gitNextTagNumber:
                 replace = "\(try getGitMaxTagMumber() + 1)"
             case .gitCurrentCommitMessage:
-                replace = try Git().log(options: [.maxCount(1)]).first?.message ?? " "
+                replace = try Git(logger: gitLogger).log(options: [.maxCount(1)]).first?.message ?? " "
             case .gitCurrentCommitHash:
-                replace = try Git().log(options: [.maxCount(1)]).first?.hash ?? ""
+                replace = try Git(logger: gitLogger).log(options: [.maxCount(1)]).first?.hash ?? ""
             case .gitCurrentCommitAuthor:
-                replace = try Git().log(options: [.maxCount(1)]).first?.author ?? ""
+                replace = try Git(logger: gitLogger).log(options: [.maxCount(1)]).first?.author ?? ""
             case .gitCurrentCommitDate:
-                replace = try Git().log(options: [.maxCount(1)]).first?.date ?? ""
+                replace = try Git(logger: gitLogger).log(options: [.maxCount(1)]).first?.date ?? ""
             case .gitRemoteURL:
-                replace = try Git().lsRemote(options: [.getURL])
+                replace = try Git(logger: gitLogger).lsRemote(options: [.getURL])
             case .recommendPackageName:
                 replace = try recommendPackageName()
             case .recommendPackageNameCamelCase:
@@ -129,7 +131,7 @@ private extension VariablesMaker {
         }
         
         do {
-            if let name = try Git().lsRemote(options: [.getURL])
+            if let name = try Git(logger: gitLogger).lsRemote(options: [.getURL])
                 .split(separator: "/")
                 .last?
                 .split(separator: ".")
@@ -149,7 +151,7 @@ private extension VariablesMaker {
 private extension VariablesMaker {
     
     func getGitTagNames() throws -> [String] {
-        return try Git().lsRemote(mode: [.tags], options: [.refs], repository: "origin")
+        return try Git(logger: gitLogger).lsRemote(mode: [.tags], options: [.refs], repository: "origin")
             .split(separator: "\n")
             .compactMap { $0.components(separatedBy: "refs/tags/").last }
     }
