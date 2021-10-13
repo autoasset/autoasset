@@ -44,11 +44,13 @@ extension VariablesCommand {
         
         func run() throws {
             print("内置变量列表:")
+            let maxNameCount = PlaceHolder.systems.map(\.name.count).max() ?? 0
+            let formatter = NumberFormatter()
+            formatter.formatWidth = 2
             PlaceHolder.systems.enumerated().forEach {
-                print("\($0+1). \($1.name) : \($1.desc)")
+                print("\(formatter.st.string(from: $0+1)!). \($1.name) \(Array(repeating: " ", count: maxNameCount - $1.name.count).joined()): \($1.desc)")
             }
         }
-        
     }
     
 }
