@@ -45,7 +45,7 @@ public enum PlaceHolder {
     case gitTagNextMajorVersion
     case gitTagNextMinorVersion
     case gitTagNextPatchVersion
-
+    
     case recommendPackageName
     case recommendPackageNameCamelCase
     case recommendPackageNameSnakeCase
@@ -54,19 +54,19 @@ public enum PlaceHolder {
     
     public static var systems: [PlaceHolder] { [
         .dateNow,
-        .recommendPackageName,
-        .recommendPackageNameCamelCase,
-        .recommendPackageNameSnakeCase,
         .dateFormat,
-        .gitRemoteURL,
         .gitCurrentBranch,
         .gitCurrentBranchNumber,
+        .gitMaxTagNumber,
+        .gitNextTagNumber,
         .gitCurrentCommitHash,
         .gitCurrentCommitAuthor,
         .gitCurrentCommitDate,
         .gitCurrentCommitMessage,
-        .gitMaxTagNumber,
-        .gitNextTagNumber,
+        .gitRemoteURL,
+        .recommendPackageName,
+        .recommendPackageNameCamelCase,
+        .recommendPackageNameSnakeCase,
         .gitTagMaxVersion,
         .gitTagNextMajorVersion,
         .gitTagNextMinorVersion,
@@ -147,7 +147,7 @@ public struct Variables {
     
     public let dateFormat: String
     public let recommendPackage: RecommendPackage
-
+    
     public let placeHolders: [PlaceHolder]
     public let placeHolderNames: Set<String>
     
