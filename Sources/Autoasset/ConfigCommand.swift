@@ -106,7 +106,9 @@ extension ConfigCommand {
             let tidyController = TidyController(tidy: config.tidy, variables: config.variables)
             try tidyController.run(name: name)
         case .xcassets:
-            try XcassetsController(model: config.xcassets, variables: config.variables).run()
+            try XcassetsController(model: config.xcassets, variables: config.variables).run(validate: { item in
+                try self.begin(config: item, variables: nil, superConfig: config)
+            })
         case .config(name: let name):
             guard let item = config.configs.first(where: { $0.name == name }) else {
                 return

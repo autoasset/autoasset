@@ -92,6 +92,8 @@ public struct VariablesMaker {
             case .gitTagNextPatchVersion:
                 let version = try getGitTagMaxVersion()
                 replace = STVersion(version.major, version.minor, version.patch + 1).description
+            case .error:
+                replace = ""
             }
             guard replace.isEmpty == false else {
                 throw ASError(message: "\(placeHolder.name) 无法获取值")
