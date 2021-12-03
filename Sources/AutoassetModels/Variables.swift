@@ -25,6 +25,8 @@ import Stem
 
 public enum PlaceHolder {
     
+    case error
+
     case dateNow
     case dateFormat
     
@@ -76,9 +78,12 @@ public enum PlaceHolder {
     
     var variable: String {
         switch self {
+        case .error: return "autoasset.error"
+            
         case .recommendPackageName: return "recommend.package.name"
         case .recommendPackageNameCamelCase: return "recommend.package.name(.camelCase)"
         case .recommendPackageNameSnakeCase: return "recommend.package.name(.snakeCase)"
+            
         case .dateNow:                 return "autoasset.date.now"
         case .dateFormat:              return "autoasset.date.format"
         case .gitRemoteURL:            return "autoasset.git.remote.url"
@@ -103,6 +108,7 @@ public enum PlaceHolder {
     
     public var desc: String {
         switch self {
+        case .error:                return "获取当前的 error"
         case .recommendPackageName: return "获取当前 git URL 后缀名/根文件夹名"
         case .recommendPackageNameCamelCase: return "获取当前 git URL 后缀名/根文件夹名(驼峰命名)"
         case .recommendPackageNameSnakeCase: return "获取当前 git URL 后缀名/根文件夹名(下划线分割命名)"
@@ -177,6 +183,11 @@ public struct Variables {
         self.placeHolders = placeHolders
         self.dateFormat = dateFormat
         self.recommendPackage = recommendPackage
+    }
+    
+    
+    public init(error: String) {
+        self.init(placeHolders: [PlaceHolder.error.variable: error])
     }
     
     public init(placeHolders dictionary: [String: String]) {
