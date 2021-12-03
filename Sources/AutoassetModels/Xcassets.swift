@@ -25,19 +25,6 @@ import Stem
 
 public struct Xcassets {
     
-    public class Lint {
-
-        /// [error] 重复文件错误
-        public let duplicate_resource_files: Config
-        /// [warning] 有 content 文件存在却未被使用
-        public let content_file_not_used: Config
-        
-        init(from json: JSON) {
-            self.duplicate_resource_files = Config(from: json["duplicate_resource_files"])
-            self.content_file_not_used    = Config(from: json["content_file_not_used"])
-        }
-    }
-    
     public class Template {
         
         public let output: String
@@ -160,29 +147,25 @@ public struct Xcassets {
     public let gifs: [Data]
     public let datas: [Data]
     public let template: Template?
-    public let lint: Lint
     
     public init(colors: [Color],
                 images: [Image],
                 gifs: [Data],
                 datas: [Data],
-                template: Template?,
-                lint: Lint) {
+                template: Template?) {
         self.colors = colors
         self.images = images
         self.gifs = gifs
         self.datas = datas
         self.template = template
-        self.lint = lint
     }
     
     init(from json: JSON) {
         colors = json["colors"].arrayValue.compactMap(Color.init(from:))
         images = json["images"].arrayValue.compactMap(Image.init(from:))
-        gifs   = json["gifs"].arrayValue.compactMap(Data.init(from:))
-        datas  = json["datas"].arrayValue.compactMap(Data.init(from:))
+        gifs  = json["gifs"].arrayValue.compactMap(Data.init(from:))
+        datas = json["datas"].arrayValue.compactMap(Data.init(from:))
         template = Template(from: json["template"])
-        lint = Lint(from: json["lint"])
     }
     
 }

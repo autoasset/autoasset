@@ -69,11 +69,10 @@ public struct XcassetsController {
                                  properties: item.properties,
                                  bundle_name: variablesMaker.textMaker(item.bundle_name))
             }),
-            template: Xcassets.Template(output: variablesMaker.textMaker(model.template?.output)),
-            lint: model.lint)
+            template: Xcassets.Template(output: variablesMaker.textMaker(model.template?.output)))
     }
     
-    public func run(validate: (Config) throws -> Void) throws {
+    public func run() throws {
         if let output = xcassets.template?.output {
             try iOSCodeForBundle(folder: try .init(path: output), logger: logger).createDefaultFiles()
         }
@@ -82,28 +81,13 @@ public struct XcassetsController {
         try colorController.run()
         
         let imageController = try ImageXcassetsController(xcassets: xcassets)
-        let validates = try imageController.run()
+        try imageController.run()
         
         let gifsController = try DataXcassetsController(named: .gifs, resources: xcassets.gifs, xcassets: xcassets)
         try gifsController.run()
         
         let dataController = try DataXcassetsController(named: .data, resources: xcassets.datas, xcassets: xcassets)
         try dataController.run()
-        
-        try validates.map { validate -> Config in
-            switch validate {
-            case .duplicate_resource_files(let message):
-                var config = xcassets.lint.duplicate_resource_files
-                config.variables = config.variables.merge(.init(error: message))
-                return config
-            case .content_file_not_used(let message):
-                var config = xcassets.lint.content_file_not_used
-                config.variables = config.variables.merge(.init(error: message))
-                return config
-            }
-        }.forEach { config in
-           try validate(config)
-        }
     }
     
 }
