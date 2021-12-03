@@ -84,13 +84,13 @@ private extension ColorCodeTemplate {
         public class AutoAssetColor: AutoAssetColorProtocol {
             
             #if canImport(UIKit)
-            let light: UIColor
-            let dark: UIColor
-            let system: UIColor
+            public let light: UIColor
+            public let dark: UIColor
+            public let system: UIColor
             #elseif canImport(AppKit)
-            let light: NSColor
-            let dark: NSColor
-            let system: NSColor
+            public let light: NSColor
+            public let dark: NSColor
+            public let system: NSColor
             #endif
             
             public required init(light hex1: Int64, dark hex2: Int64) {

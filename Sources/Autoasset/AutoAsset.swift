@@ -27,7 +27,7 @@ import ArgumentParser
 public struct AutoAsset: ParsableCommand {
     
     public static let configuration = CommandConfiguration(commandName: "autoasset",
-                                                           version: "45",
+                                                           version: "46",
                                                            subcommands: [VariablesCommand.self,
                                                                          ConfigCommand.self,
                                                                          TidyCommand.self],
